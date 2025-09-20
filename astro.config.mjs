@@ -1,6 +1,6 @@
 // astro.config.mjs — Vercel (server) + MDX integration
 import { defineConfig } from 'astro/config';
-import vercel from '@astrojs/vercel/server';
+import vercel from '@astrojs/vercel';
 import react from '@astrojs/react';
 import tailwind from '@astrojs/tailwind';
 import mdx from '@astrojs/mdx';
