@@ -1,0 +1,127 @@
+---
+// Service Area component with Phoenix Metro cities and coverage map
+const locations = [
+  "Phoenix", "Tempe", "Mesa", "Chandler", "Gilbert", "Scottsdale",
+  "Glendale", "Peoria", "Avondale", "Goodyear", "Surprise", "Tolleson",
+  "Buckeye", "Laveen", "Queen Creek", "Apache Junction", "Cave Creek",
+  "Anthem", "Sun City", "El Mirage", "Fountain Hills"
+];
+---
+
+<section class="py-16 bg-white">
+  <div class="container mx-auto px-4">
+    <div class="text-center mb-12">
+      <h2 class="text-3xl md:text-4xl font-bold text-foreground mb-4">
+        Service Area Map — Phoenix Metro
+      </h2>
+      <p class="text-xl text-muted-foreground">
+        24/7 Mobile Diesel Repair Along Phoenix Corridors
+      </p>
+      <p class="text-lg text-muted-foreground mt-2">
+        We Cover I-10, I-17, Loop 101/202/303, US-60, AZ-51
+      </p>
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-12 max-w-6xl mx-auto items-center">
+      <div>
+        <h3 class="text-2xl font-bold text-foreground mb-6">
+          Cities We Service:
+        </h3>
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-3 mb-8">
+          {locations.map((location, index) => (
+            <div
+              key={index}
+              class="bg-card rounded-lg px-4 py-3 text-center font-semibold text-foreground hover:bg-primary hover:text-primary-foreground transition-colors duration-300 border border-border/50"
+            >
+              {location}
+            </div>
+          ))}
+        </div>
+
+        <div class="text-center">
+          <p class="text-muted-foreground mb-6">
+            Don't See Your Location on Phoenix Corridors? Give Us a Call - We May Still Be Able to Help!
+          </p>
+          <a
+            href="tel:+14803077434"
+            class="btn-hero"
+          >
+            <!-- Phone icon -->
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
+            </svg>
+            Call for Current ETA
+          </a>
+        </div>
+      </div>
+
+      <div
+        class="bg-gradient-to-br from-primary/5 to-accent/5 rounded-lg p-8 min-h-[400px] flex items-center justify-center border border-border/20 bg-cover bg-center bg-no-repeat relative overflow-hidden"
+        style="background-image: url(/images/phoenix-metro-background.jpeg)"
+      >
+        <div class="absolute inset-0 bg-gradient-to-br from-black/60 via-black/40 to-black/50"></div>
+        <div class="text-center relative z-10">
+          <!-- MapPin icon -->
+          <svg class="w-24 h-24 text-white mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+          </svg>
+          <h3 class="text-2xl font-bold text-white mb-4">
+            Phoenix Metro Coverage
+          </h3>
+          <p class="text-white/90 mb-4">
+            I-10, I-17, Loop 101/202/303 Corridors
+          </p>
+          <div class="bg-card rounded-lg p-4 shadow-sm">
+            <p class="text-sm font-semibold text-primary mb-2">Typical Response Windows:</p>
+            <p class="text-sm text-muted-foreground">60–90 minutes</p>
+            <p class="text-xs text-muted-foreground mt-1">(traffic & parts availability may affect ETAs)</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* Ensure colors match CSS variables */
+  .text-foreground {
+    color: hsl(var(--foreground));
+  }
+
+  .text-muted-foreground {
+    color: hsl(var(--muted-foreground));
+  }
+
+  .bg-card {
+    background-color: hsl(var(--card));
+  }
+
+  .border-border\/50 {
+    border-color: hsl(var(--border) / 0.5);
+  }
+
+  .border-border\/20 {
+    border-color: hsl(var(--border) / 0.2);
+  }
+
+  .hover\:bg-primary:hover {
+    background-color: hsl(var(--primary));
+  }
+
+  .hover\:text-primary-foreground:hover {
+    color: hsl(var(--primary-foreground));
+  }
+
+  .from-primary\/5 {
+    --tw-gradient-from: hsl(var(--primary) / 0.05);
+  }
+
+  .to-accent\/5 {
+    --tw-gradient-to: hsl(var(--accent) / 0.05);
+  }
+
+  .text-primary {
+    color: hsl(var(--primary));
+  }
+</style>

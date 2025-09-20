@@ -1,0 +1,72 @@
+---
+// Fleet Services section with manager perspective quote
+---
+
+<section id="fleet" class="py-20 bg-background">
+  <div class="container mx-auto px-4">
+    <div class="max-w-6xl mx-auto">
+      <!-- Fleet Manager Quote -->
+      <div class="bg-card rounded-2xl p-8 md:p-12 mb-16 shadow-lg border border-border/50">
+        <div class="text-center mb-8">
+          <h2 class="text-3xl md:text-4xl font-bold text-foreground mb-4">
+            "From a Fleet Manager's Perspective"
+          </h2>
+        </div>
+
+        <blockquote class="text-lg md:text-xl text-muted-foreground leading-relaxed text-center italic mb-8">
+          "We understand schedules, compliance, and downtime costs. Our techs prioritize safety, correct diagnosis, and clear communication so your trucks return to service quickly. Whether you run five trucks or five hundred, we'll help you avoid repeat breakdowns and keep utilization high."
+        </blockquote>
+
+        <div class="text-center">
+          <button
+            id="fleet-contact-button"
+            class="btn-hero"
+            aria-label="Contact us for fleet service"
+          >
+            <!-- Users icon -->
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"></path>
+              <circle cx="9" cy="7" r="4"></circle>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M23 21v-2a4 4 0 00-3-3.87"></path>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 3.13a4 4 0 010 7.75"></path>
+            </svg>
+            Contact Us for Fleet Service
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  // Fleet contact button scroll handler
+  document.getElementById('fleet-contact-button')?.addEventListener('click', () => {
+    const element = document.getElementById('contact');
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  });
+</script>
+
+<style>
+  /* Ensure colors match CSS variables */
+  .bg-background {
+    background-color: hsl(var(--background));
+  }
+
+  .bg-card {
+    background-color: hsl(var(--card));
+  }
+
+  .text-foreground {
+    color: hsl(var(--foreground));
+  }
+
+  .text-muted-foreground {
+    color: hsl(var(--muted-foreground));
+  }
+
+  .border-border\/50 {
+    border-color: hsl(var(--border) / 0.5);
+  }
+</style>

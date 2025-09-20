@@ -1,0 +1,209 @@
+---
+// Using correct service images from the public folder
+const emergencyRoadside = "/images/emergency-roadside-alt.png";
+const mobileMechanic = "/images/mobile-mechanic-alt.png";
+---
+
+<section id="emergency-hub" class="py-16 bg-gradient-to-br from-gray-100 to-gray-50">
+  <div class="container mx-auto px-4">
+    <!-- Urgent Header with Pulsing Alert -->
+    <div class="text-center mb-12">
+      <div class="flex items-center justify-center mb-6">
+        <!-- Alert Triangle icon -->
+        <svg class="w-12 h-12 mr-4 text-accent animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4.5c-.77-.833-1.732-.833-2.5 0L4.314 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+        </svg>
+        <h2 class="text-4xl md:text-6xl font-black text-gray-900 tracking-tight">
+          24/7 PHOENIX EMERGENCY DIESEL RESPONSE
+        </h2>
+        <!-- Alert Triangle icon -->
+        <svg class="w-12 h-12 ml-4 text-accent animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4.5c-.77-.833-1.732-.833-2.5 0L4.314 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+        </svg>
+      </div>
+      <p class="text-xl text-gray-600 font-medium">
+        24/7 Emergency Mobile Diesel Repair - We Come to You!
+      </p>
+    </div>
+
+    <!-- Three-Column Service Layout -->
+    <div class="grid md:grid-cols-3 gap-8 mb-12">
+      <!-- Emergency Roadside -->
+      <div class="bg-white rounded-xl shadow-lg p-8 text-center hover:shadow-xl transition-all duration-300 group hover:-translate-y-1 flex flex-col">
+        <div class="mb-6">
+          <img
+            src={emergencyRoadside}
+            alt="Emergency roadside assistance"
+            class="w-24 h-24 object-contain mx-auto mb-4 transition-transform duration-300 group-hover:scale-110"
+          />
+          <div class="flex items-center justify-center gap-2 text-accent">
+            <!-- Clock icon -->
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="12,6 12,12 16,14"></polyline>
+            </svg>
+            <span class="font-semibold">24/7 Available</span>
+          </div>
+        </div>
+        <div class="flex-1 flex flex-col">
+          <h3 class="text-xl font-black text-gray-900 mb-4">
+            Emergency Roadside Assistance
+          </h3>
+          <p class="text-gray-600 mb-6 flex-1 min-h-[3rem]">
+            Stranded on the Road? Fast Response for Breakdowns, Flat Tires, and Critical Repairs.
+          </p>
+          <button
+            id="learn-more-emergency"
+            class="btn-outline w-full"
+          >
+            LEARN MORE
+          </button>
+        </div>
+      </div>
+
+      <!-- On-Site Service -->
+      <div class="bg-white rounded-xl shadow-lg p-8 text-center hover:shadow-xl transition-all duration-300 group hover:-translate-y-1 flex flex-col">
+        <div class="mb-6">
+          <img
+            src={mobileMechanic}
+            alt="Mobile mechanic service"
+            class="w-24 h-24 object-contain mx-auto mb-4 transition-transform duration-300 group-hover:scale-110"
+          />
+          <div class="flex items-center justify-center gap-2 text-primary">
+            <!-- MapPin icon -->
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+            </svg>
+            <span class="font-semibold">Mobile Service</span>
+          </div>
+        </div>
+        <div class="flex-1 flex flex-col">
+          <h3 class="text-xl font-black text-gray-900 mb-4">
+            On-Site Mechanic Services
+          </h3>
+          <p class="text-gray-600 mb-6 flex-1 min-h-[3rem]">
+            Professional Diesel Repair at Your Location. Scheduled Maintenance and Major Repairs.
+          </p>
+          <button
+            id="learn-more-onsite"
+            class="btn-outline w-full"
+          >
+            LEARN MORE
+          </button>
+        </div>
+      </div>
+
+      <!-- Emergency Call Section -->
+      <div class="bg-gradient-to-br from-accent to-accent/90 rounded-xl shadow-lg p-8 text-center text-white flex flex-col">
+        <div class="mb-6">
+          <div class="w-24 h-24 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4">
+            <!-- Phone icon -->
+            <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
+            </svg>
+          </div>
+          <div class="flex items-center justify-center gap-2">
+            <!-- Wrench icon -->
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4"></path>
+            </svg>
+            <span class="font-semibold">Immediate Dispatch</span>
+          </div>
+        </div>
+        <div class="flex-1 flex flex-col">
+          <h3 class="text-xl font-black mb-4">
+            CALL FOR EMERGENCY
+          </h3>
+          <p class="text-white/90 mb-6 flex-1 min-h-[3rem]">
+            Speak directly with our dispatch team. Fast response times guaranteed.
+          </p>
+          <a
+            href="tel:+14803077434"
+            class="btn-emergency w-full"
+          >
+            <!-- Phone icon -->
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
+            </svg>
+            CALL (480) 307-7434
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom Info -->
+    <div class="text-center">
+      <p class="text-sm text-gray-500 italic mb-2">
+        Photos or Fault Codes Help Us Bring the Right Parts the First Time.
+      </p>
+      <p class="text-sm text-gray-500 mb-2">
+        Standard dispatch fee applies; waived with repair authorization.
+      </p>
+      <p class="text-xs text-gray-400 italic">
+        <strong>DPS Coordination:</strong> Highway shoulder repairs on I-10, I-17, and Loop systems coordinate with Arizona Department of Public Safety for traffic control and safe positioning protocols.
+      </p>
+    </div>
+  </div>
+</section>
+
+<script>
+  // Client-side navigation for learn more buttons
+  document.getElementById('learn-more-emergency')?.addEventListener('click', () => {
+    const element = document.querySelector("#services");
+    element?.scrollIntoView({ behavior: "smooth" });
+  });
+
+  document.getElementById('learn-more-onsite')?.addEventListener('click', () => {
+    const element = document.querySelector("#services");
+    element?.scrollIntoView({ behavior: "smooth" });
+  });
+</script>
+
+<style>
+  /* Ensure colors match CSS variables */
+  .text-accent {
+    color: hsl(var(--accent));
+  }
+
+  .text-primary {
+    color: hsl(var(--primary));
+  }
+
+  .border-accent {
+    border-color: hsl(var(--accent));
+  }
+
+  .border-primary {
+    border-color: hsl(var(--primary));
+  }
+
+  .hover\:bg-accent:hover {
+    background-color: hsl(var(--accent));
+  }
+
+  .hover\:bg-primary:hover {
+    background-color: hsl(var(--primary));
+  }
+
+  .from-accent {
+    --tw-gradient-from: hsl(var(--accent));
+  }
+
+  .to-accent\/90 {
+    --tw-gradient-to: hsl(var(--accent) / 0.9);
+  }
+
+  .animate-pulse {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: .5;
+    }
+  }
+</style>
