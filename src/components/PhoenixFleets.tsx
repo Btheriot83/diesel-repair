@@ -1,0 +1,37 @@
+const PhoenixFleets = () => {
+  return (
+    <section className="py-20 bg-white">
+      <div className="container mx-auto px-4">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-3xl md:text-4xl font-black text-center mb-8 text-gray-900">
+            Why Phoenix Fleets Choose Our Mobile Diesel Repair
+          </h2>
+          
+          <div className="text-lg text-gray-700 leading-relaxed space-y-4">
+            <p>
+              Phoenix Anchors Arizona's Freight Network—Sky Harbor International Airport, Tolleson Distribution Centers, 
+              West Phoenix Logistics Hubs, Tempe (ASU Programs), Mesa Aerospace, and Chandler's High-Tech Corridor. 
+              Breakdowns on I-10, I-17, or the Loop System Can Derail Tight Schedules Fast.
+            </p>
+            
+            <p>
+              AZ Mobile Diesel Repair Brings 15+ Years of Fleet Management Expertise to Keep Your Trucks Moving. 
+              We Diagnose and <a href="#service-area" className="text-primary hover:underline">Repair On-Site</a>, <a href="#services" className="text-primary hover:underline">Engine Diagnostics and Emissions</a>,{' '}
+              <a href="#services" className="text-primary hover:underline">Electrical & Batteries</a>,{' '}<a href="#services" className="text-primary hover:underline">A/C & Cooling</a> in 120°F Heat,{' '}
+              <a href="#services" className="text-primary hover:underline">Brakes & Air Systems</a> (Including Wheel Seals),{' '}<a href="#services" className="text-primary hover:underline">Hydraulics</a>,{' '}
+              <a href="#services" className="text-primary hover:underline">Suspension & Steering</a>, and <a href="#services" className="text-primary hover:underline">Fuel System Repair</a>.
+            </p>
+            
+            <p>
+              You Get Clear ETAs, Transparent Diagnostics Before Repairs, and DOT-Compliant Parts. Whether It's a Roadside 
+              Shoulder With DPS Coordination or a Yard Visit After Hours, Our Goal Is Simple: Minimize Downtime, Avoid 
+              Unnecessary Tows, and Get Drivers Safely Back on Route Across the Phoenix Metro.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export default PhoenixFleets;
