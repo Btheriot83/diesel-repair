@@ -1,0 +1,86 @@
+---
+/**
+ * UnifiedSchema.astro
+ * Site-wide AutoRepair schema + conditional page-specific blocks (Service, FAQPage, BreadcrumbList).
+ *
+ * Props:
+ *  - pageType?: "service" | "city" | "corridor" | "blog" | "home"
+ *  - service?: { name: string; description?: string; areaServed?: string[] }
+ *  - faqs?: Array<{ question: string; answer: string }>
+ *  - breadcrumbs?: Array<{ "@type":"ListItem"; position:number; name:string; item?:string }>
+ *  - reviews?: Array<{ rating:number }>
+ */
+import company from "@/data/company.config.json";
+import svcList from "@/data/services.json";
+
+const { pageType, service, faqs, breadcrumbs, reviews } = Astro.props as {
+  pageType?: string;
+  service?: { name: string; description?: string; areaServed?: string[] };
+  faqs?: Array<{ question: string; answer: string }>;
+  breadcrumbs?: Array<{ "@type":"ListItem"; position:number; name:string; item?:string }>;
+  reviews?: Array<{ rating:number }>;
+};
+
+const orgId = "#organization";
+
+const avg = (arr: number[]) => arr.length ? (arr.reduce((a,b)=>a+b,0) / arr.length) : 0;
+
+const autoRepairSchema:any = {
+  "@context": "https://schema.org",
+  "@type": "AutoRepair",
+  "@id": orgId,
+  "name": company.name,
+  "url": company.url,
+  "telephone": company.phone,
+  "areaServed": (company.serviceAreas || []).map((c:string) => ({ "@type": "City", "name": c })),
+  "hasOfferCatalog": {
+    "@type": "OfferCatalog",
+    "name": "Mobile Diesel Services",
+    "itemListElement": (svcList || []).map((s:any) => ({
+      "@type": "Offer",
+      "itemOffered": { "@type": "Service", "name": s.name }
+    }))
+  },
+  ...(Array.isArray(reviews) && reviews.length > 0 ? {
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": avg(reviews.map(r => Number(r?.rating || 0))).toFixed(1),
+      "reviewCount": reviews.length
+    }
+  } : {})
+};
+
+const blocks:any[] = [autoRepairSchema];
+
+if (pageType === "service" && service?.name) {
+  blocks.push({
+    "@context": "https://schema.org",
+    "@type": "Service",
+    "name": service.name,
+    "provider": { "@id": orgId },
+    ...(service?.description ? { "description": service.description } : {}),
+    ...(Array.isArray(service?.areaServed) && service.areaServed.length ? { "areaServed": service.areaServed } : {})
+  });
+}
+
+if (Array.isArray(faqs) && faqs.length) {
+  blocks.push({
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": faqs.map(f => ({
+      "@type": "Question",
+      "name": f.question,
+      "acceptedAnswer": { "@type": "Answer", "text": f.answer }
+    }))
+  });
+}
+
+if (Array.isArray(breadcrumbs) && breadcrumbs.length) {
+  blocks.push({
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": breadcrumbs
+  });
+}
+---
+<script type="application/ld+json" set:html={JSON.stringify(blocks)}></script>

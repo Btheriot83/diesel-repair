@@ -1,0 +1,31 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { getCollection, getEntryBySlug } from "astro:content";
+
+export async function getStaticPaths() {
+  const entries = await getCollection("services");
+  return entries.map((e) => ({ params: { slug: e.slug } }));
+}
+
+const { slug } = Astro.params;
+const entry = await getEntryBySlug("services", slug);
+if (!entry) throw new Error(`Service not found: ${slug}`);
+const rendered = await entry.render();
+const { Content, headings } = rendered;
+const data = entry.data;
+---
+<BaseLayout
+  title={data.title}
+  metaTitle={data.metaTitle}
+  metaDescription={data.metaDescription}
+  canonical={data.canonical}
+  pageType={data.pageType}
+  service={data.service}
+  faqs={data.faqs}
+  breadcrumbs={data.breadcrumbs}
+  reviews={data.reviews}
+>
+  <article class="prose max-w-none">
+    <Content />
+  </article>
+</BaseLayout>

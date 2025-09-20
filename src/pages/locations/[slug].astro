@@ -1,0 +1,29 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { getCollection, getEntryBySlug } from "astro:content";
+
+export async function getStaticPaths() {
+  const entries = await getCollection("cities");
+  return entries.map((e) => ({ params: { slug: e.slug } }));
+}
+
+const { slug } = Astro.params;
+const entry = await getEntryBySlug("cities", slug);
+if (!entry) throw new Error(`City not found: ${slug}`);
+const rendered = await entry.render();
+const { Content } = rendered;
+const data = entry.data;
+---
+<BaseLayout
+  title={data.title}
+  metaTitle={data.metaTitle}
+  metaDescription={data.metaDescription}
+  canonical={data.canonical}
+  pageType={data.pageType}
+  faqs={data.faqs}
+  breadcrumbs={data.breadcrumbs}
+>
+  <article class="prose max-w-none">
+    <Content />
+  </article>
+</BaseLayout>

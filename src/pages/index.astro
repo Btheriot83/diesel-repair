@@ -1,5 +1,5 @@
 ---
-import Layout from '../layouts/Layout.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
 import Header from '../components/Header.astro';
 import Hero from '../components/Hero.astro';
 import PhoenixFleets from '../components/PhoenixFleets.astro';
@@ -16,7 +16,7 @@ import FAQ from '../components/FAQ.astro';
 import Footer from '../components/Footer.astro';
 ---
 
-<Layout title="AZ Mobile Diesel Repair - Mobile Diesel Mechanic in Phoenix, AZ">
+<BaseLayout title="AZ Mobile Diesel Repair - Mobile Diesel Mechanic in Phoenix, AZ" pageType="home">
   <Header />
   <Hero />
   <main>
@@ -33,4 +33,4 @@ import Footer from '../components/Footer.astro';
     <FAQ />
   </main>
   <Footer />
-</Layout>
+</BaseLayout>
