@@ -1,5 +1,5 @@
 ---
-import AspectImage from './AspectImage.astro';
+import HeroLCP from './HeroLCP.astro';
 
 // Business configuration
 const COMPANY_CONFIG = {
@@ -13,18 +13,15 @@ const COMPANY_CONFIG = {
   role="banner"
   aria-label="Mobile diesel mechanic assisting semi-truck in Phoenix desert at sunset"
 >
-  <!-- Hero background image with CLS protection -->
+  <!-- Hero background image with LCP optimization -->
   <div class="absolute inset-0 w-full h-full">
-    <AspectImage
+    <HeroLCP
       src="/lovable-uploads/eff70c3b-1b53-4693-b587-bb51f7bfda85.webp"
       alt="Mobile diesel mechanic assisting semi-truck in Phoenix desert at sunset"
       width={1920}
       height={1080}
       class="w-full h-full object-cover object-center"
-      fetchpriority="high"
-      loading="eager"
       sizes="100vw"
-      srcset="/lovable-uploads/eff70c3b-1b53-4693-b587-bb51f7bfda85.webp 1920w"
     />
   </div>
   <div class="absolute inset-0 bg-gradient-to-b from-black/40 via-black/50 to-black/60"></div>

@@ -1,0 +1,40 @@
+---
+interface Props {
+  src: string;
+  alt: string;
+  width: number;
+  height: number;
+  /**
+   * Optional intrinsic display width in CSS pixels for sizes attribute.
+   * Default targets full-bleed on mobile then caps at 1280px.
+   */
+  sizes?: string;
+  class?: string;
+}
+const {
+  src,
+  alt,
+  width,
+  height,
+  sizes = "(max-width: 640px) 100vw, (max-width: 1280px) 90vw, 1280px",
+  class: className = "block w-full h-auto",
+} = Astro.props;
+---
+<!--
+  HeroLCP: zero-CLS, LCP-friendly hero image
+  - Explicit width/height to reserve space (CLS=0)
+  - loading='eager' + fetchpriority='high' to prioritize for LCP
+  - decoding='async' to avoid main-thread jank
+  - Responsive 'sizes' to hint correct candidate
+-->
+<img
+  src={src}
+  alt={alt}
+  width={width}
+  height={height}
+  loading="eager"
+  decoding="async"
+  fetchpriority="high"
+  sizes={sizes}
+  class={className}
+/>
