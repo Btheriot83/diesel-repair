@@ -1,0 +1,49 @@
+---
+/**
+ * AspectImage.astro
+ * Drop-in <img> with explicit width/height + CSS aspect-ratio to prevent CLS.
+ *
+ * Props:
+ *  - src: string (required)
+ *  - alt: string (required)
+ *  - width: number (required)   // intrinsic width in px
+ *  - height: number (required)  // intrinsic height in px
+ *  - loading?: 'lazy' | 'eager' (default: 'lazy')
+ *  - fetchpriority?: 'auto' | 'high' | 'low' (default: 'auto')
+ *  - class?: string
+ *  - sizes?: string             // e.g., '(max-width: 768px) 100vw, 1200px'
+ *  - srcset?: string            // provide if you have responsive variants
+ */
+const { src, alt, width, height, loading = 'lazy', fetchpriority = 'auto', class: klass = '', sizes, srcset } = Astro.props as {
+  src: string; alt: string; width: number; height: number;
+  loading?: 'lazy'|'eager'; fetchpriority?: 'auto'|'high'|'low';
+  class?: string; sizes?: string; srcset?: string;
+};
+const ratio = (height / width);
+---
+<style is:global>
+  /* Ensure the image box reserves space BEFORE the image loads */
+  .ai-box {
+    display: block;
+    position: relative;
+  }
+  .ai-box img {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: var(--ai-aspect, 1 / 1);
+  }
+</style>
+<span class="ai-box" style={`--ai-aspect:${width} / ${height}`}>
+  <img
+    src={src}
+    alt={alt}
+    width={width}
+    height={height}
+    loading={loading}
+    fetchpriority={fetchpriority}
+    class={klass}
+    {...(sizes ? { sizes } : {})}
+    {...(srcset ? { srcset } : {})}
+  />
+</span>

@@ -18,7 +18,7 @@ jobs:
           node-version: '20'
 
       - name: Install Lighthouse CI
-        run: npm i -g @lhci/cli@0.13.x
+        run: npm i -g @lhci/cli@latest lighthouse@latest
 
       - name: Run audits (Preview URL)
         env:
@@ -27,5 +27,8 @@ jobs:
           echo "Base: $PREVIEW_BASE"
           for path in "/" "/locations/phoenix" "/services/emergency-roadside-assistance"; do
             echo "Auditing $PREVIEW_BASE$path"
-            lhci autorun --collect.url="$PREVIEW_BASE$path" --collect.numberOfRuns=1               --collect.settings.preset=mobile --upload.target=temporary-public-storage
+            lhci autorun --collect.url="$PREVIEW_BASE$path" --collect.numberOfRuns=1 \
+              --collect.settings.formFactor=mobile \
+              --collect.settings.throttling.cpuSlowdownMultiplier=4 \
+              --upload.target=temporary-public-storage
           done

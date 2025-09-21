@@ -1,0 +1,16 @@
+/* src/styles/cls-guards.css
+ * Global layout-shift guards to reduce CLS.
+ */
+
+:root { --header-min-h: 64px; --footer-min-h: 280px; }
+.header, header[role="banner"] { min-height: var(--header-min-h); }
+
+img:not([height]), img:not([width]) { max-width: 100%; height: auto; }
+.figure, .hero-media, .embed { aspect-ratio: 16 / 9; }
+
+[aria-expanded="false"] ~ .panel { max-height: 0; overflow: hidden; }
+
+html { font-kerning: normal; }
+body { text-rendering: optimizeLegibility; }
+
+.hero { min-height: 88vh; }

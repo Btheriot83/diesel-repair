@@ -1,4 +1,6 @@
 ---
+import AspectImage from './AspectImage.astro';
+
 // Business configuration
 const COMPANY_CONFIG = {
   phoneNumber: "(480) 307-7434",
@@ -11,21 +13,20 @@ const COMPANY_CONFIG = {
   role="banner"
   aria-label="Mobile diesel mechanic assisting semi-truck in Phoenix desert at sunset"
 >
-  <!-- Hero background image with WebP optimization -->
-  <picture class="absolute inset-0 w-full h-full">
-    <source
-      srcset="/lovable-uploads/eff70c3b-1b53-4693-b587-bb51f7bfda85.webp"
-      type="image/webp"
-    />
-    <img
-      src="/lovable-uploads/eff70c3b-1b53-4693-b587-bb51f7bfda85.png"
+  <!-- Hero background image with CLS protection -->
+  <div class="absolute inset-0 w-full h-full">
+    <AspectImage
+      src="/lovable-uploads/eff70c3b-1b53-4693-b587-bb51f7bfda85.webp"
       alt="Mobile diesel mechanic assisting semi-truck in Phoenix desert at sunset"
+      width={1920}
+      height={1080}
       class="w-full h-full object-cover object-center"
       fetchpriority="high"
       loading="eager"
-      decoding="async"
+      sizes="100vw"
+      srcset="/lovable-uploads/eff70c3b-1b53-4693-b587-bb51f7bfda85.webp 1920w"
     />
-  </picture>
+  </div>
   <div class="absolute inset-0 bg-gradient-to-b from-black/40 via-black/50 to-black/60"></div>
 
   <div class="relative z-10 text-center text-white px-4">
