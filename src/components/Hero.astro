@@ -7,11 +7,25 @@ const COMPANY_CONFIG = {
 ---
 
 <section
-  class="relative min-h-[88vh] flex items-center justify-center bg-cover bg-center bg-no-repeat"
-  style="background-image: url(/lovable-uploads/eff70c3b-1b53-4693-b587-bb51f7bfda85.png)"
+  class="relative min-h-[88vh] flex items-center justify-center overflow-hidden"
   role="banner"
   aria-label="Mobile diesel mechanic assisting semi-truck in Phoenix desert at sunset"
 >
+  <!-- Hero background image with WebP optimization -->
+  <picture class="absolute inset-0 w-full h-full">
+    <source
+      srcset="/lovable-uploads/eff70c3b-1b53-4693-b587-bb51f7bfda85.webp"
+      type="image/webp"
+    />
+    <img
+      src="/lovable-uploads/eff70c3b-1b53-4693-b587-bb51f7bfda85.png"
+      alt="Mobile diesel mechanic assisting semi-truck in Phoenix desert at sunset"
+      class="w-full h-full object-cover object-center"
+      fetchpriority="high"
+      loading="eager"
+      decoding="async"
+    />
+  </picture>
   <div class="absolute inset-0 bg-gradient-to-b from-black/40 via-black/50 to-black/60"></div>
 
   <div class="relative z-10 text-center text-white px-4">
@@ -61,15 +75,6 @@ const COMPANY_CONFIG = {
   </div>
 </section>
 
-<script>
-  // Client-side navigation for dispatch button
-  document.getElementById('dispatch-button')?.addEventListener('click', () => {
-    const element = document.querySelector("#contact");
-    element?.scrollIntoView({
-      behavior: "smooth"
-    });
-  });
-</script>
 
 <style>
   /* Hero-specific button styles to match Shadcn/ui variants */
