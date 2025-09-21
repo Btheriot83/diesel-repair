@@ -1,0 +1,9 @@
+{
+  "redirects": [
+    {
+      "source": "https://www.azmobiledieselrepair.com/(.*)",
+      "destination": "https://azmobiledieselrepair.com/$1",
+      "permanent": true
+    }
+  ]
+}

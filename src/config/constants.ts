@@ -1,11 +1,12 @@
 // Business Configuration for AZ Mobile Diesel Repair
 // Centralized configuration to ensure consistency across all components
+import { PHONE_E164, PHONE_DISPLAY, SERVICE_AREA_CITIES } from "./company";
 
 export const COMPANY_CONFIG = {
   // Business Information
   companyName: "AZ Mobile Diesel Repair",
-  phoneNumber: "(480) 307-7434",
-  phoneLink: "tel:+14803077434",
+  phoneNumber: PHONE_DISPLAY,
+  phoneLink: `tel:${PHONE_E164}`,
   email: "info@azmobilediesel.com",
   
   // Service Areas
@@ -15,29 +16,7 @@ export const COMPANY_CONFIG = {
   serviceRadius: "50 miles",
   
   // Service Area Cities (Complete 21-City Phoenix Metro Coverage)
-  serviceAreas: [
-    "Phoenix",
-    "Tempe", 
-    "Mesa",
-    "Chandler",
-    "Gilbert",
-    "Scottsdale",
-    "Glendale",
-    "Peoria",
-    "Avondale",
-    "Goodyear",
-    "Surprise",
-    "Tolleson",
-    "Buckeye",
-    "Laveen",
-    "Queen Creek",
-    "Apache Junction",
-    "Cave Creek",
-    "Anthem",
-    "Sun City",
-    "El Mirage",
-    "Fountain Hills"
-  ],
+  serviceAreas: SERVICE_AREA_CITIES,
   
   // Major Highways/Corridors
   majorCorridors: [

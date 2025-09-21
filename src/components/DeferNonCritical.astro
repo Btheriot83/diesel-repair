@@ -1,0 +1,24 @@
+---
+// src/components/DeferNonCritical.astro
+/**
+ * Props:
+ *  - scripts: Array<{ src: string, on?: 'idle' | 'visible', selector?: string, attrs?: Record<string,string|boolean> }>
+ * Usage:
+ *  <DeferNonCritical scripts={[
+ *    { src: '/js/navigation.js', on: 'idle' },
+ *    { src: '/js/forms.js', on: 'visible', selector: '#contact-form' }
+ *  ]} />
+ */
+const { scripts = [] } = Astro.props as { scripts: Array<{ src: string, on?: 'idle' | 'visible', selector?: string, attrs?: Record<string,string|boolean> }> };
+---
+<script is:inline define:vars={{ scripts }}>
+  import { onIdle, whenVisible, loadScript } from '/js/defer-init.js';
+  scripts.forEach((cfg) => {
+    const mode = cfg.on || 'idle';
+    if (mode === 'visible' && cfg.selector) {
+      whenVisible(cfg.selector, () => loadScript(cfg.src, cfg.attrs || {}));
+    } else {
+      onIdle(() => loadScript(cfg.src, cfg.attrs || {}));
+    }
+  });
+</script>

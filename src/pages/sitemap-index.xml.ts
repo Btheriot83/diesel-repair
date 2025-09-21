@@ -1,5 +1,7 @@
 import type { APIRoute } from "astro";
-const SITE = "https://azmobiledieselrepair.com";
+import { SITE_ORIGIN } from "@/config/company";
+
+const SITE = SITE_ORIGIN;
 
 export const GET: APIRoute = async () => {
   const now = new Date().toISOString();

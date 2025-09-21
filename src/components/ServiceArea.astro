@@ -1,11 +1,8 @@
 ---
+import { PHONE_E164, SERVICE_AREA_CITIES } from "@/config/company";
+
 // Service Area component with Phoenix Metro cities and coverage map
-const locations = [
-  "Phoenix", "Tempe", "Mesa", "Chandler", "Gilbert", "Scottsdale",
-  "Glendale", "Peoria", "Avondale", "Goodyear", "Surprise", "Tolleson",
-  "Buckeye", "Laveen", "Queen Creek", "Apache Junction", "Cave Creek",
-  "Anthem", "Sun City", "El Mirage", "Fountain Hills"
-];
+const locations = SERVICE_AREA_CITIES;
 ---
 
 <section class="py-16 bg-white">
@@ -43,7 +40,7 @@ const locations = [
             Don't See Your Location on Phoenix Corridors? Give Us a Call - We May Still Be Able to Help!
           </p>
           <a
-            href="tel:+14803077434"
+            href={`tel:${PHONE_E164}`}
             class="btn-hero"
           >
             <!-- Phone icon -->

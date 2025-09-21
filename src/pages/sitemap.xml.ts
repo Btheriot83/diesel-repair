@@ -1,7 +1,8 @@
 import type { APIRoute } from "astro";
 import { getCollection } from "astro:content";
+import { SITE_ORIGIN } from "@/config/company";
 
-const SITE = "https://azmobiledieselrepair.com";
+const SITE = SITE_ORIGIN;
 
 type Entry = { loc: string; changefreq: string; priority: number; lastmod?: string };
 
