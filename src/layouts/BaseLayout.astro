@@ -4,6 +4,7 @@ import '../styles/cls-guards.css';
 import '../styles/fonts.css';
 import UnifiedSchema from '@/components/SEO/UnifiedSchema.astro';
 import LCPPreload from '@/components/LCPPreload.astro';
+import SeoHints from '@/components/SeoHints.astro';
 import DeferNonCritical from '@/components/DeferNonCritical.astro';
 
 export interface Props {
@@ -32,6 +33,11 @@ const { title, pageType, service, faqs, breadcrumbs, reviews, heroImage, heroTyp
 
     <!-- LCP Preload for hero images -->
     <LCPPreload heroPath={heroImage} heroType={heroType} />
+
+    <!-- Preload homepage hero for faster LCP discovery -->
+    {pageType === 'home' && (
+      <SeoHints heroSrc="/lovable-uploads/eff70c3b-1b53-4693-b587-bb51f7bfda85.webp" />
+    )}
 
     <UnifiedSchema
       pageType={pageType}
