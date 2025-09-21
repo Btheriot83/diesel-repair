@@ -1,6 +1,8 @@
 import type { APIRoute } from "astro";
 import { getCollection } from "astro:content";
-const SITE = "https://azmobiledieselrepair.com";
+import { SITE_ORIGIN } from "@/config/company";
+
+const SITE = SITE_ORIGIN;
 
 type ImgEntry = { loc: string; images: string[] };
 const abs = (p: string) => (p.startsWith("http") ? p : `${SITE}${p.startsWith("/") ? p : `/${p}`}`);

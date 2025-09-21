@@ -10,7 +10,7 @@
  *  - breadcrumbs?: Array<{ "@type":"ListItem"; position:number; name:string; item?:string }>
  *  - reviews?: Array<{ rating:number }>
  */
-import company from "@/data/company.config.json";
+import { BUSINESS_NAME, SITE_ORIGIN, PHONE_E164, SERVICE_AREA_CITIES } from "@/config/company";
 import svcList from "@/data/services.json";
 
 const { pageType, service, faqs, breadcrumbs, reviews } = Astro.props as {
@@ -29,10 +29,10 @@ const autoRepairSchema:any = {
   "@context": "https://schema.org",
   "@type": "AutoRepair",
   "@id": orgId,
-  "name": company.name,
-  "url": company.url,
-  "telephone": company.phone,
-  "areaServed": (company.serviceAreas || []).map((c:string) => ({ "@type": "City", "name": c })),
+  "name": BUSINESS_NAME,
+  "url": SITE_ORIGIN,
+  "telephone": PHONE_E164,
+  "areaServed": SERVICE_AREA_CITIES.map((c:string) => ({ "@type": "City", "name": c })),
   "hasOfferCatalog": {
     "@type": "OfferCatalog",
     "name": "Mobile Diesel Services",
