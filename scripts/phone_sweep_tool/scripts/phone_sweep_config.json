@@ -1,0 +1,30 @@
+{
+  "targetE164": "+14803077434",
+  "targetDisplay": "(480) 307-7434",
+  "includeGlobs": [
+    "src/**",
+    "public/**"
+  ],
+  "fileExtensions": [
+    ".astro",
+    ".mdx",
+    ".md",
+    ".ts",
+    ".tsx",
+    ".js",
+    ".jsx",
+    ".json",
+    ".css",
+    ".scss",
+    ".html"
+  ],
+  "excludeDirs": [
+    "node_modules",
+    ".git",
+    "dist",
+    ".astro",
+    ".vercel",
+    "build"
+  ],
+  "dryRun": true
+}

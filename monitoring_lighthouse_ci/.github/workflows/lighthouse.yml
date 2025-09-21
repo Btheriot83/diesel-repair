@@ -1,0 +1,31 @@
+name: Lighthouse (mobile) smoke tests
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ staging ]
+
+jobs:
+  lhci:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Lighthouse CI
+        run: npm i -g @lhci/cli@0.13.x
+
+      - name: Run audits (Preview URL)
+        env:
+          PREVIEW_BASE: ${{ secrets.VERCEL_PREVIEW_BASE }}
+        run: |
+          echo "Base: $PREVIEW_BASE"
+          for path in "/" "/locations/phoenix" "/services/emergency-roadside-assistance"; do
+            echo "Auditing $PREVIEW_BASE$path"
+            lhci autorun --collect.url="$PREVIEW_BASE$path" --collect.numberOfRuns=1               --collect.settings.preset=mobile --upload.target=temporary-public-storage
+          done

@@ -1,0 +1,12 @@
+---
+/**
+ * Props:
+ *  - heroPath: string (e.g., "/images/hero/hero-truck.webp")
+ *  - heroType: string (default "image/webp")
+ *  - fontPath: string | undefined (e.g., "/fonts/inter-bold.woff2")
+ *  - fontType: string (default "font/woff2")
+ */
+const { heroPath, heroType = "image/webp", fontPath, fontType = "font/woff2" } = Astro.props;
+---
+{heroPath && <link rel="preload" as="image" href={heroPath} type={heroType} />}
+{fontPath && <link rel="preload" href={fontPath} as="font" type={fontType} crossorigin />}

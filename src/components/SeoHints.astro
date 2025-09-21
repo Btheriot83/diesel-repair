@@ -1,0 +1,22 @@
+---
+/**
+ * SeoHints: add early resource hints for LCP
+ * Usage:
+ *   In your BaseLayout.astro <head>, include:
+ *     <SeoHints heroSrc="/lovable-uploads/eff70c3b-1b53-4693-b587-bb51f7bfda85.webp" />
+ */
+interface Props {
+  heroSrc: string;
+  heroType?: string; // e.g., "image/webp"
+  heroSizes?: string; // e.g., "(max-width: 640px) 100vw, (max-width: 1280px) 90vw, 1280px"
+  crossorigin?: 'anonymous' | 'use-credentials';
+}
+const {
+  heroSrc,
+  heroType = "image/webp",
+  heroSizes = "(max-width: 640px) 100vw, (max-width: 1280px) 90vw, 1280px",
+  crossorigin
+} = Astro.props;
+---
+<!-- Preload the LCP hero so the browser discovers it before parsing the body -->
+<link rel="preload" as="image" href={heroSrc} type={heroType} imagesizes={heroSizes} { ...crossorigin ? { crossorigin } : {} } />
