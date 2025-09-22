@@ -1,0 +1,25 @@
+---
+const { corridors = [], exitClusters = [] } = Astro.props;
+/**
+ * corridors: ["I-10 (Downtown ↔ West Valley, Exits 141–149)", "I-17 (Stack ↔ Deer Valley, Exits 200–206)", "Loop 202 (Santan/Red Mtn)"]
+ * exitClusters: ["I-10 Exits 141–149","I-17 Exits 200–206","Loop 202 Exits 1–18"]
+ */
+---
+<section aria-labelledby="corridors" class="my-8">
+  <h2 id="corridors" class="sr-only">Service Corridors We Cover</h2>
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+    {corridors.map((label, i) => (
+      <div class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+        <div class="inline-flex items-center gap-2 rounded-full px-3 py-1 text-sm font-medium bg-orange-100 text-orange-800">
+          {label.split(" (")[0] /* Badge: highway short name */}
+        </div>
+        <p class="mt-2 text-sm text-slate-600">
+          {label.includes("(") ? label.slice(label.indexOf("(")+1, -1) : (exitClusters[i] ?? "")}
+        </p>
+        {exitClusters[i] && (
+          <p class="mt-1 text-xs text-slate-500">Exits: {exitClusters[i].replace(/.*Exits?\s*/i,"")}</p>
+        )}
+      </div>
+    ))}
+  </div>
+</section>

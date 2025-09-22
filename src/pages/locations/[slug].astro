@@ -2,6 +2,10 @@
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import { getCollection, getEntryBySlug } from "astro:content";
 import { buildInternalLinks } from "@/utils/linkBuilder";
+import { COMPANY_CONFIG } from "@/config/constants";
+import CityHero from "@/components/locations/CityHero.astro";
+import CorridorsGrid from "@/components/locations/CorridorsGrid.astro";
+import FAQAccordion from "@/components/ui/FAQAccordion.astro";
 
 export async function getStaticPaths() {
   const entries = await getCollection("cities");
@@ -25,64 +29,516 @@ const links = buildInternalLinks(data);
   faqs={data.faqs}
   breadcrumbs={data.breadcrumbs}
 >
-  <article class="prose max-w-none">
-    <Content />
-
-    <!-- Emergency CTA Section -->
-    <div class="my-8 p-6 bg-red-50 border border-red-200 rounded-lg">
-      <h2 class="text-xl font-bold text-red-800 mb-4">Need Emergency Service?</h2>
-      <a
-        href={links.emergencyLink.href}
-        class="inline-block px-6 py-3 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition-colors"
-      >
-        {links.emergencyLink.text}
-      </a>
+  <!-- Hero Section with Phoenix Metro Background -->
+  <section class="relative bg-gray-900 text-white py-20 overflow-hidden" style="background-image: url('/images/phoenix-metro-background.webp'); background-size: cover; background-position: center;">
+    <div class="absolute inset-0 bg-gradient-to-r from-gray-900/90 via-gray-800/80 to-gray-900/90"></div>
+    <div class="container mx-auto px-4 relative z-10">
+      <div class="max-w-4xl mx-auto text-center">
+        <h1 class="text-4xl md:text-5xl font-bold mb-6 text-white drop-shadow-lg">{data.title}</h1>
+        <p class="text-xl text-gray-100 mb-4 drop-shadow">24/7 On-Site Truck Repair Across {data.title.split('—')[1]} Metro Area</p>
+        {data.title.includes('Phoenix') && (
+          <p class="text-lg text-gray-100 mb-8 italic drop-shadow">Serving I-10, I-17, Loop 202 — Fast roadside repair when Phoenix heat or traffic takes you down.</p>
+        )}
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+          <a href={COMPANY_CONFIG.phoneLink} class="bg-diesel-orange hover:bg-diesel-hover text-white font-bold py-4 px-8 rounded-full text-lg transition-colors shadow-lg">
+            Call Now: {COMPANY_CONFIG.phoneNumber}
+          </a>
+          <a href="#contact" class="bg-transparent border-2 border-white hover:bg-white hover:text-gray-900 text-white font-bold py-4 px-8 rounded-full text-lg transition-colors">
+            Request Service
+          </a>
+        </div>
+      </div>
     </div>
+  </section>
 
-    <!-- Related Links Sections -->
-    {links.corridorLinks.length > 0 && (
-      <div class="my-8">
-        <h3 class="text-lg font-semibold mb-4">Service Corridors</h3>
-        <ul class="list-disc list-inside space-y-2">
-          {links.corridorLinks.map((link) => (
-            <li>
-              <a href={link.href} class="text-blue-600 hover:text-blue-800 underline">
-                {link.text}
-              </a>
-            </li>
-          ))}
-        </ul>
-      </div>
-    )}
+  <!-- Main Content -->
+  <div class="bg-white">
+    <div class="container mx-auto px-4 py-16">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
 
-    {links.cityLinks.length > 0 && (
-      <div class="my-8">
-        <h3 class="text-lg font-semibold mb-4">Nearby Areas</h3>
-        <ul class="list-disc list-inside space-y-2">
-          {links.cityLinks.map((link) => (
-            <li>
-              <a href={link.href} class="text-blue-600 hover:text-blue-800 underline">
-                {link.text}
-              </a>
-            </li>
-          ))}
-        </ul>
-      </div>
-    )}
+        <!-- Main Content Column -->
+        <div class="lg:col-span-2">
+          <!-- Screen reader only H2 for accessibility -->
+          {data.title.includes('Phoenix') && (
+            <h2 class="sr-only">Phoenix On-Site Diesel Truck Repair</h2>
+          )}
+          <!-- Enhanced Content with Visual Breaks -->
+          <div class="bg-gradient-to-br from-blue-50 to-gray-50 rounded-xl p-6 mb-8 border border-blue-100">
+            <div class="flex items-center gap-3 mb-4">
+              <div class="w-10 h-10 bg-diesel-orange rounded-full flex items-center justify-center">
+                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                </svg>
+              </div>
+              <h2 class="text-2xl font-bold text-gray-900 m-0">Quick Response Phoenix Diesel Service</h2>
+            </div>
+            <div class="grid md:grid-cols-2 gap-6 text-gray-700">
+              <div>
+                <h3 class="font-semibold text-lg text-gray-900 mb-3">🛣️ Highway Coverage</h3>
+                <ul class="space-y-2 text-sm">
+                  <li>• <strong>I-10</strong> Downtown → West Valley (Exits 141–149)</li>
+                  <li>• <strong>I-17</strong> Stack → Deer Valley (Exits 200–206)</li>
+                  <li>• <strong>Loop 202</strong> Sky Harbor cargo terminals</li>
+                  <li>• <strong>ETA:</strong> 60–90 minutes metro-wide</li>
+                </ul>
+              </div>
+              <div>
+                <h3 class="font-semibold text-lg text-gray-900 mb-3">🌡️ Phoenix Heat Specialists</h3>
+                <ul class="space-y-2 text-sm">
+                  <li>• Fan clutch failures in 115°F+ weather</li>
+                  <li>• Radiator and charge-air cooler service</li>
+                  <li>• Battery replacement (heat damage)</li>
+                  <li>• Coolant flush for I-17 grade climbs</li>
+                </ul>
+              </div>
+            </div>
+          </div>
 
-    {links.serviceLinks.length > 0 && (
-      <div class="my-8">
-        <h3 class="text-lg font-semibold mb-4">Our Services</h3>
-        <ul class="list-disc list-inside space-y-2">
-          {links.serviceLinks.map((link) => (
-            <li>
-              <a href={link.href} class="text-blue-600 hover:text-blue-800 underline">
-                {link.text}
+          <!-- Structured Content Blocks -->
+          <div class="space-y-8">
+            <!-- Phoenix Diesel Service Overview -->
+            <div class="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
+              <div class="flex items-start gap-4">
+                <div class="w-12 h-12 bg-diesel-orange rounded-xl flex items-center justify-center flex-shrink-0">
+                  <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                  </svg>
+                </div>
+                <div class="flex-1">
+                  <h3 class="text-xl font-bold text-gray-900 mb-3">Mobile Diesel Mechanic — Phoenix, AZ</h3>
+                  <div class="prose prose-gray max-w-none">
+                    <p class="text-gray-700 leading-relaxed">When your truck won't start or breaks down on Phoenix highways, our <strong>mobile diesel mechanic Phoenix</strong> team responds fast. We cover I‑10 through downtown into the West Valley (Exits 141–149), I‑17 up to Deer Valley (Exits 200–206), and the 202 loops that funnel freight to Sky Harbor cargo terminals and Tolleson distribution centers.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Phoenix Heat Challenges -->
+            <div class="bg-gradient-to-br from-orange-50 to-red-50 rounded-xl border border-orange-200 p-6">
+              <div class="flex items-center gap-3 mb-4">
+                <div class="w-10 h-10 bg-gradient-to-br from-orange-500 to-red-500 rounded-lg flex items-center justify-center">
+                  <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                  </svg>
+                </div>
+                <h3 class="text-lg font-bold text-gray-900">Phoenix Summer Heat Amplifies Every Weakness</h3>
+              </div>
+              <div class="grid md:grid-cols-2 gap-4 text-sm">
+                <div class="space-y-2">
+                  <div class="flex items-center gap-2">
+                    <div class="w-2 h-2 bg-red-500 rounded-full"></div>
+                    <span>Fan clutches fail in 115°F+ temperatures</span>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <div class="w-2 h-2 bg-red-500 rounded-full"></div>
+                    <span>Radiators plug from desert dust</span>
+                  </div>
+                </div>
+                <div class="space-y-2">
+                  <div class="flex items-center gap-2">
+                    <div class="w-2 h-2 bg-red-500 rounded-full"></div>
+                    <span>Charge-air coolers underperform</span>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <div class="w-2 h-2 bg-red-500 rounded-full"></div>
+                    <span>Batteries die from extreme heat</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Emergency Response -->
+            <div class="bg-gradient-to-br from-orange-500 to-red-500 rounded-xl p-6 text-white">
+              <div class="flex items-center gap-3 mb-4">
+                <div class="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center">
+                  <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                  </svg>
+                </div>
+                <h3 class="text-xl font-bold">Emergency Roadside Assistance Phoenix</h3>
+              </div>
+              <p class="text-orange-100 mb-4">When your truck breaks down on Phoenix highways, we dispatch emergency roadside assistance techs to I‑10, I‑17, and Loop corridors. Our mobile units carry diagnostic equipment for engine diagnostics, electrical and battery testing, and AC cooling system repairs.</p>
+              <div class="flex flex-wrap gap-3">
+                <a href="/services/emergency-roadside-assistance" class="bg-white text-orange-600 px-4 py-2 rounded-lg font-semibold hover:bg-orange-50 transition-colors">Emergency Roadside</a>
+                <a href="/services/engine-diagnostics" class="bg-white/20 text-white px-4 py-2 rounded-lg font-semibold hover:bg-white/30 transition-colors">Engine Diagnostics</a>
+                <a href="/services/ac-cooling" class="bg-white/20 text-white px-4 py-2 rounded-lg font-semibold hover:bg-white/30 transition-colors">AC Cooling</a>
+              </div>
+            </div>
+
+            <!-- Phoenix Specific Service Highlights -->
+            <div class="grid md:grid-cols-2 gap-6 mb-8">
+              <!-- Mobile Diesel Repair -->
+              <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl border border-blue-200 p-6 hover:shadow-lg transition-all duration-300 group">
+                <div class="flex items-center gap-3 mb-4">
+                  <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center group-hover:bg-blue-200 transition-colors overflow-hidden">
+                    <img src="/images/Mobile Diesel Repair.webp" alt="Mobile Diesel Repair" class="w-8 h-8 object-contain" />
+                  </div>
+                  <h4 class="text-lg font-bold text-gray-900">On-Site Repairs</h4>
+                </div>
+                <p class="text-gray-700 text-sm mb-3">Full repair bay brought to your truck. No towing needed for most issues.</p>
+                <a href="/services/mobile-diesel-repair" class="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 font-semibold text-sm">
+                  Learn More
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                  </svg>
+                </a>
+              </div>
+
+              <!-- Hydraulic & Suspension -->
+              <div class="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl border border-green-200 p-6 hover:shadow-lg transition-all duration-300 group">
+                <div class="flex items-center gap-3 mb-4">
+                  <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center group-hover:bg-green-200 transition-colors overflow-hidden">
+                    <img src="/images/Hydraulic_and_Suspension-removebg-preview.webp" alt="Hydraulic & Suspension" class="w-8 h-8 object-contain" />
+                  </div>
+                  <h4 class="text-lg font-bold text-gray-900">Hydraulic Systems</h4>
+                </div>
+                <p class="text-gray-700 text-sm mb-3">Hydraulic hoses, cylinders, and suspension repairs for heavy-duty vehicles.</p>
+                <a href="/services/hydraulic-suspension" class="inline-flex items-center gap-2 text-green-600 hover:text-green-700 font-semibold text-sm">
+                  View Service
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                  </svg>
+                </a>
+              </div>
+
+              <!-- Fuel Systems -->
+              <div class="bg-gradient-to-br from-yellow-50 to-amber-50 rounded-xl border border-yellow-200 p-6 hover:shadow-lg transition-all duration-300 group">
+                <div class="flex items-center gap-3 mb-4">
+                  <div class="w-12 h-12 bg-yellow-100 rounded-xl flex items-center justify-center group-hover:bg-yellow-200 transition-colors overflow-hidden">
+                    <img src="/images/Fuel_Systems-removebg-preview.webp" alt="Fuel Systems" class="w-8 h-8 object-contain" />
+                  </div>
+                  <h4 class="text-lg font-bold text-gray-900">Fuel System Repair</h4>
+                </div>
+                <p class="text-gray-700 text-sm mb-3">Fuel pumps, injectors, and system cleaning. Getting fuel to your engine efficiently.</p>
+                <a href="/services/fuel-systems" class="inline-flex items-center gap-2 text-yellow-600 hover:text-yellow-700 font-semibold text-sm">
+                  Get Quote
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                  </svg>
+                </a>
+              </div>
+
+              <!-- Preventive Maintenance -->
+              <div class="bg-gradient-to-br from-purple-50 to-violet-50 rounded-xl border border-purple-200 p-6 hover:shadow-lg transition-all duration-300 group">
+                <div class="flex items-center gap-3 mb-4">
+                  <div class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center group-hover:bg-purple-200 transition-colors overflow-hidden">
+                    <img src="/images/Preventitive Maintenance.webp" alt="Preventive Maintenance" class="w-8 h-8 object-contain" />
+                  </div>
+                  <h4 class="text-lg font-bold text-gray-900">Preventive Service</h4>
+                </div>
+                <p class="text-gray-700 text-sm mb-3">Scheduled maintenance to prevent breakdowns. Oil changes, filter replacement, inspections.</p>
+                <a href="/services/preventive-maintenance" class="inline-flex items-center gap-2 text-purple-600 hover:text-purple-700 font-semibold text-sm">
+                  Schedule Service
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                  </svg>
+                </a>
+              </div>
+            </div>
+
+            <!-- Service Coverage Areas -->
+            <div class="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
+              <h3 class="text-xl font-bold text-gray-900 mb-4">Service Coverage Areas</h3>
+              <p class="text-gray-700 mb-4">We provide mobile diesel repair throughout Phoenix and nearby communities:</p>
+              <div class="grid md:grid-cols-2 gap-3">
+                <a href="/locations/glendale" class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg hover:bg-blue-50 transition-colors group">
+                  <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center group-hover:bg-blue-200">
+                    <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                    </svg>
+                  </div>
+                  <div>
+                    <div class="font-semibold text-gray-900 group-hover:text-blue-700">Glendale</div>
+                    <div class="text-sm text-gray-500">Loop 101 & Peoria Avenue</div>
+                  </div>
+                </a>
+                <a href="/locations/tempe" class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg hover:bg-blue-50 transition-colors group">
+                  <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center group-hover:bg-blue-200">
+                    <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                    </svg>
+                  </div>
+                  <div>
+                    <div class="font-semibold text-gray-900 group-hover:text-blue-700">Tempe</div>
+                    <div class="text-sm text-gray-500">ASU area & I‑10 coverage</div>
+                  </div>
+                </a>
+                <a href="/locations/scottsdale" class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg hover:bg-blue-50 transition-colors group">
+                  <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center group-hover:bg-blue-200">
+                    <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                    </svg>
+                  </div>
+                  <div>
+                    <div class="font-semibold text-gray-900 group-hover:text-blue-700">Scottsdale</div>
+                    <div class="text-sm text-gray-500">Loop 101 & Frank Lloyd Wright</div>
+                  </div>
+                </a>
+                <a href="/locations/mesa" class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg hover:bg-blue-50 transition-colors group">
+                  <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center group-hover:bg-blue-200">
+                    <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                    </svg>
+                  </div>
+                  <div>
+                    <div class="font-semibold text-gray-900 group-hover:text-blue-700">Mesa</div>
+                    <div class="text-sm text-gray-500">US‑60 & Loop 202 corridors</div>
+                  </div>
+                </a>
+                <a href="/locations/chandler" class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg hover:bg-blue-50 transition-colors group">
+                  <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center group-hover:bg-blue-200">
+                    <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                    </svg>
+                  </div>
+                  <div>
+                    <div class="font-semibold text-gray-900 group-hover:text-blue-700">Chandler</div>
+                    <div class="text-sm text-gray-500">Loop 101 & I‑10 accessibility</div>
+                  </div>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Enhanced Service Corridors -->
+          {data.corridors && data.corridors.length > 0 && (
+            <section class="mt-12">
+              <h3 class="text-2xl font-bold text-gray-900 mb-6">Service Corridors We Cover</h3>
+              <CorridorsGrid corridors={data.corridors} exitClusters={data.exitClusters} />
+            </section>
+          )}
+
+          <!-- Enhanced Landmarks -->
+          {data.landmarks && data.landmarks.length > 0 && (
+            <section class="mt-12">
+              <h3 class="text-2xl font-bold text-gray-900 mb-6">Key Truck Service Locations</h3>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {data.landmarks.map((landmark) => (
+                  <div class="group bg-white border border-gray-200 rounded-xl p-4 hover:shadow-lg transition-all duration-300 hover:border-diesel-orange">
+                    <div class="flex items-center gap-3">
+                      <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center group-hover:from-diesel-orange group-hover:to-orange-600 transition-all duration-300">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        </svg>
+                      </div>
+                      <div class="flex-1">
+                        <div class="font-semibold text-gray-900 group-hover:text-diesel-orange transition-colors">{landmark}</div>
+                        <div class="text-sm text-gray-500 mt-1">Service Available</div>
+                      </div>
+                      <div class="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full font-medium">
+                        On-Site
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
+
+          <!-- Trust Signals Section -->
+          <section class="mt-12">
+            <div class="bg-gradient-to-r from-diesel-orange to-orange-600 rounded-xl p-6 text-white">
+              <h3 class="text-xl font-bold mb-4 text-center">Why Phoenix Trusts AZ Mobile Diesel</h3>
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="text-center">
+                  <div class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                  </div>
+                  <div class="font-semibold text-lg">Licensed & Insured</div>
+                  <div class="text-orange-100 text-sm">Fully certified diesel technicians</div>
+                </div>
+                <div class="text-center">
+                  <div class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                  </div>
+                  <div class="font-semibold text-lg">24/7 Available</div>
+                  <div class="text-orange-100 text-sm">Round-the-clock emergency service</div>
+                </div>
+                <div class="text-center">
+                  <div class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                    </svg>
+                  </div>
+                  <div class="font-semibold text-lg">15+ Years Experience</div>
+                  <div class="text-orange-100 text-sm">Fleet manager expertise</div>
+                </div>
+              </div>
+              <div class="text-center mt-6">
+                <div class="inline-flex items-center gap-2 bg-white/20 rounded-full px-4 py-2">
+                  <div class="w-2 h-2 bg-green-300 rounded-full animate-pulse"></div>
+                  <span class="text-sm font-medium">60-90 Min Response • Phoenix Metro</span>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Enhanced FAQs -->
+          {data.faqs && data.faqs.length > 0 && (
+            <section class="mt-12">
+              <h3 class="text-2xl font-bold text-gray-900 mb-6">Frequently Asked Questions</h3>
+              <FAQAccordion faqs={data.faqs} />
+            </section>
+          )}
+        </div>
+
+        <!-- Sidebar -->
+        <div class="lg:col-span-1">
+          <!-- Enhanced Emergency CTA -->
+          <div class="bg-gradient-to-br from-orange-500 to-red-500 text-white p-6 rounded-xl mb-8 shadow-lg">
+            <div class="flex items-center gap-3 mb-4">
+              <div class="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center animate-pulse">
+                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                </svg>
+              </div>
+              <h3 class="text-xl font-bold">Emergency Service?</h3>
+            </div>
+            <p class="mb-4 text-orange-100">Broken down? Need immediate help?</p>
+            <div class="space-y-3">
+              <a href={COMPANY_CONFIG.phoneLink} class="block w-full bg-white text-orange-600 font-bold py-3 px-4 rounded-lg text-center hover:bg-orange-50 transition-colors">
+                🚨 Call {COMPANY_CONFIG.phoneNumber}
               </a>
-            </li>
-          ))}
-        </ul>
+              <div class="text-center">
+                <div class="inline-flex items-center gap-2 bg-white/20 rounded-full px-3 py-1 text-sm">
+                  <div class="w-2 h-2 bg-green-300 rounded-full animate-pulse"></div>
+                  <span>Available Now • 60-90 Min ETA</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Nearby Cities -->
+          {data.nearbyCities && data.nearbyCities.length > 0 && (
+            <div class="bg-gray-50 p-6 rounded-lg mb-8">
+              <h3 class="text-xl font-semibold text-gray-900 mb-4">Nearby Service Areas</h3>
+              <ul class="space-y-2">
+                {data.nearbyCities.map((city) => (
+                  <li>
+                    <a href={`/locations/${city.toLowerCase().replace(/\s+/g, '-')}`} class="text-diesel-orange hover:text-diesel-hover font-medium">
+                      {city} Mobile Diesel Service
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          <!-- Enhanced Services -->
+          <div class="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
+            <h3 class="text-xl font-semibold text-gray-900 mb-6">Our Services</h3>
+            <div class="space-y-4">
+              <!-- Emergency Roadside -->
+              <a href="/services/emergency-roadside" class="flex items-center gap-3 p-3 rounded-lg hover:bg-red-50 transition-colors group">
+                <div class="w-8 h-8 bg-red-100 rounded-lg flex items-center justify-center group-hover:bg-red-200 overflow-hidden">
+                  <img src="/images/Emergency Roadside Assistance.webp" alt="Emergency Roadside" class="w-6 h-6 object-contain" />
+                </div>
+                <div class="flex-1">
+                  <div class="font-semibold text-gray-900 group-hover:text-red-700">Emergency Roadside</div>
+                  <div class="text-xs text-gray-500">24/7 Response</div>
+                </div>
+                <span class="text-xs bg-red-100 text-red-700 px-2 py-1 rounded-full font-medium">MOST POPULAR</span>
+              </a>
+
+              <!-- Engine Diagnostics -->
+              <a href="/services/engine-diagnostics" class="flex items-center gap-3 p-3 rounded-lg hover:bg-blue-50 transition-colors group">
+                <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center group-hover:bg-blue-200 overflow-hidden">
+                  <img src="/images/Engine Diagnostics.webp" alt="Engine Diagnostics" class="w-6 h-6 object-contain" />
+                </div>
+                <div class="flex-1">
+                  <div class="font-semibold text-gray-900 group-hover:text-blue-700">Engine Diagnostics</div>
+                  <div class="text-xs text-gray-500">Computer & ECM</div>
+                </div>
+              </a>
+
+              <!-- Brake Repairs -->
+              <a href="/services/brake-repairs" class="flex items-center gap-3 p-3 rounded-lg hover:bg-orange-50 transition-colors group">
+                <div class="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center group-hover:bg-orange-200 overflow-hidden">
+                  <img src="/images/Brakes-removebg-preview.webp" alt="Brake Repairs" class="w-6 h-6 object-contain" />
+                </div>
+                <div class="flex-1">
+                  <div class="font-semibold text-gray-900 group-hover:text-orange-700">Brake Repairs</div>
+                  <div class="text-xs text-gray-500">Air Systems</div>
+                </div>
+              </a>
+
+              <!-- Electrical & Battery -->
+              <a href="/services/electrical-battery" class="flex items-center gap-3 p-3 rounded-lg hover:bg-yellow-50 transition-colors group">
+                <div class="w-8 h-8 bg-yellow-100 rounded-lg flex items-center justify-center group-hover:bg-yellow-200 overflow-hidden">
+                  <img src="/images/Electrical and Batteries.webp" alt="Electrical & Battery" class="w-6 h-6 object-contain" />
+                </div>
+                <div class="flex-1">
+                  <div class="font-semibold text-gray-900 group-hover:text-yellow-700">Electrical & Battery</div>
+                  <div class="text-xs text-gray-500">Alternators & Starters</div>
+                </div>
+              </a>
+
+              <!-- A/C & Cooling -->
+              <a href="/services/ac-cooling" class="flex items-center gap-3 p-3 rounded-lg hover:bg-cyan-50 transition-colors group">
+                <div class="w-8 h-8 bg-cyan-100 rounded-lg flex items-center justify-center group-hover:bg-cyan-200 overflow-hidden">
+                  <img src="/images/AC Cooling icon.webp" alt="A/C & Cooling" class="w-6 h-6 object-contain" />
+                </div>
+                <div class="flex-1">
+                  <div class="font-semibold text-gray-900 group-hover:text-cyan-700">A/C & Cooling</div>
+                  <div class="text-xs text-gray-500">Phoenix Heat Experts</div>
+                </div>
+                <span class="text-xs bg-orange-100 text-orange-700 px-2 py-1 rounded-full font-medium">SUMMER</span>
+              </a>
+
+              <!-- Suspension & Steering -->
+              <a href="/services/suspension-steering" class="flex items-center gap-3 p-3 rounded-lg hover:bg-green-50 transition-colors group">
+                <div class="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center group-hover:bg-green-200 overflow-hidden">
+                  <img src="/images/Suspension and Steering.webp" alt="Suspension & Steering" class="w-6 h-6 object-contain" />
+                </div>
+                <div class="flex-1">
+                  <div class="font-semibold text-gray-900 group-hover:text-green-700">Suspension & Steering</div>
+                  <div class="text-xs text-gray-500">Steering Components</div>
+                </div>
+              </a>
+
+              <!-- Wheel Seals -->
+              <a href="/services/wheel-seals" class="flex items-center gap-3 p-3 rounded-lg hover:bg-indigo-50 transition-colors group">
+                <div class="w-8 h-8 bg-indigo-100 rounded-lg flex items-center justify-center group-hover:bg-indigo-200 overflow-hidden">
+                  <img src="/images/Wheel_Seals-removebg-preview.webp" alt="Wheel Seals" class="w-6 h-6 object-contain" />
+                </div>
+                <div class="flex-1">
+                  <div class="font-semibold text-gray-900 group-hover:text-indigo-700">Wheel Seals</div>
+                  <div class="text-xs text-gray-500">Seal Replacement</div>
+                </div>
+              </a>
+
+              <!-- View All Services -->
+              <a href="/services" class="flex items-center justify-center gap-2 p-3 bg-diesel-orange text-white rounded-lg hover:bg-diesel-hover transition-colors font-semibold">
+                <span>View All 10 Services</span>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                </svg>
+              </a>
+            </div>
+          </div>
+        </div>
       </div>
-    )}
-  </article>
+    </div>
+  </div>
+
+  <!-- Bottom CTA Section -->
+  <section class="bg-diesel-orange text-white py-16">
+    <div class="container mx-auto px-4 text-center">
+      <h2 class="text-3xl font-bold mb-4">Ready to Get Back on the Road?</h2>
+      <p class="text-xl mb-8 text-orange-100">Professional mobile diesel repair service you can trust</p>
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <a href={COMPANY_CONFIG.phoneLink} class="bg-white text-diesel-orange font-bold py-4 px-8 rounded-full text-lg hover:bg-gray-100 transition-colors">
+          Call {COMPANY_CONFIG.phoneNumber}
+        </a>
+        <a href="#contact" class="bg-transparent border-2 border-white hover:bg-white hover:text-diesel-orange text-white font-bold py-4 px-8 rounded-full text-lg transition-colors">
+          Request Service Quote
+        </a>
+      </div>
+    </div>
+  </section>
 </BaseLayout>

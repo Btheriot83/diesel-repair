@@ -1,0 +1,30 @@
+{
+  "corridors": [
+    "US\u201160 (Superstition)",
+    "Loop 202 (Red Mountain/Santan)"
+  ],
+  "exitClusters": [
+    "US\u201160 Exits 178\u2013185 (Mesa corridors)",
+    "Loop 202 Exits 24\u201330 (Red Mountain)"
+  ],
+  "nearbyCities": [
+    "Tempe",
+    "Gilbert",
+    "Apache Junction"
+  ],
+  "landmarks": [
+    "Falcon Field industrial park",
+    "Mekong Plaza distribution spur",
+    "Superstition Springs auto/truck cluster"
+  ],
+  "faqs": [
+    {
+      "q": "US\u201160 shoulder space is tight\u2014can you service safely near the ramps?",
+      "a": "We set cones and lighting, coordinate exact mile markers, and move units to safer frontage when needed. We won\u2019t work where it\u2019s unsafe."
+    },
+    {
+      "q": "Our reefer alarms spike in afternoon heat\u2014can you check power and airflow on site?",
+      "a": "Yes. We test alternator output, battery condition, and verify condenser/evaporator airflow. Minor leaks and wiring faults are usually handled curbside."
+    }
+  ]
+}

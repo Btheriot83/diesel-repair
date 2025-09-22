@@ -1,6 +1,5 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import Header from '../components/Header.astro';
 import Hero from '../components/Hero.astro';
 import PhoenixFleets from '../components/PhoenixFleets.astro';
 import ServicesGrid from '../components/ServicesGrid.astro';
@@ -13,24 +12,19 @@ import FleetServices from '../components/FleetServices.astro';
 import ServiceArea from '../components/ServiceArea.astro';
 import ContactForm from '../components/ContactForm.astro';
 import FAQ from '../components/FAQ.astro';
-import Footer from '../components/Footer.astro';
 ---
 
 <BaseLayout title="AZ Mobile Diesel Repair - Mobile Diesel Mechanic in Phoenix, AZ" pageType="home">
-  <Header />
   <Hero />
-  <main>
-    <PhoenixFleets />
-    <ServicesGrid />
-    <CorridorCoverage />
-    <PhoenixProblems />
-    <HowItWorks />
-    <UnifiedEmergencyHub />
-    <WhyChooseUs />
-    <FleetServices />
-    <ServiceArea />
-    <ContactForm />
-    <FAQ />
-  </main>
-  <Footer />
+  <PhoenixFleets />
+  <ServicesGrid />
+  <CorridorCoverage />
+  <PhoenixProblems />
+  <HowItWorks />
+  <UnifiedEmergencyHub />
+  <WhyChooseUs />
+  <FleetServices />
+  <ServiceArea />
+  <ContactForm />
+  <FAQ />
 </BaseLayout>

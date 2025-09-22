@@ -1,0 +1,30 @@
+{
+  "corridors": [
+    "Loop 101 (Price)",
+    "Loop 202 (Red Mountain/202), Airport Spur"
+  ],
+  "exitClusters": [
+    "Loop 101 Exits 52\u201358",
+    "202 Exits 6\u20139 (Rio Salado/Airport)"
+  ],
+  "nearbyCities": [
+    "Phoenix",
+    "Mesa",
+    "Chandler"
+  ],
+  "landmarks": [
+    "Sky Harbor east cargo access",
+    "Rio Salado logistics strip",
+    "ASU stadium traffic windows"
+  ],
+  "faqs": [
+    {
+      "q": "Can you navigate airport restrictions near Sky Harbor cargo?",
+      "a": "We meet at approved staging points and comply with ramp rules. Tools stay mobile and we avoid restricted shoulders."
+    },
+    {
+      "q": "Stop\u2011and\u2011go through Tempe overheats our tractors\u2014what do you check first?",
+      "a": "We verify coolant level/pressure, fan clutch engagement, belt tension, and debris on radiators and CACs. Many issues are cleared roadside after airflow restoration."
+    }
+  ]
+}

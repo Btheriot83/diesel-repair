@@ -6,6 +6,8 @@ import UnifiedSchema from '@/components/SEO/UnifiedSchema.astro';
 import LCPPreload from '@/components/LCPPreload.astro';
 import SeoHints from '@/components/SeoHints.astro';
 import DeferNonCritical from '@/components/DeferNonCritical.astro';
+import Header from '@/components/Header.astro';
+import Footer from '@/components/Footer.astro';
 
 export interface Props {
   title: string;
@@ -45,10 +47,17 @@ const { title, pageType, service, faqs, breadcrumbs, reviews, heroImage, heroTyp
       faqs={faqs}
       breadcrumbs={breadcrumbs}
       reviews={reviews}
+      title={title}
     />
   </head>
   <body class="min-h-screen bg-background text-foreground font-sans">
-    <slot />
+    <Header />
+
+    <main>
+      <slot />
+    </main>
+
+    <Footer />
 
     <!-- Defer non-critical JavaScript for better performance -->
     <DeferNonCritical scripts={[

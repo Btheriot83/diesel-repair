@@ -13,12 +13,13 @@
 import { BUSINESS_NAME, SITE_ORIGIN, PHONE_E164, SERVICE_AREA_CITIES } from "@/config/company";
 import svcList from "@/data/services.json";
 
-const { pageType, service, faqs, breadcrumbs, reviews } = Astro.props as {
+const { pageType, service, faqs, breadcrumbs, reviews, title } = Astro.props as {
   pageType?: string;
   service?: { name: string; description?: string; areaServed?: string[] };
   faqs?: Array<{ question: string; answer: string }>;
   breadcrumbs?: Array<{ "@type":"ListItem"; position:number; name:string; item?:string }>;
   reviews?: Array<{ rating:number }>;
+  title?: string;
 };
 
 const orgId = "#organization";
@@ -72,6 +73,37 @@ if (Array.isArray(faqs) && faqs.length) {
       "name": f.question,
       "acceptedAnswer": { "@type": "Answer", "text": f.answer }
     }))
+  });
+}
+
+if (pageType === "city") {
+  // Extract city name from title (e.g., "Mobile Diesel Mechanic — Phoenix, AZ" -> "Phoenix")
+  const cityName = title?.includes("—") ? title.split("—")[1]?.trim().replace(", AZ", "") || "Phoenix" : "Phoenix";
+  const phoneNumber = PHONE_E164;
+
+  // Phoenix-specific service areas (corridors)
+  const serviceArea = cityName === "Phoenix" ? [
+    "I-10 Downtown–West Valley",
+    "I-17 Stack–Deer Valley",
+    "Loop 202 Santan/Red Mtn"
+  ] : [`${cityName} area`];
+
+  blocks.push({
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    "name": BUSINESS_NAME,
+    "url": SITE_ORIGIN,
+    "telephone": phoneNumber,
+    "areaServed": cityName + ", AZ",
+    "serviceArea": serviceArea,
+    "hasOfferCatalog": {
+      "@type": "OfferCatalog",
+      "name": "Mobile Diesel Services",
+      "itemListElement": (svcList || []).map((s:any) => ({
+        "@type": "Offer",
+        "itemOffered": { "@type": "Service", "name": s.name }
+      }))
+    }
   });
 }
 

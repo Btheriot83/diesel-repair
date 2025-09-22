@@ -1,0 +1,31 @@
+{
+  "corridors": [
+    "I-10 (Downtown \u2194 West Valley)",
+    "I-17 (Stack \u2194 Deer Valley)",
+    "Loop 202 (Santan/Red Mtn)"
+  ],
+  "exitClusters": [
+    "I-10 Exits 141\u2013149 (Downtown/Stack)",
+    "I-17 Exits 200\u2013206 (Central Phoenix)"
+  ],
+  "nearbyCities": [
+    "Glendale",
+    "Tempe",
+    "Scottsdale"
+  ],
+  "landmarks": [
+    "PHX Sky Harbor cargo & ramp access",
+    "26th St truck staging near the Stack",
+    "I-17 distribution spurs (Deer Valley)"
+  ],
+  "faqs": [
+    {
+      "q": "Do you cover breakdowns around the Stack (I\u201110/I\u201117) during rush hour?",
+      "a": "Yes. We stage techs on both sides of the Stack to avoid gridlock detours. Typical ETA is 30\u201360 minutes depending on segment and traffic."
+    },
+    {
+      "q": "Phoenix heat keeps tripping high\u2011temp warnings\u2014can you diagnose on shoulder?",
+      "a": "We bring coolant pressure testers, IR thermometers, and mobile scanners. Shoulder-side checks isolate bad fan clutches, clogged condensers, or airflow issues without a tow."
+    }
+  ]
+}

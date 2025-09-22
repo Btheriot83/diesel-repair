@@ -1,0 +1,32 @@
+---
+const { siteUrl, citySlug = "phoenix", cityName = "Phoenix" } = Astro.props;
+const base = siteUrl?.replace(/\/+$/,"") || "https://azmobiledieselrepair.com";
+const items = [
+  { name: "Home", url: `${base}/` },
+  { name: "Locations", url: `${base}/locations/` },
+  { name: cityName, url: `${base}/locations/${citySlug}/` },
+];
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": items.map((it, i) => ({
+    "@type": "ListItem",
+    "position": i + 1,
+    "name": it.name,
+    "item": it.url
+  }))
+};
+---
+<script type="application/ld+json">
+{JSON.stringify(jsonLd)}
+</script>
+<nav aria-label="Breadcrumb" class="mb-4">
+  <ol class="flex flex-wrap items-center gap-2 text-sm text-slate-600">
+    {items.map((it, i) => (
+      <li class="flex items-center gap-2">
+        <a href={it.url} class="hover:underline">{it.name}</a>
+        {i < items.length - 1 && <span aria-hidden="true">/</span>}
+      </li>
+    ))}
+  </ol>
+</nav>

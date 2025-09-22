@@ -1,0 +1,31 @@
+{
+  "corridors": [
+    "Loop 202 (Santan)",
+    "Loop 101 (Price)",
+    "I\u201110 (Chandler Blvd access)"
+  ],
+  "exitClusters": [
+    "Loop 202 Exits 41\u201350",
+    "I\u201110 Exits 159\u2013162 (Chandler area)"
+  ],
+  "nearbyCities": [
+    "Tempe",
+    "Gilbert",
+    "Mesa"
+  ],
+  "landmarks": [
+    "Price Corridor logistics",
+    "AZ Tech Center depots",
+    "I\u201110 Chandler Blvd access points"
+  ],
+  "faqs": [
+    {
+      "q": "Do you handle after\u2011hours roadside repairs in the Price Corridor?",
+      "a": "Yes. We cover night calls with lighting, cones, and mobile diagnostics. If shoulder space is tight, we move to a safer frontage or lot."
+    },
+    {
+      "q": "Recurring air leaks after long 202 runs\u2014can you find them quickly?",
+      "a": "We pressure test and soap\u2011trace common failure points: service lines, glad\u2011hands, chambers, and fittings. Many leaks are isolated and repaired on site."
+    }
+  ]
+}

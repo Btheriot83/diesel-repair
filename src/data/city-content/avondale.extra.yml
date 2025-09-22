@@ -1,0 +1,30 @@
+{
+  "corridors": [
+    "I\u201110 (West Valley)",
+    "Loop 101 (Agua Fria)"
+  ],
+  "exitClusters": [
+    "I\u201110 Exits 129\u2013133 (Avondale/Coldwater)",
+    "Loop 101 Exits 5\u20139"
+  ],
+  "nearbyCities": [
+    "Goodyear",
+    "Phoenix",
+    "Tolleson"
+  ],
+  "landmarks": [
+    "Coldwater distribution parks",
+    "I\u201110/AZ\u2011101 logistics triangle",
+    "99th Ave truck services cluster"
+  ],
+  "faqs": [
+    {
+      "q": "West\u2011bound grades make temps spike\u2014can you prevent derates roadside?",
+      "a": "We clean condenser/radiator fins, test fan clutches, verify coolant pressure, and scan for codes to clear heat\u2011triggered derates when safe to do so."
+    },
+    {
+      "q": "Can you service at night along I\u201110 in Avondale?",
+      "a": "Yes. We set up lighting and cones, prioritize wider shoulders and truck plazas, and move to safer frontage when traffic volume is high."
+    }
+  ]
+}
