@@ -22,7 +22,7 @@ const {
 ---
 <!--
   HeroLCP: zero-CLS, LCP-friendly hero image with modern format support
-  - Responsive <picture> with AVIF/WebP/fallback
+  - Responsive <picture> with AVIF/WebP/fallback (using optimized responsive images)
   - Explicit width/height to reserve space (CLS=0)
   - loading='eager' + fetchpriority='high' to prioritize for LCP
   - decoding='async' to avoid main-thread jank
@@ -30,12 +30,12 @@ const {
 -->
 <picture>
   <source
-    srcset="/lovable-uploads/hero-1200w.avif 1200w, /lovable-uploads/hero-1600w.avif 1600w, /lovable-uploads/hero-2000w.avif 2000w"
+    srcset="/images/hero-optimized/hero-1200w.avif 1200w, /images/hero-optimized/hero-1600w.avif 1600w, /images/hero-optimized/hero-2000w.avif 2000w"
     type="image/avif"
     sizes={sizes}
   />
   <source
-    srcset="/lovable-uploads/hero-1200w.webp 1200w, /lovable-uploads/hero-1600w.webp 1600w, /lovable-uploads/hero-2000w.webp 2000w"
+    srcset="/images/hero-optimized/hero-1200w.webp 1200w, /images/hero-optimized/hero-1600w.webp 1600w, /images/hero-optimized/hero-2000w.webp 2000w"
     type="image/webp"
     sizes={sizes}
   />
@@ -49,6 +49,6 @@ const {
     fetchpriority="high"
     sizes={sizes}
     class={className}
-    style="aspect-ratio: 16/9"
+    style="aspect-ratio: 1/1"
   />
 </picture>

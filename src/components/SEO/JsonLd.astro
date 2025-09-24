@@ -1,0 +1,57 @@
+---
+/**
+ * JsonLd.astro
+ * Shared utility component for rendering JSON-LD structured data
+ * Guards against invalid data and provides consistent output
+ */
+
+export interface Props {
+  data: Record<string, any> | Array<Record<string, any>>;
+}
+
+const { data } = Astro.props;
+
+// Guard: Ensure data is valid
+if (!data || (Array.isArray(data) && data.length === 0)) {
+  console.warn('JsonLd: No data provided');
+}
+
+// Sanitize and validate JSON-LD data
+const sanitizeJsonLd = (obj: any): any => {
+  if (Array.isArray(obj)) {
+    return obj.filter(item => item && typeof item === 'object').map(sanitizeJsonLd);
+  }
+
+  if (obj && typeof obj === 'object') {
+    const cleaned: Record<string, any> = {};
+
+    for (const [key, value] of Object.entries(obj)) {
+      // Skip null, undefined, empty strings, empty arrays
+      if (value === null || value === undefined || value === '' ||
+          (Array.isArray(value) && value.length === 0)) {
+        continue;
+      }
+
+      // Recursively clean nested objects
+      if (typeof value === 'object') {
+        const cleanedValue = sanitizeJsonLd(value);
+        if (cleanedValue && (Array.isArray(cleanedValue) ? cleanedValue.length > 0 : Object.keys(cleanedValue).length > 0)) {
+          cleaned[key] = cleanedValue;
+        }
+      } else {
+        cleaned[key] = value;
+      }
+    }
+
+    return cleaned;
+  }
+
+  return obj;
+};
+
+const cleanData = sanitizeJsonLd(data);
+---
+
+{cleanData && (
+  <script type="application/ld+json" set:html={JSON.stringify(cleanData, null, 0)}></script>
+)}

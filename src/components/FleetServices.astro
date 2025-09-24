@@ -1,72 +1,63 @@
 ---
-// Fleet Services section with manager perspective quote
+// Fleet Programs for Phoenix Operators section matching the screenshot
 ---
 
-<section id="fleet" class="py-20 bg-background">
+<section class="py-16 bg-white">
   <div class="container mx-auto px-4">
-    <div class="max-w-6xl mx-auto">
-      <!-- Fleet Manager Quote -->
-      <div class="bg-card rounded-2xl p-8 md:p-12 mb-16 shadow-lg border border-border/50">
-        <div class="text-center mb-8">
-          <h2 class="text-3xl md:text-4xl font-bold text-foreground mb-4">
-            "From a Fleet Manager's Perspective"
+    <div class="max-w-5xl mx-auto">
+      <div class="bg-gray-50 rounded-2xl p-8 md:p-12">
+        <div class="grid lg:grid-cols-2 gap-8 items-center">
+        <!-- Left Content -->
+        <div>
+          <h2 class="text-3xl md:text-4xl font-black text-gray-900 mb-6">
+            Fleet Programs for Phoenix Operators
           </h2>
+
+          <p class="text-gray-600 mb-6">
+            Scheduled yard calls, PM windows aligned to your operations, fast parts sourcing near I-10/I-17, consolidated invoices.
+          </p>
+
+          <div class="mb-6">
+            <h3 class="font-bold text-gray-900 mb-3">What you get:</h3>
+            <p class="text-gray-600">
+              Yard calls, DOT fail recovery/re-inspection, simple approvals, net terms.
+            </p>
+          </div>
+
+          <div class="mb-8">
+            <h3 class="font-bold text-gray-900 mb-3">Who we help:</h3>
+            <p class="text-gray-600">
+              Local delivery fleets, regional carriers, owner-ops with 3–10 trucks.
+            </p>
+          </div>
+
         </div>
 
-        <blockquote class="text-lg md:text-xl text-muted-foreground leading-relaxed text-center italic mb-8">
-          "We understand schedules, compliance, and downtime costs. Our techs prioritize safety, correct diagnosis, and clear communication so your trucks return to service quickly. Whether you run five trucks or five hundred, we'll help you avoid repeat breakdowns and keep utilization high."
-        </blockquote>
-
-        <div class="text-center">
-          <button
-            id="fleet-contact-button"
-            class="btn-hero"
-            aria-label="Contact us for fleet service"
+        <!-- Right Content - CTA Buttons -->
+        <div class="flex flex-col justify-center items-center lg:items-end space-y-4">
+          <a
+            href="#contact"
+            class="inline-block bg-orange-500 hover:bg-orange-600 text-white font-semibold px-6 py-3 rounded-full text-base transition-colors min-w-[200px] text-center"
           >
-            <!-- Users icon -->
-            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"></path>
-              <circle cx="9" cy="7" r="4"></circle>
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M23 21v-2a4 4 0 00-3-3.87"></path>
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 3.13a4 4 0 010 7.75"></path>
-            </svg>
-            Contact Us for Fleet Service
-          </button>
+            Fleet Onboarding
+          </a>
+          <a
+            href="tel:4803077434"
+            class="inline-block bg-white border-2 border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white font-semibold px-6 py-3 rounded-full text-base transition-colors min-w-[200px] text-center"
+          >
+            Talk to Dispatch
+          </a>
+        </div>
+        </div>
+
+        <!-- Footer Text -->
+        <div class="text-center mt-8 pt-6 border-t border-gray-200">
+          <p class="text-gray-500 text-sm">
+            Serving Phoenix Metro fleet operators since 2020
+          </p>
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<script>
-  // Fleet contact button scroll handler
-  document.getElementById('fleet-contact-button')?.addEventListener('click', () => {
-    const element = document.getElementById('contact');
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }
-  });
-</script>
-
-<style>
-  /* Ensure colors match CSS variables */
-  .bg-background {
-    background-color: hsl(var(--background));
-  }
-
-  .bg-card {
-    background-color: hsl(var(--card));
-  }
-
-  .text-foreground {
-    color: hsl(var(--foreground));
-  }
-
-  .text-muted-foreground {
-    color: hsl(var(--muted-foreground));
-  }
-
-  .border-border\/50 {
-    border-color: hsl(var(--border) / 0.5);
-  }
-</style>

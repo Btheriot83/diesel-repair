@@ -2,9 +2,11 @@
 import '../styles/global.css';
 import '../styles/cls-guards.css';
 import '../styles/fonts.css';
-// SEO and performance components removed for now
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import MobileStickyCTA from '../components/MobileStickyCTA.astro';
+import UnifiedSchema from '../components/SEO/UnifiedSchema.astro';
+import { BUSINESS_NAME, SITE_ORIGIN } from '../config/company.ts';
 
 export interface Props {
   title: string;
@@ -22,26 +24,47 @@ const { title, pageType, description, service, faqs, breadcrumbs, reviews, heroI
 
 // Default description fallback
 const metaDescription = description || "Professional mobile diesel repair services for Phoenix Metro area. 24/7 emergency roadside assistance, fleet services, and commercial vehicle repairs.";
+
+// Meta keywords based on page type and services
+const metaKeywords = pageType === 'service' && service?.name
+  ? `${service.name}, mobile diesel repair, Phoenix diesel mechanic, emergency roadside assistance, commercial truck repair`
+  : pageType === 'city'
+  ? `mobile diesel repair, Phoenix diesel mechanic, emergency roadside assistance, ${title.includes('—') ? title.split('—')[1]?.trim() : 'Phoenix'} truck repair, commercial diesel service`
+  : 'mobile diesel repair, Phoenix diesel mechanic, emergency roadside assistance, commercial truck repair, fleet services, diesel engine repair';
+
+// Environment-based robots directive
+const isProduction = import.meta.env.PROD;
+const robotsContent = isProduction ? 'index,follow' : 'noindex,nofollow';
 ---
 
 <!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <meta name="robots" content={robotsContent} />
     <meta name="description" content={metaDescription} />
+    <meta name="keywords" content={metaKeywords} />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
 
+    <!-- Business Information Meta Tags -->
+    <meta name="author" content={BUSINESS_NAME} />
+    <meta name="business" content={BUSINESS_NAME} />
+    <meta name="geo.region" content="US-AZ" />
+    <meta name="geo.placename" content="Phoenix, Arizona" />
+    <meta name="geo.position" content="33.4484;-112.0740" />
+    <meta name="ICBM" content="33.4484, -112.0740" />
+
     <!-- OpenGraph meta tags for social sharing -->
     <meta property="og:title" content={title} />
     <meta property="og:description" content={metaDescription} />
     <meta property="og:url" content={Astro.url.href} />
-    <meta property="og:site_name" content="AZ Mobile Diesel Repair" />
+    <meta property="og:site_name" content={BUSINESS_NAME} />
     <meta property="og:type" content="website" />
     <meta property="og:locale" content="en_US" />
-    <meta property="og:image" content={`${Astro.site}/images/az-mobile-diesel-repair-logo.png`} />
+    <meta property="og:image" content={`${SITE_ORIGIN}/images/az-mobile-diesel-repair-logo.png`} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta property="og:image:alt" content="AZ Mobile Diesel Repair - Professional mobile diesel mechanics serving Phoenix Metro" />
@@ -50,22 +73,77 @@ const metaDescription = description || "Professional mobile diesel repair servic
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={metaDescription} />
-    <meta name="twitter:image" content={`${Astro.site}/images/az-mobile-diesel-repair-logo.png`} />
+    <meta name="twitter:image" content={`${SITE_ORIGIN}/images/az-mobile-diesel-repair-logo.png`} />
     <meta name="twitter:image:alt" content="AZ Mobile Diesel Repair - Professional mobile diesel mechanics serving Phoenix Metro" />
 
     <!-- Canonical URL -->
     <link rel="canonical" href={Astro.url.href} />
 
-    <!-- Performance optimization components removed for now -->
+    <!-- Font Optimization -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="preload"
+      as="style"
+      onload="this.onload=null;this.rel='stylesheet'"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+    />
 
-    <!-- LCP Preload for hero image (home page only) -->
+    <!-- Hero Image Preload for LCP Optimization (Homepage only) -->
+    {pageType === 'home' || Astro.url.pathname === '/' ? (
+      <link
+        rel="preload"
+        as="image"
+        imagesrcset="/images/hero-optimized/hero-1200w.avif 1200w, /images/hero-optimized/hero-1600w.avif 1600w, /images/hero-optimized/hero-2000w.avif 2000w"
+        imagesizes="100vw"
+        type="image/avif"
+        fetchpriority="high"
+      />
+    ) : null}
+    <noscript>
+      <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    </noscript>
+
+    <!-- Critical CSS Inline for immediate above-the-fold rendering -->
+    <style>
+      /* Critical font fallback */
+      body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;line-height:1.5;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+      /* Layout structure */
+      .hero{min-height:88vh;position:relative;display:flex;align-items:center;justify-content:center}
+      .header,header[role="banner"]{min-height:64px;position:relative;z-index:50}
+      img:not([height]),img:not([width]){max-width:100%;height:auto}
+      /* Critical button */
+      .btn-hero{display:inline-flex;align-items:center;justify-content:center;gap:0.5rem;white-space:nowrap;border-radius:0.375rem;font-size:0.875rem;font-weight:500;transition:all 300ms ease;background-color:#ed6623;color:white;box-shadow:0 1px 3px 0 rgba(0,0,0,0.1);height:2.75rem;padding:0.5rem 2rem}
+      .btn-hero:hover{background-color:#B8501C;transform:translateY(-1px);box-shadow:0 10px 25px -5px rgba(0,0,0,0.25)}
+      /* Colors */
+      .text-diesel-orange{color:#ed6623}.bg-diesel-orange{background-color:#ed6623}.border-diesel-orange{border-color:#ed6623}
+      /* Container */
+      .container{width:100%;margin:0 auto;padding:0 1rem}
+      @media(min-width:640px){.container{max-width:640px}}
+      @media(min-width:768px){.container{max-width:768px;padding:0 2rem}}
+      @media(min-width:1024px){.container{max-width:1024px}}
+      @media(min-width:1280px){.container{max-width:1280px}}
+      /* Critical utilities */
+      .py-20{padding:5rem 0}.mb-8{margin-bottom:2rem}.text-center{text-align:center}.font-black{font-weight:900}.text-4xl{font-size:2.25rem;line-height:2.5rem}.text-gray-900{color:rgb(17 24 39)}
+    </style>
+
+    <!-- LCP Preload for hero images -->
     {pageType === 'home' && (
       <link
         rel="preload"
         as="image"
-        imagesrcset="/lovable-uploads/hero-1200w.avif 1200w, /lovable-uploads/hero-1600w.avif 1600w, /lovable-uploads/hero-2000w.avif 2000w"
-        imagesizes="100vw"
-        type="image/avif"
+        href="/images/phoenix-metro-background.webp"
+        type="image/webp"
+        fetchpriority="high"
+      />
+    )}
+
+    {pageType === 'city' && (
+      <link
+        rel="preload"
+        as="image"
+        href="/images/phoenix-metro-background.webp"
+        type="image/webp"
         fetchpriority="high"
       />
     )}
@@ -78,14 +156,14 @@ const metaDescription = description || "Professional mobile diesel repair servic
       <SeoHints heroSrc="/lovable-uploads/eff70c3b-1b53-4693-b587-bb51f7bfda85.webp" />
     )} -->
 
-    <!-- <UnifiedSchema
+    <UnifiedSchema
       pageType={pageType}
       service={service}
       faqs={faqs}
       breadcrumbs={breadcrumbs}
       reviews={reviews}
       title={title}
-    /> -->
+    />
   </head>
   <body class="min-h-screen bg-background text-foreground font-sans pb-20 md:pb-0">
     <Header />
@@ -96,29 +174,58 @@ const metaDescription = description || "Professional mobile diesel repair servic
 
     <Footer />
 
-    <!-- Performance optimization disabled for now -->
+    <!-- Mobile Sticky CTA for persistent call access -->
+    <MobileStickyCTA />
 
-    <!-- GA4 Analytics Initialization -->
+    <!-- Optimized JavaScript Loading -->
     <script is:inline>
-      // Initialize GA4 tracking
-      function initGA4() {
-        if (typeof window === 'undefined') return;
+      // Minimal performance monitoring for Core Web Vitals
+      function initCWV() {
+        if (typeof window === 'undefined' || !window.performance) return;
 
-        // Analytics disabled for now
+        // Track First Contentful Paint
+        const observer = new PerformanceObserver((list) => {
+          list.getEntries().forEach((entry) => {
+            // Could log to analytics if needed
+          });
+        });
+        observer.observe({ entryTypes: ['paint'] });
+
+        // Track Largest Contentful Paint
+        if ('LargestContentfulPaint' in window) {
+          new PerformanceObserver((list) => {
+            list.getEntries().forEach((entry) => {
+              // Could log to analytics if needed
+            });
+          }).observe({ entryTypes: ['largest-contentful-paint'] });
+        }
       }
 
-      // Initialize on page load
-      if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initGA4);
+      // Initialize on idle to avoid blocking main thread
+      if ('requestIdleCallback' in window) {
+        requestIdleCallback(initCWV, { timeout: 2000 });
       } else {
-        initGA4();
+        setTimeout(initCWV, 100);
       }
     </script>
 
-    <!-- Defer non-critical JavaScript for better performance -->
-    <!-- <DeferNonCritical scripts={[
-      { src: '/js/navigation.js', on: 'idle' },
-      { src: '/js/forms.js', on: 'visible', selector: '#contact' }
-    ]} /> -->
+    <!-- Deferred Non-Critical Scripts -->
+    <script type="module">
+      // Lazy load form enhancement when contact form is visible
+      const contactForm = document.querySelector('#contact');
+      if (contactForm && 'IntersectionObserver' in window) {
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              import('/js/forms.js').then(module => {
+                if (module.initForms) module.initForms();
+              });
+              observer.disconnect();
+            }
+          });
+        }, { rootMargin: '200px' });
+        observer.observe(contactForm);
+      }
+    </script>
   </body>
 </html>

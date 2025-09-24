@@ -1,6 +1,6 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
-import { getCollection, getEntryBySlug } from "astro:content";
+import { getCollection, getEntry } from "astro:content";
 import { buildInternalLinks } from "@/utils/linkBuilder";
 
 export async function getStaticPaths() {
@@ -9,7 +9,7 @@ export async function getStaticPaths() {
 }
 
 const { slug } = Astro.params;
-const entry = await getEntryBySlug("services", slug);
+const entry = await getEntry("services", slug);
 if (!entry) throw new Error(`Service not found: ${slug}`);
 const rendered = await entry.render();
 const { Content, headings } = rendered;

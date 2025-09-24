@@ -17,8 +17,32 @@ export default defineConfig({
     mdx()
   ],
 
+  build: {
+    inlineStylesheets: 'auto',
+  },
+
+  compressHTML: true,
+
   server: {
     port: 4321,
     host: true,
   },
+
+  prefetch: {
+    prefetchAll: false,
+    defaultStrategy: 'hover'
+  },
+
+  vite: {
+    build: {
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            // Conservative chunking to keep SSR bundle lean
+            vendor: ['react', 'react-dom']
+          }
+        }
+      }
+    }
+  }
 });

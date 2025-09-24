@@ -10,22 +10,42 @@ import { COMPANY_CONFIG } from '../config/constants';
         <!-- Company info section - spans 3 columns -->
         <div class="md:col-span-3 text-center md:text-left">
           <!-- Horizontal logo -->
-          <img src="/images/az-mobile-diesel-logo.bg-removed.padded.webp" alt="AZ Mobile Diesel Repair" class="max-h-28 md:max-h-32 w-auto object-contain mx-auto md:mx-0 mb-3">
+          <img
+            src="/images/az-mobile-diesel-logo.bg-removed.padded.webp"
+            alt="AZ Mobile Diesel Repair"
+            width="200"
+            height="120"
+            loading="lazy"
+            class="max-h-28 md:max-h-32 w-auto object-contain mx-auto md:mx-0 mb-3"
+          >
           <p class="text-gray-300 text-lg font-medium tracking-wide">24/7 Emergency Service</p>
           <p class="text-gray-400 text-sm mt-1">Available Day & Night</p>
         </div>
 
-        <!-- Phone section - spans 1 column, aligns with RESOURCES below -->
-        <div class="flex flex-col items-center md:items-start text-center md:text-left space-y-2 md:mt-8">
-          <div class="flex items-center space-x-3 text-diesel-orange font-bold text-2xl">
-            <!-- Phone icon -->
-            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
-            </svg>
+        <!-- Contact section -->
+        <div class="flex flex-col items-center md:items-start text-center md:text-left space-y-4 md:mt-8">
+          <!-- Phone number -->
+          <div class="text-diesel-orange font-bold text-2xl">
             <a href={COMPANY_CONFIG.phoneLink} class="hover:text-diesel-hover transition-colors">
               {COMPANY_CONFIG.phoneNumber}
             </a>
           </div>
+
+          <!-- Location with icon -->
+          <div class="flex items-center space-x-2 text-gray-300">
+            <!-- Location icon -->
+            <svg class="w-5 h-5 text-diesel-orange" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+            </svg>
+            <span class="font-medium">Serving Phoenix, AZ</span>
+          </div>
+
+          <!-- Service description -->
+          <p class="text-gray-300 text-sm">
+            Mobile Diesel Repair throughout Phoenix Metro
+          </p>
+
+          <!-- Tap to call text -->
           <p class="text-gray-400 text-sm">Tap to Call Now</p>
         </div>
       </div>

@@ -16,7 +16,7 @@ const COMPANY_CONFIG = {
   <!-- Hero background image with LCP optimization -->
   <div class="absolute inset-0 w-full h-full">
     <HeroLCP
-      src="/lovable-uploads/eff70c3b-1b53-4693-b587-bb51f7bfda85.webp"
+      src="/images/Alt Hero 3.png"
       alt="Mobile diesel mechanic assisting semi-truck in Phoenix desert at sunset"
       width={1920}
       height={1080}
@@ -27,11 +27,24 @@ const COMPANY_CONFIG = {
   <div class="absolute inset-0 bg-gradient-to-b from-black/40 via-black/50 to-black/60"></div>
 
   <div class="relative z-10 text-center text-white px-4">
-    <h1 class="text-5xl md:text-7xl font-black mb-8 leading-tight tracking-tight">
+    <h1 class="text-5xl md:text-7xl font-black mb-6 leading-tight tracking-tight">
       MOBILE DIESEL MECHANIC
       <br />
       <span class="text-primary">IN PHOENIX, AZ</span>
     </h1>
+
+    <!-- Trust Signals Above Fold -->
+    <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8">
+      <!-- Quality Promise -->
+      <div class="flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-full px-4 py-2">
+        <span class="text-white font-bold text-lg">We aim for 5-star results on every call</span>
+      </div>
+
+      <!-- Response Time -->
+      <div class="bg-orange-500/90 backdrop-blur-sm rounded-full px-4 py-2 font-bold text-white">
+        Average 25-min response near I-10/I-17
+      </div>
+    </div>
 
     <p class="text-xl mb-10 max-w-4xl mx-auto font-medium md:text-2xl">
       24/7 On-Site Truck Repair Across the Phoenix Metro — I-10, I-17, Loop 101, 202 & 303.
@@ -40,7 +53,7 @@ const COMPANY_CONFIG = {
     <div class="flex flex-col sm:flex-row gap-6 justify-center items-center mb-16">
       <a
         href={COMPANY_CONFIG.phoneLink}
-        class="hero-cta-primary flex items-center gap-2 text-lg px-8 py-5 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-bold rounded-full shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
+        class="hero-cta-primary flex items-center gap-2 text-lg px-8 py-5 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-bold rounded-full shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 min-h-[44px]"
         aria-label="Call AZ Mobile Diesel Repair now for service"
       >
         <!-- Phone icon -->
@@ -52,7 +65,7 @@ const COMPANY_CONFIG = {
 
       <button
         id="dispatch-button"
-        class="hero-cta-secondary border-2 border-accent text-accent hover:bg-accent hover:text-accent-foreground text-lg px-8 py-5 font-bold rounded-full shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 bg-transparent"
+        class="hero-cta-secondary border-2 border-accent text-accent hover:bg-accent hover:text-accent-foreground text-lg px-8 py-5 font-bold rounded-full shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 bg-transparent min-h-[44px]"
         aria-label="Request dispatch for diesel repair service"
       >
         REQUEST DISPATCH

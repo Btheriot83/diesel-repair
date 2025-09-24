@@ -1,6 +1,6 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
-import { getCollection, getEntryBySlug } from "astro:content";
+import { getCollection, getEntry } from "astro:content";
 import { buildInternalLinks } from "@/utils/linkBuilder";
 import { COMPANY_CONFIG } from "@/config/constants";
 import CityHero from "@/components/locations/CityHero.astro";
@@ -13,7 +13,7 @@ export async function getStaticPaths() {
 }
 
 const { slug } = Astro.params;
-const entry = await getEntryBySlug("cities", slug);
+const entry = await getEntry("cities", slug);
 if (!entry) throw new Error(`City not found: ${slug}`);
 const rendered = await entry.render();
 const { Content } = rendered;

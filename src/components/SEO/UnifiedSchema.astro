@@ -10,8 +10,8 @@
  *  - breadcrumbs?: Array<{ "@type":"ListItem"; position:number; name:string; item?:string }>
  *  - reviews?: Array<{ rating:number }>
  */
-import { BUSINESS_NAME, SITE_ORIGIN, PHONE_E164, SERVICE_AREA_CITIES } from "@/config/company";
-import svcList from "@/data/services.json";
+import { BUSINESS_NAME, SITE_ORIGIN, PHONE_E164, SERVICE_AREA_CITIES } from "../../config/company";
+import svcList from "../../data/services.json";
 
 const { pageType, service, faqs, breadcrumbs, reviews, title } = Astro.props as {
   pageType?: string;
@@ -26,32 +26,113 @@ const orgId = "#organization";
 
 const avg = (arr: number[]) => arr.length ? (arr.reduce((a,b)=>a+b,0) / arr.length) : 0;
 
-const autoRepairSchema:any = {
-  "@context": "https://schema.org",
-  "@type": "AutoRepair",
-  "@id": orgId,
-  "name": BUSINESS_NAME,
-  "url": SITE_ORIGIN,
-  "telephone": PHONE_E164,
-  "areaServed": SERVICE_AREA_CITIES.map((c:string) => ({ "@type": "City", "name": c })),
-  "hasOfferCatalog": {
-    "@type": "OfferCatalog",
-    "name": "Mobile Diesel Services",
-    "itemListElement": (svcList || []).map((s:any) => ({
-      "@type": "Offer",
-      "itemOffered": { "@type": "Service", "name": s.name }
-    }))
-  },
-  ...(Array.isArray(reviews) && reviews.length > 0 ? {
-    "aggregateRating": {
-      "@type": "AggregateRating",
-      "ratingValue": avg(reviews.map(r => Number(r?.rating || 0))).toFixed(1),
-      "reviewCount": reviews.length
-    }
-  } : {})
-};
+const blocks:any[] = [];
 
-const blocks:any[] = [autoRepairSchema];
+// Homepage gets Organization + WebSite + ItemList schemas
+if (pageType === "home") {
+  // Organization schema
+  blocks.push({
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "@id": orgId,
+    "name": BUSINESS_NAME,
+    "url": SITE_ORIGIN,
+    "telephone": PHONE_E164,
+    "email": "dispatch@azmobiledieselrepair.com",
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Phoenix",
+      "addressRegion": "AZ",
+      "addressCountry": "US"
+    },
+    "areaServed": SERVICE_AREA_CITIES.map((c:string) => ({ "@type": "City", "name": c + ", AZ" })),
+    "description": "Professional mobile diesel repair services for commercial vehicles in Phoenix Metro area. 24/7 emergency roadside assistance, fleet services, and on-site repairs.",
+    "priceRange": "$$",
+    "openingHours": "Mo-Su 00:00-23:59",
+    "hasOfferCatalog": {
+      "@type": "OfferCatalog",
+      "name": "Mobile Diesel Services",
+      "itemListElement": (svcList || []).map((s:any) => ({
+        "@type": "Offer",
+        "itemOffered": { "@type": "Service", "name": s.name }
+      }))
+    },
+    "sameAs": [],
+    "image": SITE_ORIGIN + "/images/az-mobile-diesel-logo.webp",
+    "logo": SITE_ORIGIN + "/images/az-mobile-diesel-logo.webp",
+    ...(Array.isArray(reviews) && reviews.length > 0 ? {
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": avg(reviews.map(r => Number(r?.rating || 0))).toFixed(1),
+        "reviewCount": reviews.length
+      }
+    } : {})
+  });
+
+  // WebSite schema for search functionality
+  blocks.push({
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "@id": SITE_ORIGIN + "/#website",
+    "url": SITE_ORIGIN,
+    "name": BUSINESS_NAME,
+    "publisher": { "@id": orgId }
+  });
+
+  // ItemList for services
+  blocks.push({
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    "name": "Mobile Diesel Repair Services",
+    "itemListElement": (svcList || []).map((s:any, i:number) => ({
+      "@type": "ListItem",
+      "position": i + 1,
+      "item": {
+        "@type": "Service",
+        "name": s.name,
+        "provider": { "@id": orgId }
+      }
+    }))
+  });
+} else {
+  // Non-homepage gets AutoRepair schema
+  const autoRepairSchema:any = {
+    "@context": "https://schema.org",
+    "@type": "AutoRepair",
+    "@id": orgId,
+    "name": BUSINESS_NAME,
+    "url": SITE_ORIGIN,
+    "telephone": PHONE_E164,
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Phoenix",
+      "addressRegion": "AZ",
+      "addressCountry": "US"
+    },
+    "areaServed": SERVICE_AREA_CITIES.map((c:string) => ({ "@type": "City", "name": c + ", AZ" })),
+    "description": "Professional mobile diesel repair and 24/7 emergency roadside assistance for commercial vehicles across Phoenix Metro area.",
+    "priceRange": "$$",
+    "openingHours": "Mo-Su 00:00-23:59",
+    "hasOfferCatalog": {
+      "@type": "OfferCatalog",
+      "name": "Mobile Diesel Services",
+      "itemListElement": (svcList || []).map((s:any) => ({
+        "@type": "Offer",
+        "itemOffered": { "@type": "Service", "name": s.name }
+      }))
+    },
+    "image": SITE_ORIGIN + "/images/az-mobile-diesel-logo.webp",
+    "logo": SITE_ORIGIN + "/images/az-mobile-diesel-logo.webp",
+    ...(Array.isArray(reviews) && reviews.length > 0 ? {
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": avg(reviews.map(r => Number(r?.rating || 0))).toFixed(1),
+        "reviewCount": reviews.length
+      }
+    } : {})
+  };
+  blocks.push(autoRepairSchema);
+}
 
 if (pageType === "service" && service?.name) {
   blocks.push({

@@ -28,16 +28,16 @@ const getIconSize = (serviceName: string) => {
 };
 
 const services = [
-  { icon: "/images/Mobile Diesel Repair.png", name: "MOBILE DIESEL REPAIR", description: "Full-service on-site diesel repair covering engines, electrical, brakes, and cooling—saves tows and downtime." },
-  { icon: "/images/Emergency Roadside Assistance.png", name: "EMERGENCY ROADSIDE ASSISTANCE", description: "24/7 jumpstarts, fuel delivery, tire issues, urgent breakdowns." },
-  { icon: "/images/Engine Diagnostics.png", name: "ENGINE DIAGNOSTICS (COMPUTER & ECM)", description: "Mobile ECM scans, check-engine, emissions troubleshooting." },
-  { icon: "/images/Brakes-removebg-preview.png", name: "BRAKES & AIR SYSTEMS (INCL. WHEEL SEALS)", description: "Pads, rotors, air leaks, chambers, valves, wheel seals." },
-  { icon: "/images/Suspension and Steering.png", name: "SUSPENSION & STEERING", description: "Shocks, leaf springs, bushings, steering component repairs." },
-  { icon: "/images/Hydraulic_and_Suspension-removebg-preview.png", name: "HYDRAULICS (HOSES & CYLINDERS)", description: "Hose replacement, fittings, pumps and cylinder repairs." },
-  { icon: "/images/Electrical and Batteries.png", name: "ELECTRICAL & BATTERIES (ALTERNATORS & STARTERS)", description: "Jumpstarts, charging system faults, wiring repairs." },
-  { icon: "/images/AC Cooling icon.png", name: "A/C & COOLING SYSTEMS", description: "Compressors, condensers, radiators, hoses, leak checks." },
-  { icon: "/images/Fuel_Systems-removebg-preview.png", name: "FUEL SYSTEM REPAIR", description: "Filters, injection, pumps, flow issues and hard starts." },
-  { icon: "/images/Preventitive Maintenance.png", name: "PREVENTIVE MAINTENANCE (PM SERVICES)", description: "Oil & filters, inspections, DOT pre-checks, fleet PM schedules." },
+  { icon: "/images/Mobile Diesel Repair.webp", fallback: "/images/Mobile Diesel Repair.png", name: "MOBILE DIESEL REPAIR", description: "Full-service on-site diesel repair covering engines, electrical, brakes, and cooling—saves tows and downtime." },
+  { icon: "/images/Emergency Roadside Assistance.webp", fallback: "/images/Emergency Roadside Assistance.png", name: "EMERGENCY ROADSIDE ASSISTANCE", description: "24/7 jumpstarts, fuel delivery, tire issues, urgent breakdowns." },
+  { icon: "/images/Engine Diagnostics.webp", fallback: "/images/Engine Diagnostics.png", name: "ENGINE DIAGNOSTICS (COMPUTER & ECM)", description: "Mobile ECM scans, check-engine, emissions troubleshooting." },
+  { icon: "/images/Brakes-removebg-preview.webp", fallback: "/images/Brakes-removebg-preview.png", name: "BRAKES & AIR SYSTEMS (INCL. WHEEL SEALS)", description: "Pads, rotors, air leaks, chambers, valves, wheel seals." },
+  { icon: "/images/Suspension and Steering.webp", fallback: "/images/Suspension and Steering.png", name: "SUSPENSION & STEERING", description: "Shocks, leaf springs, bushings, steering component repairs." },
+  { icon: "/images/Hydraulic_and_Suspension-removebg-preview.webp", fallback: "/images/Hydraulic_and_Suspension-removebg-preview.png", name: "HYDRAULICS (HOSES & CYLINDERS)", description: "Hose replacement, fittings, pumps and cylinder repairs." },
+  { icon: "/images/Electrical and Batteries.webp", fallback: "/images/Electrical and Batteries.png", name: "ELECTRICAL & BATTERIES (ALTERNATORS & STARTERS)", description: "Jumpstarts, charging system faults, wiring repairs." },
+  { icon: "/images/AC Cooling icon.webp", fallback: "/images/AC Cooling icon.png", name: "A/C & COOLING SYSTEMS", description: "Compressors, condensers, radiators, hoses, leak checks." },
+  { icon: "/images/Fuel_Systems-removebg-preview.webp", fallback: "/images/Fuel_Systems-removebg-preview.png", name: "FUEL SYSTEM REPAIR", description: "Filters, injection, pumps, flow issues and hard starts." },
+  { icon: "/images/Preventitive Maintenance.webp", fallback: "/images/Preventitive Maintenance.png", name: "PREVENTIVE MAINTENANCE (PM SERVICES)", description: "Oil & filters, inspections, DOT pre-checks, fleet PM schedules." },
 ];
 ---
 
@@ -61,17 +61,21 @@ const services = [
             class="bg-gray-50 border-2 border-gray-200 rounded-xl p-8 text-center hover:shadow-xl hover:border-primary transition-all duration-300 group hover:-translate-y-1"
           >
             <div class="w-28 h-28 flex items-center justify-center mx-auto mb-6 transition-all duration-300">
-              <img
-                src={service.icon}
-                alt={`${service.name} service icon`}
-                class="transition-transform duration-300 group-hover:scale-110"
-                style={{
-                  width: iconSize.width,
-                  height: iconSize.height,
-                  objectFit: 'contain',
-                  objectPosition: 'center'
-                }}
-              />
+              <picture>
+                <source srcset={service.icon} type="image/webp" />
+                <img
+                  src={service.fallback}
+                  alt={`${service.name} service icon`}
+                  class="transition-transform duration-300 group-hover:scale-110"
+                  style={{
+                    width: iconSize.width,
+                    height: iconSize.height,
+                    objectFit: 'contain',
+                    objectPosition: 'center'
+                  }}
+                  loading="lazy"
+                />
+              </picture>
             </div>
             <h3 class="font-black text-gray-900 mb-3 text-lg tracking-tight">
               {service.name}

@@ -1,173 +1,28 @@
 ---
-const features = [
-  {
-    title: "QUALITY OF WORK",
-    description: "Professional Service by Experienced Diesel Mechanics",
-    icon: "shield"
-  },
-  {
-    title: "ATTENTION TO DETAIL",
-    description: "Thorough Inspections",
-    icon: "clock"
-  },
-  {
-    title: "TRANSPARENCY & HONESTY",
-    description: "Upfront Pricing, No Surprises, No Hidden Fees",
-    icon: "star"
-  },
-  {
-    title: "SPEED & EFFICIENCY",
-    description: "We Work Hard to Get You Back on the Road Fast",
-    icon: "users"
-  },
-  {
-    title: "ALWAYS RESPONSIVE",
-    description: "We Communicate With You Every Step of the Way",
-    icon: "wrench"
-  },
-  {
-    title: "SATISFACTION GUARANTEED",
-    description: "We Stand Behind Our Work and Your Complete Satisfaction is Our Priority",
-    icon: "checkcircle"
-  }
-];
-
-const getIcon = (iconType: string) => {
-  switch (iconType) {
-    case 'shield':
-      return `<svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
-              </svg>`;
-    case 'clock':
-      return `<svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="12" cy="12" r="10"></circle>
-                <polyline points="12,6 12,12 16,14"></polyline>
-              </svg>`;
-    case 'star':
-      return `<svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"></polygon>
-              </svg>`;
-    case 'users':
-      return `<svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"></path>
-                <circle cx="9" cy="7" r="4"></circle>
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M23 21v-2a4 4 0 00-3-3.87"></path>
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 3.13a4 4 0 010 7.75"></path>
-              </svg>`;
-    case 'wrench':
-      return `<svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4"></path>
-              </svg>`;
-    case 'checkcircle':
-      return `<svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-              </svg>`;
-    default:
-      return '';
-  }
-};
+// Why Choose AZ Mobile Diesel section matching the screenshot
 ---
 
-<section id="about" class="py-20 bg-gray-50">
+<section class="py-16 bg-gray-50">
   <div class="container mx-auto px-4">
-    <div class="text-center mb-16">
-      <h2 class="text-3xl md:text-4xl font-black text-gray-900 mb-6 tracking-tight">
-        QUALITY, SPEED & TRANSPARENCY
+    <div class="max-w-4xl mx-auto text-center">
+      <!-- Main Heading -->
+      <h2 class="text-3xl md:text-4xl font-black text-gray-900 mb-8">
+        Why Choose AZ Mobile Diesel
       </h2>
-      <p class="text-xl text-gray-600 max-w-4xl mx-auto font-medium mb-4">
-        Licensed and insured technicians, DOT-compliant parts, and clear communication from dispatch to invoice.
-      </p>
-    </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 max-w-7xl mx-auto">
-      {features.map((feature, index) => (
-        <article
-          key={index}
-          class="text-center p-8 bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
-        >
-          <div class="w-20 h-20 bg-gradient-to-br from-primary to-primary/80 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
-            <Fragment set:html={getIcon(feature.icon)} />
-          </div>
-          <h3 class="font-black text-gray-900 mb-4 text-lg tracking-tight">
-            {feature.title}
-          </h3>
-          <p class="text-gray-600 font-medium">
-            {feature.description}
-          </p>
-        </article>
-      ))}
-    </div>
-
-    <div class="text-center mt-16">
-      <div class="text-lg text-gray-600 max-w-4xl mx-auto leading-relaxed font-medium space-y-8">
-        <div class="bg-white rounded-xl p-8 shadow-lg">
-          <h3 class="text-2xl font-bold text-gray-900 mb-4">Fleet Management Experience</h3>
-          <p class="mb-4">
-            At AZ Mobile Diesel Repair, we understand the critical importance of fleet uptime and operational efficiency. Our leadership team brings direct trucking industry experience, with our lead mechanic having <strong>over 15 years</strong> as a fleet manager specializing in diesel trucks and heavy equipment across Arizona's challenging desert conditions.
-          </p>
-        </div>
-
-        <div class="bg-white rounded-xl p-8 shadow-lg">
-          <h3 class="text-2xl font-bold text-gray-900 mb-4">Strategic Partnership Approach</h3>
-          <p class="mb-4">
-            We're not just mechanics—we're strategic partners who understand delivery schedules, maintenance budgets, and the true cost of downtime.
-          </p>
-          <div class="text-left max-w-2xl mx-auto">
-            <p class="font-semibold text-gray-800 mb-3">Our fleet management approach includes:</p>
-            <ul class="space-y-2 text-gray-700">
-              <li class="flex items-start">
-                <span class="text-primary font-bold mr-3">•</span>
-                <span><strong>After-hours emergency scheduling</strong> for minimal disruption</span>
-              </li>
-              <li class="flex items-start">
-                <span class="text-primary font-bold mr-3">•</span>
-                <span><strong>Consolidated monthly billing systems</strong> for simplified accounting</span>
-              </li>
-              <li class="flex items-start">
-                <span class="text-primary font-bold mr-3">•</span>
-                <span><strong>Comprehensive service history reports</strong> for maintenance tracking</span>
-              </li>
-              <li class="flex items-start">
-                <span class="text-primary font-bold mr-3">•</span>
-                <span>Component failure prediction and <strong>DOT compliance documentation</strong></span>
-              </li>
-            </ul>
-          </div>
-        </div>
-
-        <div class="bg-gradient-to-r from-primary/5 to-accent/5 rounded-xl p-6 border-l-4 border-primary">
-          <p class="text-lg font-semibold text-gray-800">
-            Whether you're managing local Phoenix delivery routes or long-haul operations across the Southwest, we provide the technical expertise and business understanding that keeps your fleet profitable and compliant.
-          </p>
-        </div>
+      <!-- Value Propositions Pills -->
+      <div class="flex justify-center items-center gap-4 flex-wrap">
+        <span class="bg-white text-orange-500 font-medium px-6 py-3 rounded-full text-lg border border-orange-500">
+          Licensed & Insured
+        </span>
+        <span class="bg-white text-orange-500 font-medium px-6 py-3 rounded-full text-lg border border-orange-500">
+          24/7 Dispatch
+        </span>
+        <span class="bg-white text-orange-500 font-medium px-6 py-3 rounded-full text-lg border border-orange-500">
+          15+ Years Experience
+        </span>
       </div>
     </div>
   </div>
 </section>
 
-<style>
-  /* Ensure colors match CSS variables */
-  .text-primary {
-    color: hsl(var(--primary));
-  }
-
-  .bg-gradient-to-br.from-primary {
-    --tw-gradient-from: hsl(var(--primary));
-  }
-
-  .bg-gradient-to-br.to-primary\/80 {
-    --tw-gradient-to: hsl(var(--primary) / 0.8);
-  }
-
-  .from-primary\/5 {
-    --tw-gradient-from: hsl(var(--primary) / 0.05);
-  }
-
-  .to-accent\/5 {
-    --tw-gradient-to: hsl(var(--accent) / 0.05);
-  }
-
-  .border-primary {
-    border-color: hsl(var(--primary));
-  }
-</style>
