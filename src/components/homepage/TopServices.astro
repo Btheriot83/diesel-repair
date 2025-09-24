@@ -1,0 +1,105 @@
+---
+import ServiceIcon from '../ServiceIcon.astro';
+
+// Top Services We Provide - Using custom icons from public/images
+const services = [
+  {
+    name: "Emergency Roadside",
+    url: "/services/emergency-roadside-assistance",
+    icon: "Emergency Roadside Assistance.webp"
+  },
+  {
+    name: "Engine Diagnostics",
+    url: "/services/engine-diagnostics",
+    icon: "Engine Diagnostics.webp"
+  },
+  {
+    name: "Electrical & Battery",
+    url: "/services/electrical-battery",
+    icon: "Electrical and Batteries.webp"
+  },
+  {
+    name: "Brake Repairs",
+    url: "/services/brake-repairs",
+    icon: "Brakes-removebg-preview.webp"
+  },
+  {
+    name: "Suspension & Steering",
+    url: "/services/suspension-steering",
+    icon: "Suspension and Steering.webp"
+  },
+  {
+    name: "Hydraulics",
+    url: "/services/hydraulics",
+    icon: "Hydraulic_and_Suspension-removebg-preview.webp"
+  },
+  {
+    name: "A/C & Cooling",
+    url: "/services/ac-cooling",
+    icon: "AC Cooling icon.webp"
+  },
+  {
+    name: "Fuel System Repair",
+    url: "/services/fuel-system",
+    icon: "Fuel_Systems-removebg-preview.webp"
+  },
+  {
+    name: "Wheel Seals",
+    url: "/services/wheel-seals",
+    icon: "Wheel_Seals-removebg-preview.webp"
+  },
+  {
+    name: "Mobile Diesel Repair",
+    url: "/services/mobile-diesel-repair",
+    icon: "Mobile Diesel Repair.webp"
+  }
+];
+---
+
+<section class="py-16 bg-gray-50">
+  <div class="container mx-auto px-4">
+    <div class="text-center mb-12">
+      <h2 class="text-3xl md:text-4xl font-black text-gray-900 mb-4">
+        Top Services We Provide
+      </h2>
+      <p class="text-lg text-gray-600 font-medium">
+        Professional <a href="/services/mobile-diesel-repair" class="text-primary hover:underline">Mobile Diesel Repair</a> and <a href="/services/emergency-roadside-assistance" class="text-primary hover:underline">Emergency Roadside Assistance</a> across Phoenix metro
+      </p>
+    </div>
+
+    <div class="grid grid-cols-2 md:grid-cols-5 gap-4 max-w-6xl mx-auto">
+      {services.map((service) => (
+        <a
+          href={service.url}
+          class="bg-white border border-gray-200 rounded-lg p-4 text-center hover:shadow-lg hover:border-primary transition-all duration-300 group min-h-[120px] flex flex-col justify-center"
+        >
+          <div class="mb-3">
+            <ServiceIcon
+              src={service.icon}
+              alt={`${service.name} icon`}
+              loading="lazy"
+              class="w-20 h-20 mx-auto object-contain"
+            />
+          </div>
+          <h3 class="font-bold text-sm text-gray-900 group-hover:text-primary transition-colors">
+            {service.name}
+          </h3>
+        </a>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .text-primary {
+    color: hsl(var(--primary));
+  }
+
+  .hover\:border-primary:hover {
+    border-color: hsl(var(--primary));
+  }
+
+  .group-hover\:text-primary:hover {
+    color: hsl(var(--primary));
+  }
+</style>

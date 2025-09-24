@@ -6,12 +6,17 @@ import UnifiedSchema from '@/components/SEO/UnifiedSchema.astro';
 import LCPPreload from '@/components/LCPPreload.astro';
 import SeoHints from '@/components/SeoHints.astro';
 import DeferNonCritical from '@/components/DeferNonCritical.astro';
+import FontPreloader from '@/components/FontPreloader.astro';
+import ResourceHints from '@/components/ResourceHints.astro';
+import CriticalCSS from '@/components/CriticalCSS.astro';
 import Header from '@/components/Header.astro';
 import Footer from '@/components/Footer.astro';
+import { initializeAnalytics, ANALYTICS_CONFIG } from '@/utils/analytics';
 
 export interface Props {
   title: string;
   pageType?: 'service' | 'city' | 'corridor' | 'blog' | 'home';
+  description?: string;
   service?: { name: string; description?: string; areaServed?: string[] };
   faqs?: Array<{ question: string; answer: string }>;
   breadcrumbs?: Array<{ '@type': 'ListItem'; position: number; name: string; item?: string }>;
@@ -20,37 +25,88 @@ export interface Props {
   heroType?: string;
 }
 
-const { title, pageType, service, faqs, breadcrumbs, reviews, heroImage, heroType } = Astro.props;
+const { title, pageType, description, service, faqs, breadcrumbs, reviews, heroImage, heroType } = Astro.props;
+
+// Default description fallback
+const metaDescription = description || "Professional mobile diesel repair services for Phoenix Metro area. 24/7 emergency roadside assistance, fleet services, and commercial vehicle repairs.";
 ---
 
 <!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="description" content="Professional mobile diesel repair services for Phoenix Metro area. 24/7 emergency roadside assistance, fleet services, and commercial vehicle repairs." />
+    <meta name="description" content={metaDescription} />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
 
-    <!-- LCP Preload for hero images -->
-    <LCPPreload heroPath={heroImage} heroType={heroType} />
+    <!-- OpenGraph meta tags for social sharing -->
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={metaDescription} />
+    <meta property="og:url" content={Astro.url.href} />
+    <meta property="og:site_name" content="AZ Mobile Diesel Repair" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:image" content={`${Astro.site}/images/az-mobile-diesel-repair-logo.png`} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="AZ Mobile Diesel Repair - Professional mobile diesel mechanics serving Phoenix Metro" />
 
-    <!-- Preload homepage hero for faster LCP discovery -->
+    <!-- Twitter Card meta tags -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={metaDescription} />
+    <meta name="twitter:image" content={`${Astro.site}/images/az-mobile-diesel-repair-logo.png`} />
+    <meta name="twitter:image:alt" content="AZ Mobile Diesel Repair - Professional mobile diesel mechanics serving Phoenix Metro" />
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href={Astro.url.href} />
+
+    <!-- Critical CSS for above-the-fold performance -->
+    <CriticalCSS pageType={pageType} inline={true} />
+
+    <!-- Font preloading for performance optimization -->
+    <FontPreloader preloadCritical={true} />
+
+    <!-- Resource hints and performance optimizations -->
+    <ResourceHints
+      pageType={pageType}
+      enableAnalytics={true}
+      enableMaps={pageType === 'city'}
+      enableCDN={true}
+    />
+
+    <!-- LCP Preload for hero image (home page only) -->
     {pageType === 'home' && (
-      <SeoHints heroSrc="/lovable-uploads/eff70c3b-1b53-4693-b587-bb51f7bfda85.webp" />
+      <link
+        rel="preload"
+        as="image"
+        imagesrcset="/lovable-uploads/hero-1200w.avif 1200w, /lovable-uploads/hero-1600w.avif 1600w, /lovable-uploads/hero-2000w.avif 2000w"
+        imagesizes="100vw"
+        type="image/avif"
+        fetchpriority="high"
+      />
     )}
 
-    <UnifiedSchema
+    <!-- LCP Preload for hero images -->
+    <!-- <LCPPreload heroPath={heroImage} heroType={heroType} /> -->
+
+    <!-- Preload homepage hero for faster LCP discovery -->
+    <!-- {pageType === 'home' && (
+      <SeoHints heroSrc="/lovable-uploads/eff70c3b-1b53-4693-b587-bb51f7bfda85.webp" />
+    )} -->
+
+    <!-- <UnifiedSchema
       pageType={pageType}
       service={service}
       faqs={faqs}
       breadcrumbs={breadcrumbs}
       reviews={reviews}
       title={title}
-    />
+    /> -->
   </head>
-  <body class="min-h-screen bg-background text-foreground font-sans">
+  <body class="min-h-screen bg-background text-foreground font-sans pb-20 md:pb-0">
     <Header />
 
     <main>
@@ -59,10 +115,46 @@ const { title, pageType, service, faqs, breadcrumbs, reviews, heroImage, heroTyp
 
     <Footer />
 
+    <!-- Performance optimization and monitoring -->
+    <script src="/js/performance-init.js" async></script>
+
+    <!-- GA4 Analytics Initialization -->
+    <script is:inline define:vars={{ measurementId: ANALYTICS_CONFIG.measurementId }}>
+      // Initialize GA4 tracking
+      function initGA4() {
+        if (typeof window === 'undefined') return;
+
+        // Load GA4 script
+        const script = document.createElement('script');
+        script.src = `https://www.googletagmanager.com/gtag/js?id=${measurementId}`;
+        script.async = true;
+        document.head.appendChild(script);
+
+        // Initialize dataLayer and gtag
+        window.dataLayer = window.dataLayer || [];
+        window.gtag = function gtag(...args) {
+          window.dataLayer?.push(args);
+        };
+
+        window.gtag('js', new Date());
+        window.gtag('config', measurementId, {
+          page_title: document.title,
+          page_location: window.location.href
+        });
+      }
+
+      // Initialize on page load
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initGA4);
+      } else {
+        initGA4();
+      }
+    </script>
+
     <!-- Defer non-critical JavaScript for better performance -->
-    <DeferNonCritical scripts={[
+    <!-- <DeferNonCritical scripts={[
       { src: '/js/navigation.js', on: 'idle' },
       { src: '/js/forms.js', on: 'visible', selector: '#contact' }
-    ]} />
+    ]} /> -->
   </body>
 </html>

@@ -1,0 +1,47 @@
+---
+interface Props {
+  src: string;
+  alt: string;
+  loading?: 'lazy' | 'eager';
+  class?: string;
+}
+
+const {
+  src,
+  alt,
+  loading = 'lazy',
+  class: className = 'w-20 h-20 mx-auto object-contain'
+} = Astro.props;
+
+// The src already contains the WebP extension, so use it directly
+const imageSrc = `/images/${src}`;
+
+// Special sizing for different icons
+const isHydraulics = src.includes('Hydraulic');
+const isFuelSystem = src.includes('Fuel_Systems');
+const isACCooling = src.includes('AC Cooling');
+const isBrakeRepairs = src.includes('Brakes');
+
+// Large icons (w-24 h-24)
+const needsLargeSize = isHydraulics || isFuelSystem || isBrakeRepairs;
+// Medium icons (w-22 h-22)
+const needsMediumSize = isACCooling;
+
+let finalClassName = className;
+if (needsLargeSize) {
+  finalClassName = className.replace('w-20 h-20', 'w-24 h-24');
+} else if (needsMediumSize) {
+  finalClassName = className.replace('w-20 h-20', 'w-22 h-22');
+}
+---
+
+<img
+  src={imageSrc}
+  alt={alt}
+  loading={loading}
+  decoding="async"
+  class={finalClassName}
+  width={needsLargeSize ? "96" : needsMediumSize ? "88" : "80"}
+  height={needsLargeSize ? "96" : needsMediumSize ? "88" : "80"}
+  style="aspect-ratio: 1/1; object-fit: contain;"
+/>

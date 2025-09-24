@@ -4,9 +4,20 @@
   "version": "0.0.1",
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build",
+    "build": "npm run optimize-images && astro build",
+    "build:fast": "astro build",
+    "build:analyze": "ANALYZE=true astro build",
+    "build:production": "NODE_ENV=production npm run optimize-images && astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "preview:build": "npm run build && astro preview",
+    "astro": "astro",
+    "optimize:images": "node scripts/optimize-images.mjs",
+    "optimize:images:critical": "node scripts/optimize-images.mjs --critical",
+    "optimize:images:dry-run": "node scripts/optimize-images.mjs --dry-run",
+    "optimize:svgs": "node scripts/optimize-svgs.mjs",
+    "lighthouse": "lhci autorun",
+    "performance-check": "npm run build && npm run lighthouse",
+    "verify:home": "node scripts/verify-homepage-seo.mjs"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.4",
@@ -36,6 +47,9 @@
   "homepage": "https://github.com/Btheriot83/diesel-repair#readme",
   "devDependencies": {
     "@astrojs/mdx": "^4.3.5",
-    "@astrojs/vercel": "^8.2.7"
+    "@astrojs/vercel": "^8.2.7",
+    "jsdom": "^27.0.0",
+    "sharp": "^0.34.4",
+    "terser": "^5.44.0"
   }
 }
