@@ -6,30 +6,37 @@
 @layer base {
   :root {
     --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    --foreground: 28 84% 4.9%; /* Darker for better readability */
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 28 84% 4.9%;
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary: 18 82% 52%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96%;
-    --secondary-foreground: 222.2 84% 4.9%;
+    --popover-foreground: 28 84% 4.9%;
+    /* Diesel brand colors converted to HSL */
+    --primary: 18 82% 52%; /* #ed6623 diesel-orange */
+    --primary-foreground: 0 0% 98%; /* White text on orange */
+    --secondary: 210 40% 96%; /* Light gray for secondary elements */
+    --secondary-foreground: 28 84% 4.9%;
     --muted: 210 40% 96%;
     --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 18 82% 52%;
-    --accent-foreground: 210 40% 98%;
+    --accent: 18 82% 52%; /* Same as primary for consistency */
+    --accent-foreground: 0 0% 98%;
     --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive-foreground: 0 0% 98%;
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 18 82% 52%;
-    --chart-1: 12 76% 61%;
-    --chart-2: 173 58% 39%;
-    --chart-3: 197 37% 24%;
-    --chart-4: 43 74% 66%;
-    --chart-5: 27 87% 67%;
+    --ring: 18 82% 52%; /* Diesel orange for focus rings */
+    /* Updated chart colors with diesel theme */
+    --chart-1: 18 82% 52%; /* Diesel orange */
+    --chart-2: 28 25% 25%; /* Diesel dark variation */
+    --chart-3: 197 37% 24%; /* Keep complementary blue */
+    --chart-4: 43 74% 66%; /* Warm yellow complement */
+    --chart-5: 27 87% 67%; /* Orange variation */
     --radius: 0.5rem;
+
+    /* Custom diesel brand variables */
+    --diesel-orange: 18 82% 52%; /* #ed6623 */
+    --diesel-hover: 18 70% 42%; /* #B8501C */
+    --diesel-dark: 28 3% 11%; /* #1d1d1d */
   }
 
   .dark {
@@ -71,7 +78,7 @@
   }
 }
 
-/* Custom diesel theme colors */
+/* Enhanced diesel brand color utilities */
 .text-diesel-orange {
   color: #ed6623;
 }
@@ -84,27 +91,89 @@
   border-color: #ed6623;
 }
 
-.hover\:bg-diesel-orange:hover {
+.text-diesel-hover {
+  color: #B8501C;
+}
+
+.bg-diesel-hover {
   background-color: #B8501C;
 }
 
-/* Button styles to match Shadcn UI button variants with hover animations */
+.text-diesel-dark {
+  color: #1d1d1d;
+}
+
+.bg-diesel-dark {
+  background-color: #1d1d1d;
+}
+
+/* Unified spacing system */
+.section-padding {
+  @apply py-16 md:py-20 lg:py-24;
+}
+
+.container-padding {
+  @apply px-4 md:px-6 lg:px-8;
+}
+
+/* Button styles with consistent diesel branding */
 @layer components {
   .btn-hero {
-    @apply inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all duration-300 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50;
-    @apply bg-primary text-primary-foreground shadow hover:bg-primary/90 hover:-translate-y-1 hover:shadow-xl;
-    @apply h-11 px-8 py-2;
+    @apply inline-flex items-center justify-center gap-3 whitespace-nowrap rounded-full text-sm font-bold transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-diesel-orange focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50;
+    @apply bg-diesel-orange text-white shadow-lg hover:bg-diesel-hover hover:-translate-y-1 hover:shadow-xl active:scale-95;
+    @apply min-h-[44px] px-6 py-3 md:px-8;
   }
 
   .btn-outline {
-    @apply inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all duration-300 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50;
-    @apply border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground hover:-translate-y-1 hover:shadow-xl;
-    @apply h-10 px-4 py-2;
+    @apply inline-flex items-center justify-center gap-3 whitespace-nowrap rounded-full text-sm font-bold transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-diesel-orange focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50;
+    @apply border-2 border-white bg-transparent text-white shadow-lg hover:bg-white hover:text-diesel-orange hover:-translate-y-1 hover:shadow-xl active:scale-95;
+    @apply min-h-[44px] px-6 py-3 md:px-8;
   }
 
   .btn-emergency {
-    @apply inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all duration-300 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50;
-    @apply bg-white text-accent hover:bg-gray-100 hover:-translate-y-1 hover:shadow-xl;
-    @apply h-10 px-4 py-2;
+    @apply inline-flex items-center justify-center gap-3 whitespace-nowrap rounded-full text-sm font-bold transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-diesel-orange focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50;
+    @apply bg-white text-diesel-orange shadow-lg hover:bg-gray-50 hover:-translate-y-1 hover:shadow-xl active:scale-95;
+    @apply min-h-[44px] px-6 py-3 md:px-8;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-3 whitespace-nowrap rounded-full text-sm font-semibold transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-diesel-orange focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50;
+    @apply bg-gray-100 text-diesel-dark hover:bg-gray-200 hover:-translate-y-0.5 hover:shadow-md active:scale-95;
+    @apply min-h-[40px] px-4 py-2 md:px-6;
+  }
+
+  /* Hero section styling */
+  .section-hero {
+    @apply relative min-h-[88vh] flex items-center justify-center overflow-hidden;
+  }
+
+  .hero-overlay {
+    @apply absolute inset-0 bg-gradient-to-r from-gray-900/90 via-gray-800/70 to-gray-900/90;
+  }
+
+  /* Card styling with consistent spacing */
+  .card-elevated {
+    @apply bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 p-6 md:p-8;
+  }
+
+  .card-service {
+    @apply card-elevated text-center group cursor-pointer;
+  }
+
+  /* Typography consistency */
+  .heading-xl {
+    @apply text-4xl md:text-5xl lg:text-6xl font-black leading-tight text-diesel-dark;
+  }
+
+  .heading-lg {
+    @apply text-3xl md:text-4xl font-bold leading-tight text-diesel-dark;
+  }
+
+  .heading-md {
+    @apply text-2xl md:text-3xl font-bold leading-snug text-diesel-dark;
+  }
+
+  .text-lead {
+    @apply text-lg md:text-xl leading-relaxed text-gray-600;
   }
 }

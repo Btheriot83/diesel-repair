@@ -1,0 +1,62 @@
+{
+  "phoenix": {
+    "city": "phoenix",
+    "path": "/images/phoenix-optimized/phoenix-1600w.avif",
+    "fileName": "phoenix-1600w.avif",
+    "format": "avif",
+    "width": 1600,
+    "height": 1600,
+    "bytes": 158449,
+    "aspect": 1.0
+  },
+  "tempe": {
+    "city": "tempe",
+    "path": "/images/hero-optimized/hero-1600w.avif",
+    "fileName": "hero-1600w.avif",
+    "format": "avif",
+    "width": 1600,
+    "height": 900,
+    "bytes": 140000,
+    "aspect": 1.78
+  },
+  "mesa": {
+    "city": "mesa",
+    "path": "/images/hero-optimized/hero-1600w.avif",
+    "fileName": "hero-1600w.avif",
+    "format": "avif",
+    "width": 1600,
+    "height": 900,
+    "bytes": 140000,
+    "aspect": 1.78
+  },
+  "chandler": {
+    "city": "chandler",
+    "path": "/images/hero-optimized/hero-1600w.avif",
+    "fileName": "hero-1600w.avif",
+    "format": "avif",
+    "width": 1600,
+    "height": 900,
+    "bytes": 140000,
+    "aspect": 1.78
+  },
+  "glendale": {
+    "city": "glendale",
+    "path": "/images/hero-optimized/hero-1600w.avif",
+    "fileName": "hero-1600w.avif",
+    "format": "avif",
+    "width": 1600,
+    "height": 900,
+    "bytes": 140000,
+    "aspect": 1.78
+  },
+  "default-hero": {
+    "city": "default-hero",
+    "path": "/images/hero-optimized/hero-2000w.avif",
+    "fileName": "hero-2000w.avif",
+    "format": "avif",
+    "width": 2000,
+    "height": 1125,
+    "bytes": 180000,
+    "aspect": 1.78
+  }
+}

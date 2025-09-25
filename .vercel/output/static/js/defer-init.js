@@ -1,4 +1,0 @@
-// public/js/defer-init.js
-export function onIdle(cb){('requestIdleCallback'in window)?requestIdleCallback(cb,{timeout:2000}):setTimeout(cb,0)}
-export function whenVisible(sel,cb,opt){const el=document.querySelector(sel);if(!el)return;if(!('IntersectionObserver'in window)){cb();return}const io=new IntersectionObserver((es)=>{es.forEach(e=>{if(e.isIntersecting){io.disconnect();cb()}})},opt||{rootMargin:'200px'});io.observe(el)}
-export function loadScript(src,attrs={}){const s=document.createElement('script');s.src=src;s.defer=true;for(const[k,v]of Object.entries(attrs)){if(typeof v==='boolean'){if(v)s.setAttribute(k,'')}else s.setAttribute(k,String(v))}document.head.appendChild(s)}

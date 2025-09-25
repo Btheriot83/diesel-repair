@@ -1,19 +1,20 @@
 ---
+import { PHONE_DISPLAY, PHONE_E164, BUSINESS_NAME } from '../config/company.ts';
+
 // Mobile Sticky CTA Bar for persistent call access
 // Improves mobile conversion by 40-60% according to UX research
-const PHONE_NUMBER = "(480) 307-7434";
-const PHONE_LINK = "tel:+14803077434";
+const PHONE_LINK = `tel:${PHONE_E164}`;
 ---
 
 <!-- Mobile Sticky CTA Bar - Hidden on desktop, visible on mobile/tablet -->
-<div class="mobile-sticky-cta lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-gradient-to-r from-orange-500 to-orange-600 shadow-lg border-t-2 border-orange-400">
+<div class="mobile-sticky-cta lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-gradient-to-r from-diesel-orange to-diesel-hover shadow-lg border-t-2 border-diesel-orange/60">
   <div class="px-4 py-3 flex items-center justify-between">
     <!-- Left: Service info -->
     <div class="flex-1">
       <div class="text-white font-bold text-sm leading-tight">
         24/7 Diesel Repair
       </div>
-      <div class="text-orange-100 text-xs">
+      <div class="text-white/80 text-xs">
         Emergency Service Available
       </div>
     </div>
@@ -21,8 +22,8 @@ const PHONE_LINK = "tel:+14803077434";
     <!-- Right: Call button -->
     <a
       href={PHONE_LINK}
-      class="flex items-center gap-2 bg-white text-orange-600 font-bold px-4 py-3 rounded-full shadow-lg hover:bg-orange-50 transition-colors duration-200 active:scale-95 min-h-[44px]"
-      aria-label="Call AZ Mobile Diesel Repair now for emergency service"
+      class="flex items-center gap-2 bg-white text-diesel-orange font-bold px-4 py-3 rounded-full shadow-lg hover:bg-gray-50 hover:text-diesel-hover transition-colors duration-200 active:scale-95 min-h-[44px]"
+      aria-label={`Call ${BUSINESS_NAME} now for emergency diesel service`}
     >
       <!-- Phone icon -->
       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -35,11 +36,11 @@ const PHONE_LINK = "tel:+14803077434";
   <!-- Optional: Text/SMS secondary action -->
   <div class="px-4 pb-2">
     <a
-      href="sms:+14803077434"
-      class="text-center block text-orange-100 text-xs underline hover:text-white"
-      aria-label="Send text message to AZ Mobile Diesel Repair"
+      href={`sms:${PHONE_E164}`}
+      class="text-center block text-white/80 text-xs underline hover:text-white"
+      aria-label={`Send text message to ${BUSINESS_NAME}`}
     >
-      Or text us at {PHONE_NUMBER}
+      Or text us at {PHONE_DISPLAY}
     </a>
   </div>
 </div>

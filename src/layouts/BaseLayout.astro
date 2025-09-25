@@ -18,9 +18,11 @@ export interface Props {
   reviews?: Array<{ rating: number }>;
   heroImage?: string;
   heroType?: string;
+  ogImage?: string;
+  ogImageAlt?: string;
 }
 
-const { title, pageType, description, service, faqs, breadcrumbs, reviews, heroImage, heroType } = Astro.props;
+const { title, pageType, description, service, faqs, breadcrumbs, reviews, heroImage, heroType, ogImage, ogImageAlt } = Astro.props;
 
 // Default description fallback
 const metaDescription = description || "Professional mobile diesel repair services for Phoenix Metro area. 24/7 emergency roadside assistance, fleet services, and commercial vehicle repairs.";
@@ -62,19 +64,19 @@ const robotsContent = isProduction ? 'index,follow' : 'noindex,nofollow';
     <meta property="og:description" content={metaDescription} />
     <meta property="og:url" content={Astro.url.href} />
     <meta property="og:site_name" content={BUSINESS_NAME} />
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content={pageType === 'city' ? 'business.business' : 'website'} />
     <meta property="og:locale" content="en_US" />
-    <meta property="og:image" content={`${SITE_ORIGIN}/images/az-mobile-diesel-repair-logo.png`} />
-    <meta property="og:image:width" content="1200" />
-    <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content="AZ Mobile Diesel Repair - Professional mobile diesel mechanics serving Phoenix Metro" />
+    <meta property="og:image" content={ogImage || `${SITE_ORIGIN}/images/az-mobile-diesel-repair-logo.png`} />
+    <meta property="og:image:width" content={ogImage ? "1920" : "1200"} />
+    <meta property="og:image:height" content={ogImage ? "1080" : "630"} />
+    <meta property="og:image:alt" content={ogImageAlt || "AZ Mobile Diesel Repair - Professional mobile diesel mechanics serving Phoenix Metro"} />
 
     <!-- Twitter Card meta tags -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={metaDescription} />
-    <meta name="twitter:image" content={`${SITE_ORIGIN}/images/az-mobile-diesel-repair-logo.png`} />
-    <meta name="twitter:image:alt" content="AZ Mobile Diesel Repair - Professional mobile diesel mechanics serving Phoenix Metro" />
+    <meta name="twitter:image" content={ogImage || `${SITE_ORIGIN}/images/az-mobile-diesel-repair-logo.png`} />
+    <meta name="twitter:image:alt" content={ogImageAlt || "AZ Mobile Diesel Repair - Professional mobile diesel mechanics serving Phoenix Metro"} />
 
     <!-- Canonical URL -->
     <link rel="canonical" href={Astro.url.href} />

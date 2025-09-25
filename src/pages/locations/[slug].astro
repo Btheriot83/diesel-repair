@@ -3,9 +3,10 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 import { getCollection, getEntry } from "astro:content";
 import { buildInternalLinks } from "@/utils/linkBuilder";
 import { COMPANY_CONFIG } from "@/config/constants";
-import CityHero from "@/components/locations/CityHero.astro";
+import HeroCity from "@/components/HeroCity.astro";
 import CorridorsGrid from "@/components/locations/CorridorsGrid.astro";
 import FAQAccordion from "@/components/ui/FAQAccordion.astro";
+import { getHeroPreload } from "@/utils/heroPreload";
 
 export async function getStaticPaths() {
   const entries = await getCollection("cities");
@@ -19,37 +20,198 @@ const rendered = await entry.render();
 const { Content } = rendered;
 const data = entry.data;
 const links = buildInternalLinks(data);
+
+// Enhanced local SEO data with cityDefaults fallback
+const cityName = (data.title.split('—')[1]?.trim() || 'Phoenix').split(',')[0].trim();
+const isPhoenix = cityName.toLowerCase().includes('phoenix');
+
+// City defaults fallback system for cities with minimal content
+const cityDefaults = {
+  corridors: data.corridors || [
+    `I-10 ${cityName} Area Coverage`,
+    `I-17 ${cityName} Corridor Access`,
+    `Loop System ${cityName} Metro`
+  ],
+  landmarks: data.landmarks || [
+    `${cityName} distribution centers`,
+    `Local freight facilities`,
+    `Major corridor intersections`,
+    `Industrial zones & logistics hubs`
+  ],
+  nearbyCities: data.nearbyCities || ["Phoenix", "Tempe", "Mesa", "Chandler", "Glendale"],
+  relatedServices: data.relatedServices || ["emergency-roadside-assistance", "engine-diagnostics", "brakes-air-systems"],
+  faqs: data.faqs || [
+    {
+      question: `Do you provide emergency service in ${cityName}?`,
+      answer: `Yes, we provide 24/7 emergency mobile diesel repair throughout ${cityName} and surrounding areas. Typical response time is 30-90 minutes depending on location and traffic conditions.`
+    },
+    {
+      question: `What areas around ${cityName} do you cover?`,
+      answer: `We cover ${cityName} and extend service to nearby cities including ${data.nearbyCities?.slice(0,3).join(", ") || "Phoenix, Tempe, Mesa"}. Our mobile units are strategically positioned for optimal coverage across the metro area.`
+    }
+  ],
+  hero: data.hero || "/images/hero/phoenix-metro-background.webp",
+  images: data.images || [
+    "/images/locations/mobile-diesel-repair-on-site.webp",
+    "/images/locations/emergency-roadside-service.webp"
+  ]
+};
+
+// Enhanced meta tags for locality with Phoenix-specific optimization
+const enhancedMetaTitle = isPhoenix
+  ? "Mobile Diesel Mechanic — Phoenix, AZ | 24/7 Roadside & On-Site Repair"
+  : `Mobile Diesel Mechanic — ${cityName} | 24/7 Roadside & On-Site Repair`;
+
+const enhancedMetaDescription = isPhoenix
+  ? "Expert mobile diesel repair in Phoenix, AZ. Serving I-10, I-17, Loop 202 corridors. Emergency roadside assistance with 30-90 min ETA. Available 24/7."
+  : `Professional mobile diesel repair in ${cityName}. I-10/I-17, Loop coverage. 30-90 min ETA. Emergency roadside assistance available 24/7.`;
+
+// OG image - use hero image for better social sharing
+const heroData = await import("@/data/heroManifest.json");
+const cityHero = heroData.default[cityName.toLowerCase()] || heroData.default['default-hero'];
+const ogImage = cityHero ? `${COMPANY_CONFIG.siteUrl}${cityHero.path}` : `${COMPANY_CONFIG.siteUrl}/images/az-mobile-diesel-repair-logo.png`;
+
+// Hero preload for LCP optimization
+const heroPreload = getHeroPreload(cityName);
+
+// Schema markup data
+const schemaData = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "LocalBusiness",
+      "@id": `${COMPANY_CONFIG.siteUrl}/locations/${slug}#business`,
+      "name": "AZ Mobile Diesel Repair",
+      "alternateName": `Mobile Diesel Mechanic ${cityName}`,
+      "url": `${COMPANY_CONFIG.siteUrl}/locations/${slug}`,
+      "telephone": COMPANY_CONFIG.phoneE164,
+      "priceRange": "$$",
+      "email": COMPANY_CONFIG.email,
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": cityName,
+        "addressRegion": "AZ",
+        "addressCountry": "US"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": 33.4484,
+        "longitude": -112.0740
+      },
+      "areaServed": [
+        {
+          "@type": "City",
+          "name": cityName,
+          "containedInPlace": {
+            "@type": "State",
+            "name": "Arizona"
+          }
+        }
+      ],
+      "openingHours": "Mo-Su 00:00-23:59",
+      "serviceType": "Mobile Diesel Repair",
+      "hasOfferCatalog": {
+        "@type": "OfferCatalog",
+        "name": "Diesel Repair Services",
+        "itemListElement": cityDefaults.relatedServices.slice(0,3).map((service, index) => ({
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Service",
+            "name": service.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
+            "url": `${COMPANY_CONFIG.siteUrl}/services/${service}`
+          }
+        }))
+      }
+    },
+    ...(cityDefaults.faqs ? [{
+      "@type": "FAQPage",
+      "mainEntity": cityDefaults.faqs.map(faq => ({
+        "@type": "Question",
+        "name": faq.question,
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": faq.answer
+        }
+      }))
+    }] : []),
+    ...(data.breadcrumbs ? [{
+      "@type": "BreadcrumbList",
+      "itemListElement": data.breadcrumbs.map((crumb, index) => ({
+        "@type": "ListItem",
+        "position": crumb.position,
+        "name": crumb.name,
+        "item": crumb.item
+      }))
+    }] : [])
+  ]
+};
 ---
+
 <BaseLayout
-  title={data.title}
-  metaTitle={data.metaTitle}
-  metaDescription={data.metaDescription}
-  canonical={data.canonical}
-  pageType={data.pageType}
-  faqs={data.faqs}
+  title={enhancedMetaTitle}
+  description={enhancedMetaDescription}
+  pageType="city"
+  faqs={cityDefaults.faqs}
   breadcrumbs={data.breadcrumbs}
+  heroImage={ogImage}
+  ogImage={ogImage}
+  ogImageAlt={`Mobile diesel mechanic servicing ${cityName} - Professional truck repair on major corridors`}
 >
-  <!-- Hero Section with Phoenix Metro Background -->
-  <section class="relative bg-gray-900 text-white py-20 overflow-hidden" style="background-image: url('/images/phoenix-metro-background.webp'); background-size: cover; background-position: center;">
-    <div class="absolute inset-0 bg-gradient-to-r from-gray-900/90 via-gray-800/80 to-gray-900/90"></div>
-    <div class="container mx-auto px-4 relative z-10">
-      <div class="max-w-4xl mx-auto text-center">
-        <h1 class="text-4xl md:text-5xl font-bold mb-6 text-white drop-shadow-lg">{data.title}</h1>
-        <p class="text-xl text-gray-100 mb-4 drop-shadow">24/7 On-Site Truck Repair Across {data.title.split('—')[1]} Metro Area</p>
-        {data.title.includes('Phoenix') && (
-          <p class="text-lg text-gray-100 mb-8 italic drop-shadow">Serving I-10, I-17, Loop 202 — Fast roadside repair when Phoenix heat or traffic takes you down.</p>
-        )}
-        <div class="flex flex-col sm:flex-row gap-4 justify-center">
-          <a href={COMPANY_CONFIG.phoneLink} class="bg-diesel-orange hover:bg-diesel-hover text-white font-bold py-4 px-8 rounded-full text-lg transition-colors shadow-lg">
-            Call Now: {COMPANY_CONFIG.phoneNumber}
-          </a>
-          <a href="#contact" class="bg-transparent border-2 border-white hover:bg-white hover:text-gray-900 text-white font-bold py-4 px-8 rounded-full text-lg transition-colors">
-            Request Service
-          </a>
-        </div>
+  <!-- Hero Image Preload for LCP -->
+  {heroPreload && (
+    <link
+      rel="preload"
+      as="image"
+      href={heroPreload.href}
+      type={heroPreload.type}
+      imagesrcset={heroPreload.imagesrcset}
+      imagesizes={heroPreload.imagesizes}
+    />
+  )}
+
+  <!-- Enhanced Schema Markup -->
+  <script type="application/ld+json" set:html={JSON.stringify(schemaData)}></script>
+
+  <!-- Mobile Sticky CTA -->
+  <div class="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-gradient-to-r from-diesel-orange to-orange-600 p-4 shadow-lg">
+    <div class="flex items-center justify-between gap-3">
+      <div class="flex-1 min-w-0">
+        <div class="text-white text-sm font-medium truncate">Need Emergency Service?</div>
+        <div class="text-orange-100 text-xs">30-90 min ETA • Available Now</div>
+      </div>
+      <a href={COMPANY_CONFIG.phoneLink} class="flex-shrink-0 bg-white text-diesel-orange font-bold py-3 px-6 rounded-full text-sm hover:bg-gray-100 transition-colors min-h-[44px] flex items-center gap-2">
+        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M6.62,10.79C8.06,13.62 10.38,15.94 13.21,17.38L15.41,15.18C15.69,14.9 16.08,14.82 16.43,14.93C17.55,15.3 18.75,15.5 20,15.5A1,1 0 0,1 21,16.5V20A1,1 0 0,1 20,21A17,17 0 0,1 3,4A1,1 0 0,1 4,3H7.5A1,1 0 0,1 8.5,4C8.5,5.25 8.7,6.45 9.07,7.57C9.18,7.92 9.1,8.31 8.82,8.59L6.62,10.79Z"/>
+        </svg>
+        Call Now
+      </a>
+    </div>
+  </div>
+
+  <!-- Hero Section with HeroCity Component -->
+  <HeroCity
+    city={cityName}
+    headline={enhancedMetaTitle}
+    subline={isPhoenix
+      ? "Serving I-10, I-17, Loop 202 — fast roadside repair when Phoenix heat or traffic hits"
+      : `24/7 On-Site Truck Repair Across ${cityName} Metro Area`
+    }
+    breadcrumbs={data.breadcrumbs}
+  />
+
+  <!-- Jump Links Navigation -->
+  <div class="bg-orange-50 border-b border-orange-100">
+    <div class="container mx-auto px-4 py-3">
+      <div class="flex flex-wrap gap-2 justify-center text-sm">
+        <a href="#emergency-roadside" class="text-diesel-orange hover:text-diesel-hover px-3 py-1 rounded-full hover:bg-orange-100 transition-colors">Emergency Service</a>
+        {isPhoenix && <a href="#phoenix-heat" class="text-diesel-orange hover:text-diesel-hover px-3 py-1 rounded-full hover:bg-orange-100 transition-colors">Heat Issues</a>}
+        <a href="#highway-coverage" class="text-diesel-orange hover:text-diesel-hover px-3 py-1 rounded-full hover:bg-orange-100 transition-colors">Highway Coverage</a>
+        <a href="#truck-stops" class="text-diesel-orange hover:text-diesel-hover px-3 py-1 rounded-full hover:bg-orange-100 transition-colors">Truck Stops</a>
+        <a href="#fleet-programs" class="text-diesel-orange hover:text-diesel-hover px-3 py-1 rounded-full hover:bg-orange-100 transition-colors">Fleet Programs</a>
+        <a href="#services-detail" class="text-diesel-orange hover:text-diesel-hover px-3 py-1 rounded-full hover:bg-orange-100 transition-colors">All Services</a>
       </div>
     </div>
-  </section>
+  </div>
 
   <!-- Main Content -->
   <div class="bg-white">
@@ -58,339 +220,667 @@ const links = buildInternalLinks(data);
 
         <!-- Main Content Column -->
         <div class="lg:col-span-2">
-          <!-- Screen reader only H2 for accessibility -->
-          {data.title.includes('Phoenix') && (
-            <h2 class="sr-only">Phoenix On-Site Diesel Truck Repair</h2>
-          )}
-          <!-- Enhanced Content with Visual Breaks -->
-          <div class="bg-gradient-to-br from-blue-50 to-gray-50 rounded-xl p-6 mb-8 border border-blue-100">
-            <div class="flex items-center gap-3 mb-4">
-              <div class="w-10 h-10 bg-diesel-orange rounded-full flex items-center justify-center">
-                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-                </svg>
-              </div>
-              <h2 class="text-2xl font-bold text-gray-900 m-0">Quick Response Phoenix Diesel Service</h2>
-            </div>
-            <div class="grid md:grid-cols-2 gap-6 text-gray-700">
-              <div>
-                <h3 class="font-semibold text-lg text-gray-900 mb-3">🛣️ Highway Coverage</h3>
-                <ul class="space-y-2 text-sm">
-                  <li>• <strong>I-10</strong> Downtown → West Valley (Exits 141–149)</li>
-                  <li>• <strong>I-17</strong> Stack → Deer Valley (Exits 200–206)</li>
-                  <li>• <strong>Loop 202</strong> Sky Harbor cargo terminals</li>
-                  <li>• <strong>ETA:</strong> 60–90 minutes metro-wide</li>
-                </ul>
-              </div>
-              <div>
-                <h3 class="font-semibold text-lg text-gray-900 mb-3">🌡️ Phoenix Heat Specialists</h3>
-                <ul class="space-y-2 text-sm">
-                  <li>• Fan clutch failures in 115°F+ weather</li>
-                  <li>• Radiator and charge-air cooler service</li>
-                  <li>• Battery replacement (heat damage)</li>
-                  <li>• Coolant flush for I-17 grade climbs</li>
-                </ul>
-              </div>
-            </div>
-          </div>
 
-          <!-- Structured Content Blocks -->
-          <div class="space-y-8">
-            <!-- Phoenix Diesel Service Overview -->
-            <div class="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-              <div class="flex items-start gap-4">
-                <div class="w-12 h-12 bg-diesel-orange rounded-xl flex items-center justify-center flex-shrink-0">
-                  <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                  </svg>
-                </div>
-                <div class="flex-1">
-                  <h3 class="text-xl font-bold text-gray-900 mb-3">Mobile Diesel Mechanic — Phoenix, AZ</h3>
-                  <div class="prose prose-gray max-w-none">
-                    <p class="text-gray-700 leading-relaxed">When your truck won't start or breaks down on Phoenix highways, our <strong>mobile diesel mechanic Phoenix</strong> team responds fast. We cover I‑10 through downtown into the West Valley (Exits 141–149), I‑17 up to Deer Valley (Exits 200–206), and the 202 loops that funnel freight to Sky Harbor cargo terminals and Tolleson distribution centers.</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Phoenix Heat Challenges -->
-            <div class="bg-gradient-to-br from-orange-50 to-red-50 rounded-xl border border-orange-200 p-6">
-              <div class="flex items-center gap-3 mb-4">
-                <div class="w-10 h-10 bg-gradient-to-br from-orange-500 to-red-500 rounded-lg flex items-center justify-center">
-                  <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
-                  </svg>
-                </div>
-                <h3 class="text-lg font-bold text-gray-900">Phoenix Summer Heat Amplifies Every Weakness</h3>
-              </div>
-              <div class="grid md:grid-cols-2 gap-4 text-sm">
-                <div class="space-y-2">
-                  <div class="flex items-center gap-2">
-                    <div class="w-2 h-2 bg-red-500 rounded-full"></div>
-                    <span>Fan clutches fail in 115°F+ temperatures</span>
-                  </div>
-                  <div class="flex items-center gap-2">
-                    <div class="w-2 h-2 bg-red-500 rounded-full"></div>
-                    <span>Radiators plug from desert dust</span>
-                  </div>
-                </div>
-                <div class="space-y-2">
-                  <div class="flex items-center gap-2">
-                    <div class="w-2 h-2 bg-red-500 rounded-full"></div>
-                    <span>Charge-air coolers underperform</span>
-                  </div>
-                  <div class="flex items-center gap-2">
-                    <div class="w-2 h-2 bg-red-500 rounded-full"></div>
-                    <span>Batteries die from extreme heat</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Emergency Response -->
-            <div class="bg-gradient-to-br from-orange-500 to-red-500 rounded-xl p-6 text-white">
-              <div class="flex items-center gap-3 mb-4">
-                <div class="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center">
-                  <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <!-- 1. Emergency Roadside Assistance Section -->
+          <section id="emergency-roadside" class="mb-12">
+            <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl border border-blue-200 p-8">
+              <div class="flex items-center gap-4 mb-6">
+                <div class="w-14 h-14 bg-gradient-to-br from-red-600 to-red-700 rounded-xl flex items-center justify-center">
+                  <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
                   </svg>
                 </div>
-                <h3 class="text-xl font-bold">Emergency Roadside Assistance Phoenix</h3>
-              </div>
-              <p class="text-orange-100 mb-4">When your truck breaks down on Phoenix highways, we dispatch emergency roadside assistance techs to I‑10, I‑17, and Loop corridors. Our mobile units carry diagnostic equipment for engine diagnostics, electrical and battery testing, and AC cooling system repairs.</p>
-              <div class="flex flex-wrap gap-3">
-                <a href="/services/emergency-roadside-assistance" class="bg-white text-orange-600 px-4 py-2 rounded-lg font-semibold hover:bg-orange-50 transition-colors">Emergency Roadside</a>
-                <a href="/services/engine-diagnostics" class="bg-white/20 text-white px-4 py-2 rounded-lg font-semibold hover:bg-white/30 transition-colors">Engine Diagnostics</a>
-                <a href="/services/ac-cooling" class="bg-white/20 text-white px-4 py-2 rounded-lg font-semibold hover:bg-white/30 transition-colors">AC Cooling</a>
-              </div>
-            </div>
-
-            <!-- Phoenix Specific Service Highlights -->
-            <div class="grid md:grid-cols-2 gap-6 mb-8">
-              <!-- Mobile Diesel Repair -->
-              <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl border border-blue-200 p-6 hover:shadow-lg transition-all duration-300 group">
-                <div class="flex items-center gap-3 mb-4">
-                  <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center group-hover:bg-blue-200 transition-colors overflow-hidden">
-                    <img src="/images/Mobile Diesel Repair.webp" alt="Mobile Diesel Repair" class="w-8 h-8 object-contain" />
-                  </div>
-                  <h4 class="text-lg font-bold text-gray-900">On-Site Repairs</h4>
-                </div>
-                <p class="text-gray-700 text-sm mb-3">Full repair bay brought to your truck. No towing needed for most issues.</p>
-                <a href="/services/mobile-diesel-repair" class="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 font-semibold text-sm">
-                  Learn More
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                  </svg>
-                </a>
-              </div>
-
-              <!-- Hydraulic & Suspension -->
-              <div class="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl border border-green-200 p-6 hover:shadow-lg transition-all duration-300 group">
-                <div class="flex items-center gap-3 mb-4">
-                  <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center group-hover:bg-green-200 transition-colors overflow-hidden">
-                    <img src="/images/Hydraulic_and_Suspension-removebg-preview.webp" alt="Hydraulic & Suspension" class="w-8 h-8 object-contain" />
-                  </div>
-                  <h4 class="text-lg font-bold text-gray-900">Hydraulic Systems</h4>
-                </div>
-                <p class="text-gray-700 text-sm mb-3">Hydraulic hoses, cylinders, and suspension repairs for heavy-duty vehicles.</p>
-                <a href="/services/hydraulic-suspension" class="inline-flex items-center gap-2 text-green-600 hover:text-green-700 font-semibold text-sm">
-                  View Service
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                  </svg>
-                </a>
-              </div>
-
-              <!-- Fuel Systems -->
-              <div class="bg-gradient-to-br from-yellow-50 to-amber-50 rounded-xl border border-yellow-200 p-6 hover:shadow-lg transition-all duration-300 group">
-                <div class="flex items-center gap-3 mb-4">
-                  <div class="w-12 h-12 bg-yellow-100 rounded-xl flex items-center justify-center group-hover:bg-yellow-200 transition-colors overflow-hidden">
-                    <img src="/images/Fuel_Systems-removebg-preview.webp" alt="Fuel Systems" class="w-8 h-8 object-contain" />
-                  </div>
-                  <h4 class="text-lg font-bold text-gray-900">Fuel System Repair</h4>
-                </div>
-                <p class="text-gray-700 text-sm mb-3">Fuel pumps, injectors, and system cleaning. Getting fuel to your engine efficiently.</p>
-                <a href="/services/fuel-systems" class="inline-flex items-center gap-2 text-yellow-600 hover:text-yellow-700 font-semibold text-sm">
-                  Get Quote
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                  </svg>
-                </a>
-              </div>
-
-              <!-- Preventive Maintenance -->
-              <div class="bg-gradient-to-br from-purple-50 to-violet-50 rounded-xl border border-purple-200 p-6 hover:shadow-lg transition-all duration-300 group">
-                <div class="flex items-center gap-3 mb-4">
-                  <div class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center group-hover:bg-purple-200 transition-colors overflow-hidden">
-                    <img src="/images/Preventitive Maintenance.webp" alt="Preventive Maintenance" class="w-8 h-8 object-contain" />
-                  </div>
-                  <h4 class="text-lg font-bold text-gray-900">Preventive Service</h4>
-                </div>
-                <p class="text-gray-700 text-sm mb-3">Scheduled maintenance to prevent breakdowns. Oil changes, filter replacement, inspections.</p>
-                <a href="/services/preventive-maintenance" class="inline-flex items-center gap-2 text-purple-600 hover:text-purple-700 font-semibold text-sm">
-                  Schedule Service
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                  </svg>
-                </a>
-              </div>
-            </div>
-
-            <!-- Service Coverage Areas -->
-            <div class="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-              <h3 class="text-xl font-bold text-gray-900 mb-4">Service Coverage Areas</h3>
-              <p class="text-gray-700 mb-4">We provide mobile diesel repair throughout Phoenix and nearby communities:</p>
-              <div class="grid md:grid-cols-2 gap-3">
-                <a href="/locations/glendale" class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg hover:bg-blue-50 transition-colors group">
-                  <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center group-hover:bg-blue-200">
-                    <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
-                    </svg>
-                  </div>
-                  <div>
-                    <div class="font-semibold text-gray-900 group-hover:text-blue-700">Glendale</div>
-                    <div class="text-sm text-gray-500">Loop 101 & Peoria Avenue</div>
-                  </div>
-                </a>
-                <a href="/locations/tempe" class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg hover:bg-blue-50 transition-colors group">
-                  <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center group-hover:bg-blue-200">
-                    <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
-                    </svg>
-                  </div>
-                  <div>
-                    <div class="font-semibold text-gray-900 group-hover:text-blue-700">Tempe</div>
-                    <div class="text-sm text-gray-500">ASU area & I‑10 coverage</div>
-                  </div>
-                </a>
-                <a href="/locations/scottsdale" class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg hover:bg-blue-50 transition-colors group">
-                  <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center group-hover:bg-blue-200">
-                    <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
-                    </svg>
-                  </div>
-                  <div>
-                    <div class="font-semibold text-gray-900 group-hover:text-blue-700">Scottsdale</div>
-                    <div class="text-sm text-gray-500">Loop 101 & Frank Lloyd Wright</div>
-                  </div>
-                </a>
-                <a href="/locations/mesa" class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg hover:bg-blue-50 transition-colors group">
-                  <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center group-hover:bg-blue-200">
-                    <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
-                    </svg>
-                  </div>
-                  <div>
-                    <div class="font-semibold text-gray-900 group-hover:text-blue-700">Mesa</div>
-                    <div class="text-sm text-gray-500">US‑60 & Loop 202 corridors</div>
-                  </div>
-                </a>
-                <a href="/locations/chandler" class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg hover:bg-blue-50 transition-colors group">
-                  <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center group-hover:bg-blue-200">
-                    <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
-                    </svg>
-                  </div>
-                  <div>
-                    <div class="font-semibold text-gray-900 group-hover:text-blue-700">Chandler</div>
-                    <div class="text-sm text-gray-500">Loop 101 & I‑10 accessibility</div>
-                  </div>
-                </a>
-              </div>
-            </div>
-          </div>
-
-          <!-- Enhanced Service Corridors -->
-          {data.corridors && data.corridors.length > 0 && (
-            <section class="mt-12">
-              <h3 class="text-2xl font-bold text-gray-900 mb-6">Service Corridors We Cover</h3>
-              <CorridorsGrid corridors={data.corridors} exitClusters={data.exitClusters} />
-            </section>
-          )}
-
-          <!-- Enhanced Landmarks -->
-          {data.landmarks && data.landmarks.length > 0 && (
-            <section class="mt-12">
-              <h3 class="text-2xl font-bold text-gray-900 mb-6">Key Truck Service Locations</h3>
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {data.landmarks.map((landmark) => (
-                  <div class="group bg-white border border-gray-200 rounded-xl p-4 hover:shadow-lg transition-all duration-300 hover:border-diesel-orange">
-                    <div class="flex items-center gap-3">
-                      <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center group-hover:from-diesel-orange group-hover:to-orange-600 transition-all duration-300">
-                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                        </svg>
-                      </div>
-                      <div class="flex-1">
-                        <div class="font-semibold text-gray-900 group-hover:text-diesel-orange transition-colors">{landmark}</div>
-                        <div class="text-sm text-gray-500 mt-1">Service Available</div>
-                      </div>
-                      <div class="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full font-medium">
-                        On-Site
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </section>
-          )}
-
-          <!-- Trust Signals Section -->
-          <section class="mt-12">
-            <div class="bg-gradient-to-r from-diesel-orange to-orange-600 rounded-xl p-6 text-white">
-              <h3 class="text-xl font-bold mb-4 text-center">Why Phoenix Trusts AZ Mobile Diesel</h3>
-              <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div class="text-center">
-                  <div class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-3">
-                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
-                  </div>
-                  <div class="font-semibold text-lg">Licensed & Insured</div>
-                  <div class="text-orange-100 text-sm">Fully certified diesel technicians</div>
-                </div>
-                <div class="text-center">
-                  <div class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-3">
-                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
-                  </div>
-                  <div class="font-semibold text-lg">24/7 Available</div>
-                  <div class="text-orange-100 text-sm">Round-the-clock emergency service</div>
-                </div>
-                <div class="text-center">
-                  <div class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-3">
-                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-                    </svg>
-                  </div>
-                  <div class="font-semibold text-lg">15+ Years Experience</div>
-                  <div class="text-orange-100 text-sm">Fleet manager expertise</div>
+                <div>
+                  <h2 class="text-2xl font-bold text-gray-900">Emergency Roadside Assistance — {cityName}</h2>
+                  <p class="text-diesel-orange font-medium">24/7 Immediate Response Available</p>
                 </div>
               </div>
-              <div class="text-center mt-6">
-                <div class="inline-flex items-center gap-2 bg-white/20 rounded-full px-4 py-2">
-                  <div class="w-2 h-2 bg-green-300 rounded-full animate-pulse"></div>
-                  <span class="text-sm font-medium">60-90 Min Response • Phoenix Metro</span>
+
+              <div class="prose prose-gray max-w-none">
+                <p class="text-gray-700 text-lg leading-relaxed mb-4">When your commercial vehicle breaks down on {isPhoenix ? 'I-10, I-17, or the Loop system' : 'major corridors'}, every minute costs money. Our <strong>emergency roadside assistance {cityName}</strong> team specializes in getting you back on the road fast with mobile diagnostic equipment and repair capabilities.</p>
+
+                <div class="grid md:grid-cols-2 gap-6 mt-6">
+                  <div class="bg-white rounded-lg p-4 border border-orange-200">
+                    <h3 class="font-bold text-diesel-orange mb-3 flex items-center gap-2">
+                      <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                      </svg>
+                      Typical Response Time
+                    </h3>
+                    <ul class="text-sm text-gray-600 space-y-1">
+                      {isPhoenix ? (
+                        <>
+                          <li>• Downtown/Stack area: 30-45 minutes</li>
+                          <li>• I-10 West Valley: 30-60 minutes</li>
+                          <li>• I-17 North Phoenix: 45-75 minutes</li>
+                          <li>• Loop system: 60-90 minutes</li>
+                        </>
+                      ) : (
+                        <>
+                          <li>• City center: 30-45 minutes</li>
+                          <li>• Major corridors: 45-60 minutes</li>
+                          <li>• Metro area: 60-90 minutes</li>
+                          <li>• Extended coverage: 75-90 minutes</li>
+                        </>
+                      )}
+                    </ul>
+                  </div>
+
+                  <div class="bg-white rounded-lg p-4 border border-orange-200">
+                    <h3 class="font-bold text-diesel-orange mb-3 flex items-center gap-2">
+                      <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M17.71,1.29a1,1,0,0,0-1.42,0L14.05,3.53a1,1,0,0,0,0,1.42l1.42,1.42a1,1,0,0,0,1.42,0l2.24-2.24a1,1,0,0,0,0-1.42ZM12,6a6,6,0,1,0,6,6A6,6,0,0,0,12,6Zm0,10a4,4,0,1,1,4-4A4,4,0,0,1,12,16Z"/>
+                      </svg>
+                      Emergency Services
+                    </h3>
+                    <ul class="text-sm text-gray-600 space-y-1">
+                      <li>• Jump starts & battery replacement</li>
+                      <li>• Roadside engine diagnostics</li>
+                      <li>• Emergency fluid top-offs</li>
+                      <li>• Safety inspections & clearances</li>
+                    </ul>
+                  </div>
+                </div>
+
+                <div class="mt-6 flex justify-center">
+                  <div class="inline-block p-3 bg-diesel-orange text-white rounded-lg">
+                    <p class="text-center text-base font-semibold whitespace-nowrap">
+                      🚨 Breakdown Emergency? Call <a href={COMPANY_CONFIG.phoneLink} class="underline font-bold">{COMPANY_CONFIG.phoneNumber}</a>
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
           </section>
 
-          <!-- Enhanced FAQs -->
-          {data.faqs && data.faqs.length > 0 && (
-            <section class="mt-12">
-              <h3 class="text-2xl font-bold text-gray-900 mb-6">Frequently Asked Questions</h3>
-              <FAQAccordion faqs={data.faqs} />
+          <!-- 2. Phoenix Heat Challenges Section -->
+          {isPhoenix && (
+            <section id="phoenix-heat" class="mb-12">
+              <div class="bg-gradient-to-br from-gray-50 to-slate-50 rounded-xl border border-gray-200 p-8">
+                <div class="flex items-center gap-4 mb-6">
+                  <div class="w-14 h-14 bg-gradient-to-br from-diesel-dark to-gray-600 rounded-xl flex items-center justify-center">
+                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                    </svg>
+                  </div>
+                  <div>
+                    <h2 class="text-2xl font-bold text-gray-900">Common Breakdowns in Phoenix Heat</h2>
+                    <p class="text-orange-600 font-medium">Summer Temperatures Amplify Every Weakness</p>
+                  </div>
+                </div>
+
+                <div class="prose prose-gray max-w-none">
+                  <p class="text-gray-700 text-lg leading-relaxed mb-6">Phoenix summer heat creates the most demanding operating conditions for diesel engines in North America. When temperatures soar to 115°F+, cooling systems struggle, batteries fail, and components that work fine elsewhere reach their breaking point.</p>
+
+                  <div class="grid md:grid-cols-3 gap-4">
+                    <div class="bg-white rounded-lg p-5 border border-orange-200">
+                      <div class="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center mb-3">
+                        🌡️
+                      </div>
+                      <h3 class="font-bold text-gray-900 mb-2">Cooling System Failures</h3>
+                      <ul class="text-sm text-gray-600 space-y-1">
+                        <li>• Fan clutch failures in extreme heat</li>
+                        <li>• Radiator plugging from desert dust</li>
+                        <li>• Charge-air cooler efficiency loss</li>
+                        <li>• Thermostat malfunctions</li>
+                      </ul>
+                    </div>
+
+                    <div class="bg-white rounded-lg p-5 border border-orange-200">
+                      <div class="w-10 h-10 bg-yellow-100 rounded-lg flex items-center justify-center mb-3">
+                        🔋
+                      </div>
+                      <h3 class="font-bold text-gray-900 mb-2">Electrical & Battery Issues</h3>
+                      <ul class="text-sm text-gray-600 space-y-1">
+                        <li>• Heat-damaged battery cells</li>
+                        <li>• Alternator bearing failures</li>
+                        <li>• Starter motor overheating</li>
+                        <li>• Wiring insulation breakdown</li>
+                      </ul>
+                    </div>
+
+                    <div class="bg-white rounded-lg p-5 border border-orange-200">
+                      <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center mb-3">
+                        ❄️
+                      </div>
+                      <h3 class="font-bold text-gray-900 mb-2">A/C System Stress</h3>
+                      <ul class="text-sm text-gray-600 space-y-1">
+                        <li>• Compressor clutch failures</li>
+                        <li>• Condenser coil blockage</li>
+                        <li>• Refrigerant pressure issues</li>
+                        <li>• Belt-driven component strain</li>
+                      </ul>
+                    </div>
+                  </div>
+
+                  <div class="mt-6 p-5 bg-gradient-to-r from-orange-100 to-yellow-100 rounded-lg border border-orange-200">
+                    <h3 class="font-bold text-orange-800 mb-3">🔥 Phoenix Heat Specialist Services</h3>
+                    <div class="grid md:grid-cols-2 gap-3 text-sm">
+                      <div class="flex items-center gap-2">
+                        <div class="w-2 h-2 bg-orange-500 rounded-full"></div>
+                        <span>I-17 grade climb cooling emergencies</span>
+                      </div>
+                      <div class="flex items-center gap-2">
+                        <div class="w-2 h-2 bg-orange-500 rounded-full"></div>
+                        <span>Desert dust radiator cleaning</span>
+                      </div>
+                      <div class="flex items-center gap-2">
+                        <div class="w-2 h-2 bg-orange-500 rounded-full"></div>
+                        <span>Heat-rated battery replacement</span>
+                      </div>
+                      <div class="flex items-center gap-2">
+                        <div class="w-2 h-2 bg-orange-500 rounded-full"></div>
+                        <span>A/C system summer optimization</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </section>
           )}
+
+          <!-- 3. Highway & Corridor Coverage Section -->
+          <section id="highway-coverage" class="mb-12">
+            <div class="bg-gradient-to-br from-gray-50 to-slate-50 rounded-xl border border-gray-200 p-8">
+              <div class="flex items-center gap-4 mb-6">
+                <div class="w-14 h-14 bg-gradient-to-br from-diesel-dark to-gray-600 rounded-xl flex items-center justify-center">
+                  <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-1.447-.894L15 4m0 13V4m-6 3l6-3"></path>
+                  </svg>
+                </div>
+                <div>
+                  <h2 class="text-2xl font-bold text-gray-900">Highway & Corridor Coverage</h2>
+                  <p class="text-diesel-orange font-medium">{isPhoenix ? 'I-10, I-17, Loop 101/202/303' : 'Major Interstate Coverage'}</p>
+                </div>
+              </div>
+
+              <div class="prose prose-gray max-w-none">
+                <p class="text-gray-700 text-lg leading-relaxed mb-6">Our strategic positioning provides rapid response across the most critical freight corridors in the {cityName} area. We maintain mobile units positioned for optimal coverage during peak traffic periods.</p>
+
+                {isPhoenix && (
+                  <div class="grid md:grid-cols-2 gap-6">
+                    <div class="bg-white rounded-lg p-6 border border-orange-200">
+                      <h3 class="font-bold text-diesel-orange mb-4 flex items-center gap-2">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M12,2L13.09,8.26L22,9L14.74,12L22,15L13.09,15.74L12,22L10.91,15.74L2,15L9.26,12L2,9L10.91,8.26L12,2Z"/>
+                        </svg>
+                        Major Interstate Routes
+                      </h3>
+                      <div class="space-y-3">
+                        <div class="flex items-start gap-3">
+                          <div class="bg-orange-100 rounded px-2 py-1 text-xs font-bold text-diesel-orange mt-1">I-10</div>
+                          <div>
+                            <div class="font-medium text-gray-900">East-West Corridor</div>
+                            <div class="text-sm text-gray-600">Downtown ↔ West Valley (Exits 141-149)</div>
+                            <div class="text-xs text-diesel-orange">Stack interchange, 7th Ave/St</div>
+                          </div>
+                        </div>
+                        <div class="flex items-start gap-3">
+                          <div class="bg-orange-100 rounded px-2 py-1 text-xs font-bold text-diesel-orange mt-1">I-17</div>
+                          <div>
+                            <div class="font-medium text-gray-900">North-South Corridor</div>
+                            <div class="text-sm text-gray-600">Stack ↔ Deer Valley (Exits 200-206)</div>
+                            <div class="text-xs text-diesel-orange">Notorious grade climbs</div>
+                          </div>
+                        </div>
+                        <div class="flex items-start gap-3">
+                          <div class="bg-orange-100 rounded px-2 py-1 text-xs font-bold text-diesel-orange mt-1">202</div>
+                          <div>
+                            <div class="font-medium text-gray-900">Loop System</div>
+                            <div class="text-sm text-gray-600">Santan/Red Mountain (Exits 1-18)</div>
+                            <div class="text-xs text-diesel-orange">Sky Harbor cargo access</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="bg-white rounded-lg p-6 border border-orange-200">
+                      <h3 class="font-bold text-diesel-orange mb-4 flex items-center gap-2">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                        </svg>
+                        Strategic Response Zones
+                      </h3>
+                      <div class="space-y-3 text-sm">
+                        <div class="flex items-center justify-between p-2 bg-orange-50 rounded border">
+                          <span class="font-medium">Downtown/Stack Area</span>
+                          <span class="text-diesel-orange font-bold">30-45 min</span>
+                        </div>
+                        <div class="flex items-center justify-between p-2 bg-orange-100 rounded border">
+                          <span class="font-medium">Sky Harbor Cargo</span>
+                          <span class="text-diesel-hover font-bold">30-45 min</span>
+                        </div>
+                        <div class="flex items-center justify-between p-2 bg-orange-100 rounded border">
+                          <span class="font-medium">West Valley Corridor</span>
+                          <span class="text-diesel-hover font-bold">30-60 min</span>
+                        </div>
+                        <div class="flex items-center justify-between p-2 bg-orange-200 rounded border">
+                          <span class="font-medium">Loop System Remote</span>
+                          <span class="text-diesel-dark font-bold">75-90 min</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                <div class="mt-6 text-center">
+                  <a href="/services/emergency-roadside-assistance" class="inline-flex items-center gap-2 bg-diesel-orange text-white px-6 py-3 rounded-lg font-semibold hover:bg-diesel-hover transition-colors">
+                    View Emergency Service Details
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                    </svg>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- 4. Truck Stops & Strategic Locations -->
+          <section id="truck-stops" class="mb-12">
+            <div class="bg-gradient-to-br from-gray-50 to-slate-50 rounded-xl border border-gray-200 p-8">
+              <div class="flex items-center gap-4 mb-6">
+                <div class="w-14 h-14 bg-gradient-to-br from-diesel-dark to-gray-600 rounded-xl flex items-center justify-center">
+                  <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                  </svg>
+                </div>
+                <div>
+                  <h2 class="text-2xl font-bold text-gray-900">Major Truck Stops & Service Locations</h2>
+                  <p class="text-diesel-orange font-medium">{isPhoenix ? 'I-10/I-17 Strategic Positioning' : 'Key Service Access Points'}</p>
+                </div>
+              </div>
+
+              <div class="prose prose-gray max-w-none">
+                <p class="text-gray-700 text-lg leading-relaxed mb-6">We strategically position our mobile units near major truck stops and freight hubs across {cityName} for fastest possible response to breakdowns. Whether you're at a truck stop, distribution center, or stuck on the shoulder, we know exactly how to reach you.</p>
+
+                {isPhoenix && (
+                  <div class="grid md:grid-cols-2 gap-6">
+                    <div class="bg-white rounded-lg p-6 border border-orange-200">
+                      <h3 class="font-bold text-diesel-orange mb-4 flex items-center gap-2">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M18,8c0-3.31-2.69-6-6-6S6,4.69 6,8c0,4.5 6,11 6,11S18,12.5 18,8z M10,8c0-1.1 0.9-2 2-2s2,0.9 2,2-0.9,2-2,2S10,9.1 10,8z"/>
+                        </svg>
+                        I-10 West Valley Corridor
+                      </h3>
+                      <div class="space-y-3 text-sm">
+                        <div class="flex items-center justify-between p-3 bg-orange-50 rounded border">
+                          <div>
+                            <div class="font-medium">TA Travel Center Goodyear</div>
+                            <div class="text-gray-600">Exit 147 - I-10 & Dysart Road</div>
+                          </div>
+                          <span class="text-diesel-orange font-bold text-xs">30-45 min</span>
+                        </div>
+                        <div class="flex items-center justify-between p-3 bg-orange-50 rounded border">
+                          <div>
+                            <div class="font-medium">Love's Travel Stop Tolleson</div>
+                            <div class="text-gray-600">Exit 144 - I-10 & 91st Avenue</div>
+                          </div>
+                          <span class="text-diesel-orange font-bold text-xs">30-45 min</span>
+                        </div>
+                        <div class="flex items-center justify-between p-3 bg-orange-50 rounded border">
+                          <div>
+                            <div class="font-medium">Pilot Travel Center Avondale</div>
+                            <div class="text-gray-600">Exit 141 - I-10 & Avondale Blvd</div>
+                          </div>
+                          <span class="text-diesel-orange font-bold text-xs">30-45 min</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="bg-white rounded-lg p-6 border border-orange-200">
+                      <h3 class="font-bold text-diesel-orange mb-4 flex items-center gap-2">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M12,11.5A2.5,2.5 0 0,1 9.5,9A2.5,2.5 0 0,1 12,6.5A2.5,2.5 0 0,1 14.5,9A2.5,2.5 0 0,1 12,11.5M12,2A7,7 0 0,0 5,9C5,14.25 12,22 12,22C12,22 19,14.25 19,9A7,7 0 0,0 12,2Z"/>
+                        </svg>
+                        Distribution & Freight Hubs
+                      </h3>
+                      <div class="space-y-3 text-sm">
+                        <div class="flex items-center justify-between p-3 bg-orange-50 rounded border">
+                          <div>
+                            <div class="font-medium">Sky Harbor Cargo Area</div>
+                            <div class="text-gray-600">26th Street Staging Areas</div>
+                          </div>
+                          <span class="text-diesel-orange font-bold text-xs">30-45 min</span>
+                        </div>
+                        <div class="flex items-center justify-between p-3 bg-orange-100 rounded border">
+                          <div>
+                            <div class="font-medium">Amazon Fulfillment Centers</div>
+                            <div class="text-gray-600">Goodyear, Tolleson, Phoenix</div>
+                          </div>
+                          <span class="text-diesel-hover font-bold text-xs">30-45 min</span>
+                        </div>
+                        <div class="flex items-center justify-between p-3 bg-orange-100 rounded border">
+                          <div>
+                            <div class="font-medium">Walmart Distribution</div>
+                            <div class="text-gray-600">Buckeye, Casa Grande Access</div>
+                          </div>
+                          <span class="text-diesel-hover font-bold text-xs">45-60 min</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                <div class="mt-6 p-5 bg-gradient-to-r from-orange-100 to-amber-100 rounded-lg border border-orange-200">
+                  <h3 class="font-bold text-diesel-dark mb-3">🚛 Truck Stop Emergency Services</h3>
+                  <div class="grid md:grid-cols-3 gap-3 text-sm">
+                    <div class="flex items-center gap-2">
+                      <div class="w-2 h-2 bg-diesel-orange rounded-full"></div>
+                      <span>Jump starts & battery service</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                      <div class="w-2 h-2 bg-diesel-orange rounded-full"></div>
+                      <span>DOT safety inspections</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                      <div class="w-2 h-2 bg-diesel-orange rounded-full"></div>
+                      <span>Emergency fluid top-offs</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                      <div class="w-2 h-2 bg-diesel-orange rounded-full"></div>
+                      <span>Mobile diagnostics on-site</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                      <div class="w-2 h-2 bg-diesel-orange rounded-full"></div>
+                      <span>Parts delivery coordination</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                      <div class="w-2 h-2 bg-diesel-orange rounded-full"></div>
+                      <span>Towing & recovery assistance</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- 5. Fleet Programs & Commercial Services -->
+          <section id="fleet-programs" class="mb-12">
+            <div class="bg-gradient-to-br from-gray-50 to-slate-50 rounded-xl border border-gray-200 p-8">
+              <div class="flex items-center gap-4 mb-6">
+                <div class="w-14 h-14 bg-gradient-to-br from-diesel-dark to-gray-600 rounded-xl flex items-center justify-center">
+                  <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                  </svg>
+                </div>
+                <div>
+                  <h2 class="text-2xl font-bold text-gray-900">Fleet Management & Commercial Programs</h2>
+                  <p class="text-diesel-orange font-medium">Proactive Maintenance for {cityName} Businesses</p>
+                </div>
+              </div>
+
+              <div class="prose prose-gray max-w-none">
+                <p class="text-gray-700 text-lg leading-relaxed mb-6">Our fleet management programs help {cityName} businesses minimize downtime through scheduled maintenance, priority emergency response, and volume pricing. From owner-operators with 2-3 trucks to large fleets with 50+ vehicles, we scale our service to your needs.</p>
+
+                <div class="grid md:grid-cols-2 gap-6">
+                  <div class="bg-white rounded-lg p-6 border border-gray-200">
+                    <h3 class="font-bold text-diesel-orange mb-4 flex items-center gap-2">
+                      <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M9,11H15L13,9L15,7H9V9L11,11M7,18H17V16H7V18M17,14H7V12H17V14M7,10H17V8H7V10M12,4A10,10 0 0,0 2,14A10,10 0 0,0 12,24A10,10 0 0,0 22,14A10,10 0 0,0 12,4Z"/>
+                      </svg>
+                      Preventive Maintenance Programs
+                    </h3>
+                    <ul class="space-y-2 text-sm text-gray-600">
+                      <li class="flex items-start gap-2">
+                        <div class="w-1.5 h-1.5 bg-diesel-orange rounded-full mt-2"></div>
+                        <span><strong>Scheduled PM Services:</strong> B-service, C-service intervals based on mileage/hours</span>
+                      </li>
+                      <li class="flex items-start gap-2">
+                        <div class="w-1.5 h-1.5 bg-diesel-orange rounded-full mt-2"></div>
+                        <span><strong>Fleet Health Monitoring:</strong> Regular inspections, early problem detection</span>
+                      </li>
+                      <li class="flex items-start gap-2">
+                        <div class="w-1.5 h-1.5 bg-diesel-orange rounded-full mt-2"></div>
+                        <span><strong>Priority Emergency Response:</strong> Fleet customers get fastest dispatch times</span>
+                      </li>
+                      <li class="flex items-start gap-2">
+                        <div class="w-1.5 h-1.5 bg-diesel-orange rounded-full mt-2"></div>
+                        <span><strong>Volume Pricing:</strong> Discounted rates for multiple vehicles</span>
+                      </li>
+                    </ul>
+                  </div>
+
+                  <div class="bg-white rounded-lg p-6 border border-gray-200">
+                    <h3 class="font-bold text-diesel-orange mb-4 flex items-center gap-2">
+                      <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M17,12C17,7.55 12.92,5.02 12,5C11.08,5.02 7,7.55 7,12C7,16.84 11,21.5 12,22C13,21.5 17,16.84 17,12M12,1L21,5V11C21,16.55 17.16,21.74 12,23C6.84,21.74 3,16.55 3,11V5L12,1Z"/>
+                      </svg>
+                      Fleet Service Specializations
+                    </h3>
+                    <div class="space-y-3">
+                      <div class="p-3 bg-gray-50 rounded border">
+                        <div class="font-medium text-diesel-dark text-sm">Owner-Operators (2-10 trucks)</div>
+                        <div class="text-xs text-gray-600">Personal attention, flexible scheduling, cost-effective maintenance</div>
+                      </div>
+                      <div class="p-3 bg-gray-50 rounded border">
+                        <div class="font-medium text-diesel-dark text-sm">Regional Fleets (10-50 trucks)</div>
+                        <div class="text-xs text-gray-600">Standardized protocols, bulk parts pricing, dispatch coordination</div>
+                      </div>
+                      <div class="p-3 bg-gray-50 rounded border">
+                        <div class="font-medium text-diesel-dark text-sm">Large Fleets (50+ trucks)</div>
+                        <div class="text-xs text-gray-600">Dedicated account management, custom service agreements, analytics</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="mt-6 p-5 bg-gradient-to-r from-gray-100 to-slate-100 rounded-lg border border-gray-200">
+                  <h3 class="font-bold text-diesel-dark mb-3">💼 Commercial Fleet Benefits</h3>
+                  <div class="grid md:grid-cols-2 gap-3 text-sm">
+                    <div class="flex items-center gap-2">
+                      <div class="w-2 h-2 bg-diesel-orange rounded-full"></div>
+                      <span>Priority dispatch for fleet customers</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                      <div class="w-2 h-2 bg-diesel-orange rounded-full"></div>
+                      <span>Fleet maintenance programs available</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                      <div class="w-2 h-2 bg-diesel-orange rounded-full"></div>
+                      <span>Scheduled maintenance coordination</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                      <div class="w-2 h-2 bg-diesel-orange rounded-full"></div>
+                      <span>Fleet maintenance reports & analytics</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                      <div class="w-2 h-2 bg-diesel-orange rounded-full"></div>
+                      <span>24/7 dedicated fleet hotline</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                      <div class="w-2 h-2 bg-diesel-orange rounded-full"></div>
+                      <span>Extended payment terms available</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="mt-6 text-center">
+                  <a href={`tel:${COMPANY_CONFIG.phoneE164}`} class="inline-flex items-center gap-2 bg-diesel-orange text-white px-6 py-3 rounded-lg font-semibold hover:bg-diesel-hover transition-colors min-h-[44px]">
+                    Request Fleet Program Quote
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                    </svg>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- 6. Complete Service Details -->
+          <section id="services-detail" class="mb-12">
+            <div class="bg-gradient-to-br from-gray-50 to-slate-50 rounded-xl border border-gray-200 p-8">
+              <div class="flex items-center gap-4 mb-6">
+                <div class="w-14 h-14 bg-gradient-to-br from-gray-600 to-slate-600 rounded-xl flex items-center justify-center">
+                  <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                  </svg>
+                </div>
+                <div>
+                  <h2 class="text-2xl font-bold text-gray-900">Complete Mobile Diesel Service Capabilities</h2>
+                  <p class="text-gray-600 font-medium">Full-Service Mobile Workshop — {cityName}</p>
+                </div>
+              </div>
+
+              <div class="prose prose-gray max-w-none">
+                <p class="text-gray-700 text-lg leading-relaxed mb-6">Our mobile service units carry professional diagnostic equipment and parts inventory to handle the majority of diesel repair needs on-site. From emergency roadside fixes to comprehensive maintenance services, we bring the full repair shop to your location.</p>
+
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+
+                  <!-- Emergency & Diagnostics -->
+                  <div class="bg-white rounded-lg p-5 border border-gray-200">
+                    <div class="w-16 h-16 bg-red-100 rounded-lg flex items-center justify-center mb-3 overflow-hidden">
+                      <img src="/images/Emergency Roadside Assistance.webp" alt="Emergency Service" class="w-14 h-14 object-contain" loading="lazy" width="56" height="56" />
+                    </div>
+                    <h3 class="font-bold text-gray-900 mb-2">Emergency & Diagnostics</h3>
+                    <ul class="text-sm text-gray-600 space-y-1">
+                      <li>• 24/7 emergency roadside response</li>
+                      <li>• Computer diagnostic scanning</li>
+                      <li>• ECM programming & updates</li>
+                      <li>• Check engine light diagnosis</li>
+                    </ul>
+                    <a href="/services/emergency-roadside-assistance" class="inline-flex items-center gap-1 text-xs text-red-600 hover:text-red-700 font-medium mt-2">
+                      Learn more <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                    </a>
+                  </div>
+
+                  <!-- Engine & Cooling -->
+                  <div class="bg-white rounded-lg p-5 border border-gray-200">
+                    <div class="w-16 h-16 bg-blue-100 rounded-lg flex items-center justify-center mb-3 overflow-hidden">
+                      <img src="/images/Engine Diagnostics.webp" alt="Engine Service" class="w-14 h-14 object-contain" loading="lazy" width="56" height="56" />
+                    </div>
+                    <h3 class="font-bold text-gray-900 mb-2">Engine & Cooling</h3>
+                    <ul class="text-sm text-gray-600 space-y-1">
+                      <li>• Overheating diagnosis & repair</li>
+                      <li>• Radiator & cooling system service</li>
+                      <li>• Thermostat replacement</li>
+                      <li>• Fan clutch & belt service</li>
+                    </ul>
+                    <a href="/services/engine-diagnostics" class="inline-flex items-center gap-1 text-xs text-blue-600 hover:text-blue-700 font-medium mt-2">
+                      Learn more <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                    </a>
+                  </div>
+
+                  <!-- Brakes & Air Systems -->
+                  <div class="bg-white rounded-lg p-5 border border-gray-200">
+                    <div class="w-16 h-16 bg-orange-100 rounded-lg flex items-center justify-center mb-3 overflow-hidden">
+                      <img src="/images/Brakes-removebg-preview.webp" alt="Brakes & Air" class="w-14 h-14 object-contain" loading="lazy" width="56" height="56" />
+                    </div>
+                    <h3 class="font-bold text-gray-900 mb-2">Brakes & Air Systems</h3>
+                    <ul class="text-sm text-gray-600 space-y-1">
+                      <li>• Air brake system diagnosis</li>
+                      <li>• Brake chamber replacement</li>
+                      <li>• Air leak detection & repair</li>
+                      <li>• DOT brake inspections</li>
+                    </ul>
+                    <a href="/services/brakes-air-systems" class="inline-flex items-center gap-1 text-xs text-orange-600 hover:text-orange-700 font-medium mt-2">
+                      Learn more <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                    </a>
+                  </div>
+
+                  <!-- A/C & Climate -->
+                  <div class="bg-white rounded-lg p-5 border border-gray-200">
+                    <div class="w-16 h-16 bg-cyan-100 rounded-lg flex items-center justify-center mb-3 overflow-hidden">
+                      <img src="/images/AC Cooling icon.webp" alt="A/C Service" class="w-14 h-14 object-contain" loading="lazy" width="56" height="56" />
+                    </div>
+                    <h3 class="font-bold text-gray-900 mb-2">A/C & Climate Systems</h3>
+                    <ul class="text-sm text-gray-600 space-y-1">
+                      <li>• A/C system diagnosis & repair</li>
+                      <li>• Refrigerant recovery & recharge</li>
+                      <li>• Compressor replacement</li>
+                      <li>• Climate control troubleshooting</li>
+                    </ul>
+                    <a href="/services/ac-cooling" class="inline-flex items-center gap-1 text-xs text-cyan-600 hover:text-cyan-700 font-medium mt-2">
+                      Learn more <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                    </a>
+                  </div>
+
+                  <!-- Electrical & Batteries -->
+                  <div class="bg-white rounded-lg p-5 border border-gray-200">
+                    <div class="w-16 h-16 bg-yellow-100 rounded-lg flex items-center justify-center mb-3 overflow-hidden">
+                      <img src="/images/Electrical and Batteries.webp" alt="Electrical Service" class="w-14 h-14 object-contain" loading="lazy" width="56" height="56" />
+                    </div>
+                    <h3 class="font-bold text-gray-900 mb-2">Electrical & Batteries</h3>
+                    <ul class="text-sm text-gray-600 space-y-1">
+                      <li>• Battery testing & replacement</li>
+                      <li>• Alternator & starter service</li>
+                      <li>• Electrical system diagnosis</li>
+                      <li>• Jump starts & emergency power</li>
+                    </ul>
+                    <a href="/services/electrical-batteries" class="inline-flex items-center gap-1 text-xs text-yellow-600 hover:text-yellow-700 font-medium mt-2">
+                      Learn more <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                    </a>
+                  </div>
+
+                  <!-- Hydraulics & Hoses -->
+                  <div class="bg-white rounded-lg p-5 border border-gray-200">
+                    <div class="w-16 h-16 bg-purple-100 rounded-lg flex items-center justify-center mb-3 overflow-hidden">
+                      <img src="/images/Hydraulic_and_Suspension-removebg-preview.webp" alt="Hydraulics Service" class="w-14 h-14 object-contain" loading="lazy" width="56" height="56" />
+                    </div>
+                    <h3 class="font-bold text-gray-900 mb-2">Hydraulics & Hoses</h3>
+                    <ul class="text-sm text-gray-600 space-y-1">
+                      <li>• Hydraulic system diagnosis</li>
+                      <li>• Hose repair & replacement</li>
+                      <li>• Cylinder rebuilding</li>
+                      <li>• Fluid leak detection</li>
+                    </ul>
+                    <a href="/services/hydraulics-hoses-cylinders" class="inline-flex items-center gap-1 text-xs text-purple-600 hover:text-purple-700 font-medium mt-2">
+                      Learn more <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                    </a>
+                  </div>
+
+                </div>
+
+                <div class="mt-6 p-5 bg-gradient-to-r from-gray-100 to-slate-100 rounded-lg border border-gray-200">
+                  <h3 class="font-bold text-gray-800 mb-3">🔧 What We Bring to Your Location</h3>
+                  <div class="grid md:grid-cols-2 gap-3 text-sm">
+                    <div class="flex items-center gap-2">
+                      <div class="w-2 h-2 bg-gray-500 rounded-full"></div>
+                      <span>Professional diagnostic scanners</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                      <div class="w-2 h-2 bg-gray-500 rounded-full"></div>
+                      <span>Complete tool inventory</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                      <div class="w-2 h-2 bg-gray-500 rounded-full"></div>
+                      <span>Common parts & fluids</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                      <div class="w-2 h-2 bg-gray-500 rounded-full"></div>
+                      <span>Mobile hydraulic crimping</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                      <div class="w-2 h-2 bg-gray-500 rounded-full"></div>
+                      <span>Heavy-duty jump packs</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                      <div class="w-2 h-2 bg-gray-500 rounded-full"></div>
+                      <span>Safety equipment & lighting</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="mt-6 text-center">
+                  <a href="/services" class="inline-flex items-center gap-2 bg-diesel-orange text-white px-6 py-3 rounded-lg font-semibold hover:bg-diesel-hover transition-colors min-h-[44px]">
+                    View All 10 Services
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                    </svg>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Mobile Sticky CTA Space -->
+          <div class="lg:hidden h-20"></div>
+
         </div>
 
-        <!-- Sidebar -->
+        <!-- Enhanced Sidebar -->
         <div class="lg:col-span-1">
-          <!-- Enhanced Emergency CTA -->
-          <div class="bg-gradient-to-br from-orange-500 to-red-500 text-white p-6 rounded-xl mb-8 shadow-lg">
+          <!-- Emergency CTA -->
+          <div id="request-service" class="bg-gradient-to-br from-orange-500 to-red-500 text-white p-6 rounded-xl mb-8 shadow-lg">
             <div class="flex items-center gap-3 mb-4">
               <div class="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center animate-pulse">
                 <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -401,24 +891,24 @@ const links = buildInternalLinks(data);
             </div>
             <p class="mb-4 text-orange-100">Broken down? Need immediate help?</p>
             <div class="space-y-3">
-              <a href={COMPANY_CONFIG.phoneLink} class="block w-full bg-white text-orange-600 font-bold py-3 px-4 rounded-lg text-center hover:bg-orange-50 transition-colors">
+              <a href={COMPANY_CONFIG.phoneLink} class="block w-full bg-white text-orange-600 font-bold py-3 px-4 rounded-lg text-center hover:bg-orange-50 transition-colors min-h-[44px] flex items-center justify-center">
                 🚨 Call {COMPANY_CONFIG.phoneNumber}
               </a>
               <div class="text-center">
                 <div class="inline-flex items-center gap-2 bg-white/20 rounded-full px-3 py-1 text-sm">
                   <div class="w-2 h-2 bg-green-300 rounded-full animate-pulse"></div>
-                  <span>Available Now • 60-90 Min ETA</span>
+                  <span>Available Now • 30-90 Min ETA</span>
                 </div>
               </div>
             </div>
           </div>
 
           <!-- Nearby Cities -->
-          {data.nearbyCities && data.nearbyCities.length > 0 && (
+          {cityDefaults.nearbyCities && cityDefaults.nearbyCities.length > 0 && (
             <div class="bg-gray-50 p-6 rounded-lg mb-8">
               <h3 class="text-xl font-semibold text-gray-900 mb-4">Nearby Service Areas</h3>
               <ul class="space-y-2">
-                {data.nearbyCities.map((city) => (
+                {cityDefaults.nearbyCities.map((city) => (
                   <li>
                     <a href={`/locations/${city.toLowerCase().replace(/\s+/g, '-')}`} class="text-diesel-orange hover:text-diesel-hover font-medium">
                       {city} Mobile Diesel Service
@@ -434,9 +924,9 @@ const links = buildInternalLinks(data);
             <h3 class="text-xl font-semibold text-gray-900 mb-6">Our Services</h3>
             <div class="space-y-4">
               <!-- Emergency Roadside -->
-              <a href="/services/emergency-roadside" class="flex items-center gap-3 p-3 rounded-lg hover:bg-red-50 transition-colors group">
-                <div class="w-8 h-8 bg-red-100 rounded-lg flex items-center justify-center group-hover:bg-red-200 overflow-hidden">
-                  <img src="/images/Emergency Roadside Assistance.webp" alt="Emergency Roadside" class="w-6 h-6 object-contain" />
+              <a href="/services/emergency-roadside-assistance" class="flex items-center gap-3 p-3 rounded-lg hover:bg-red-50 transition-colors group">
+                <div class="w-14 h-14 bg-red-100 rounded-lg flex items-center justify-center group-hover:bg-red-200 overflow-hidden">
+                  <img src="/images/Emergency Roadside Assistance.webp" alt="Emergency Roadside" class="w-11 h-11 object-contain" loading="lazy" width="44" height="44" />
                 </div>
                 <div class="flex-1">
                   <div class="font-semibold text-gray-900 group-hover:text-red-700">Emergency Roadside</div>
@@ -447,8 +937,8 @@ const links = buildInternalLinks(data);
 
               <!-- Engine Diagnostics -->
               <a href="/services/engine-diagnostics" class="flex items-center gap-3 p-3 rounded-lg hover:bg-blue-50 transition-colors group">
-                <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center group-hover:bg-blue-200 overflow-hidden">
-                  <img src="/images/Engine Diagnostics.webp" alt="Engine Diagnostics" class="w-6 h-6 object-contain" />
+                <div class="w-14 h-14 bg-blue-100 rounded-lg flex items-center justify-center group-hover:bg-blue-200 overflow-hidden">
+                  <img src="/images/Engine Diagnostics.webp" alt="Engine Diagnostics" class="w-11 h-11 object-contain" loading="lazy" width="44" height="44" />
                 </div>
                 <div class="flex-1">
                   <div class="font-semibold text-gray-900 group-hover:text-blue-700">Engine Diagnostics</div>
@@ -456,60 +946,16 @@ const links = buildInternalLinks(data);
                 </div>
               </a>
 
-              <!-- Brake Repairs -->
-              <a href="/services/brake-repairs" class="flex items-center gap-3 p-3 rounded-lg hover:bg-orange-50 transition-colors group">
-                <div class="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center group-hover:bg-orange-200 overflow-hidden">
-                  <img src="/images/Brakes-removebg-preview.webp" alt="Brake Repairs" class="w-6 h-6 object-contain" />
-                </div>
-                <div class="flex-1">
-                  <div class="font-semibold text-gray-900 group-hover:text-orange-700">Brake Repairs</div>
-                  <div class="text-xs text-gray-500">Air Systems</div>
-                </div>
-              </a>
-
-              <!-- Electrical & Battery -->
-              <a href="/services/electrical-battery" class="flex items-center gap-3 p-3 rounded-lg hover:bg-yellow-50 transition-colors group">
-                <div class="w-8 h-8 bg-yellow-100 rounded-lg flex items-center justify-center group-hover:bg-yellow-200 overflow-hidden">
-                  <img src="/images/Electrical and Batteries.webp" alt="Electrical & Battery" class="w-6 h-6 object-contain" />
-                </div>
-                <div class="flex-1">
-                  <div class="font-semibold text-gray-900 group-hover:text-yellow-700">Electrical & Battery</div>
-                  <div class="text-xs text-gray-500">Alternators & Starters</div>
-                </div>
-              </a>
-
               <!-- A/C & Cooling -->
               <a href="/services/ac-cooling" class="flex items-center gap-3 p-3 rounded-lg hover:bg-cyan-50 transition-colors group">
-                <div class="w-8 h-8 bg-cyan-100 rounded-lg flex items-center justify-center group-hover:bg-cyan-200 overflow-hidden">
-                  <img src="/images/AC Cooling icon.webp" alt="A/C & Cooling" class="w-6 h-6 object-contain" />
+                <div class="w-14 h-14 bg-cyan-100 rounded-lg flex items-center justify-center group-hover:bg-cyan-200 overflow-hidden">
+                  <img src="/images/AC Cooling icon.webp" alt="A/C & Cooling" class="w-11 h-11 object-contain" loading="lazy" width="44" height="44" />
                 </div>
                 <div class="flex-1">
                   <div class="font-semibold text-gray-900 group-hover:text-cyan-700">A/C & Cooling</div>
                   <div class="text-xs text-gray-500">Phoenix Heat Experts</div>
                 </div>
-                <span class="text-xs bg-orange-100 text-orange-700 px-2 py-1 rounded-full font-medium">SUMMER</span>
-              </a>
-
-              <!-- Suspension & Steering -->
-              <a href="/services/suspension-steering" class="flex items-center gap-3 p-3 rounded-lg hover:bg-green-50 transition-colors group">
-                <div class="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center group-hover:bg-green-200 overflow-hidden">
-                  <img src="/images/Suspension and Steering.webp" alt="Suspension & Steering" class="w-6 h-6 object-contain" />
-                </div>
-                <div class="flex-1">
-                  <div class="font-semibold text-gray-900 group-hover:text-green-700">Suspension & Steering</div>
-                  <div class="text-xs text-gray-500">Steering Components</div>
-                </div>
-              </a>
-
-              <!-- Wheel Seals -->
-              <a href="/services/wheel-seals" class="flex items-center gap-3 p-3 rounded-lg hover:bg-indigo-50 transition-colors group">
-                <div class="w-8 h-8 bg-indigo-100 rounded-lg flex items-center justify-center group-hover:bg-indigo-200 overflow-hidden">
-                  <img src="/images/Wheel_Seals-removebg-preview.webp" alt="Wheel Seals" class="w-6 h-6 object-contain" />
-                </div>
-                <div class="flex-1">
-                  <div class="font-semibold text-gray-900 group-hover:text-indigo-700">Wheel Seals</div>
-                  <div class="text-xs text-gray-500">Seal Replacement</div>
-                </div>
+                {isPhoenix && <span class="text-xs bg-orange-100 text-orange-700 px-2 py-1 rounded-full font-medium">SUMMER</span>}
               </a>
 
               <!-- View All Services -->
@@ -526,16 +972,28 @@ const links = buildInternalLinks(data);
     </div>
   </div>
 
+  <!-- Enhanced FAQs -->
+  {cityDefaults.faqs && cityDefaults.faqs.length > 0 && (
+    <section class="bg-gray-50 py-16">
+      <div class="container mx-auto px-4">
+        <h2 class="text-3xl font-bold text-gray-900 text-center mb-12">Frequently Asked Questions</h2>
+        <div class="max-w-4xl mx-auto">
+          <FAQAccordion faqs={cityDefaults.faqs} />
+        </div>
+      </div>
+    </section>
+  )}
+
   <!-- Bottom CTA Section -->
   <section class="bg-diesel-orange text-white py-16">
     <div class="container mx-auto px-4 text-center">
       <h2 class="text-3xl font-bold mb-4">Ready to Get Back on the Road?</h2>
       <p class="text-xl mb-8 text-orange-100">Professional mobile diesel repair service you can trust</p>
       <div class="flex flex-col sm:flex-row gap-4 justify-center">
-        <a href={COMPANY_CONFIG.phoneLink} class="bg-white text-diesel-orange font-bold py-4 px-8 rounded-full text-lg hover:bg-gray-100 transition-colors">
+        <a href={COMPANY_CONFIG.phoneLink} class="bg-white text-diesel-orange font-bold py-4 px-8 rounded-full text-lg hover:bg-gray-100 transition-colors min-h-[44px] flex items-center justify-center">
           Call {COMPANY_CONFIG.phoneNumber}
         </a>
-        <a href="#contact" class="bg-transparent border-2 border-white hover:bg-white hover:text-diesel-orange text-white font-bold py-4 px-8 rounded-full text-lg transition-colors">
+        <a href="#request-service" class="bg-transparent border-2 border-white hover:bg-white hover:text-diesel-orange text-white font-bold py-4 px-8 rounded-full text-lg transition-colors min-h-[44px] flex items-center justify-center">
           Request Service Quote
         </a>
       </div>
