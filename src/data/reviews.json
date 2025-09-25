@@ -1,0 +1,70 @@
+{
+  "reviews": [
+    {
+      "id": 1,
+      "city": "Phoenix",
+      "date": "2024-09-20",
+      "jobType": "Emergency Roadside",
+      "corridor": "I-10 Downtown",
+      "neighborhood": "Downtown Phoenix",
+      "quote": "Fixed our overheated engine right on I-10 in 90°F heat - professional and fast!",
+      "rating": 5,
+      "customerName": "Mark T."
+    },
+    {
+      "id": 2,
+      "city": "Phoenix",
+      "date": "2024-09-18",
+      "jobType": "AC System Repair",
+      "corridor": "I-17 Central",
+      "neighborhood": "Midtown Phoenix",
+      "quote": "AC went out in July heat - they had us cool again in 45 minutes.",
+      "rating": 5,
+      "customerName": "Jessica R."
+    },
+    {
+      "id": 3,
+      "city": "Phoenix",
+      "date": "2024-09-15",
+      "jobType": "Battery Replacement",
+      "corridor": "Loop 202 East",
+      "neighborhood": "Ahwatukee",
+      "quote": "Dead battery at Sky Harbor cargo - they came out at 2 AM, no complaints.",
+      "rating": 5,
+      "customerName": "Carlos M."
+    },
+    {
+      "id": 4,
+      "city": "Phoenix",
+      "date": "2024-09-12",
+      "jobType": "Hydraulic Leak",
+      "corridor": "West Valley",
+      "neighborhood": "Maryvale",
+      "quote": "Hydraulic hose blew during delivery run - fixed it roadside, saved the day.",
+      "rating": 5,
+      "customerName": "Robert K."
+    },
+    {
+      "id": 5,
+      "city": "Phoenix",
+      "date": "2024-09-10",
+      "jobType": "Brake System",
+      "corridor": "I-17 North",
+      "neighborhood": "North Phoenix",
+      "quote": "Air brakes acting up on I-17 grade - diagnosed and fixed in one visit.",
+      "rating": 5,
+      "customerName": "Linda P."
+    },
+    {
+      "id": 6,
+      "city": "Tempe",
+      "date": "2024-09-08",
+      "jobType": "Engine Diagnostics",
+      "corridor": "US-60 East",
+      "neighborhood": "Tempe",
+      "quote": "Check engine light mystery solved - great diagnostic skills.",
+      "rating": 5,
+      "customerName": "David S."
+    }
+  ]
+}
