@@ -20,15 +20,25 @@ export function getHeroPreload(city: string): HeroPreloadData | null {
   }
 
   // Generate responsive srcset for preload
-  const basePath = heroData.path.replace(/\.[^.]+$/, ''); // Remove extension
-  const baseDir = basePath.split('/').slice(0, -1).join('/'); // Get directory
-
-  // Prefer AVIF for preload if supported, fallback to WebP
   let imagesrcset: string;
   let type: string;
 
-  if (heroData.format === 'avif' || heroData.path.includes('/hero-optimized/')) {
-    // Use AVIF sources
+  if (heroData.path.includes('/cities/')) {
+    // Use our new cities hero images
+    const baseName = heroData.path.replace('/images/cities/', '').replace('-hero-1600.avif', '');
+    const baseDir = '/images/cities';
+
+    imagesrcset = [
+      `${baseDir}/${baseName}-hero-2000.avif 2000w`,
+      `${baseDir}/${baseName}-hero-1600.avif 1600w`,
+      `${baseDir}/${baseName}-hero-1200.avif 1200w`
+    ].join(', ');
+    type = 'image/avif';
+  } else if (heroData.format === 'avif' || heroData.path.includes('/hero-optimized/')) {
+    // Use legacy AVIF sources
+    const basePath = heroData.path.replace(/\.[^.]+$/, ''); // Remove extension
+    const baseDir = basePath.split('/').slice(0, -1).join('/'); // Get directory
+
     imagesrcset = [
       `${baseDir}/hero-2000w.avif 2000w`,
       `${baseDir}/hero-1600w.avif 1600w`,
@@ -36,19 +46,9 @@ export function getHeroPreload(city: string): HeroPreloadData | null {
     ].join(', ');
     type = 'image/avif';
   } else {
-    // Use WebP sources or original
-    if (heroData.path.includes('/hero-optimized/')) {
-      imagesrcset = [
-        `${baseDir}/hero-2000w.webp 2000w`,
-        `${baseDir}/hero-1600w.webp 1600w`,
-        `${baseDir}/hero-1200w.webp 1200w`
-      ].join(', ');
-      type = 'image/webp';
-    } else {
-      // Single image fallback
-      imagesrcset = heroData.path;
-      type = `image/${heroData.format}`;
-    }
+    // Single image fallback
+    imagesrcset = heroData.path;
+    type = `image/${heroData.format}`;
   }
 
   return {

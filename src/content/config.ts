@@ -29,6 +29,20 @@ const baseFields = {
   links: z.object({ internal: z.array(z.string()).optional() }).optional(),
   draft: z.boolean().default(false),
   updated: z.string().optional(), // ISO date for lastmod
+  // New fields for city data
+  city: z.string().optional(),
+  slug: z.string().optional(),
+  state: z.string().optional(),
+  centroid: z.object({
+    lat: z.number(),
+    lng: z.number()
+  }).optional(),
+  exitClusters: z.array(z.string()).optional(),
+  neighborhoods: z.array(z.string()).optional(),
+  zips: z.array(z.string()).optional(),
+  landmarks: z.array(z.string()).optional(),
+  heatNotes: z.array(z.string()).optional(),
+  etaMinutes: z.number().optional(),
 };
 
 const services = defineCollection({

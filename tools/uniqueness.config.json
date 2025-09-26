@@ -1,0 +1,12 @@
+{
+  "maxSimilarity": 0.80,
+  "minUniqueTokenRatio": 0.35,
+  "minCounts": {
+    "corridors": 2,
+    "exitClusters": 2,
+    "neighborhoods": 6,
+    "zips": 6,
+    "landmarks": 3,
+    "heatNotes": 2
+  }
+}

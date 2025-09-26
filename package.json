@@ -17,7 +17,9 @@
     "optimize:svgs": "node scripts/optimize-svgs.mjs",
     "lighthouse": "lhci autorun",
     "performance-check": "npm run build && npm run lighthouse",
-    "verify:home": "node scripts/verify-homepage-seo.mjs"
+    "verify:home": "node scripts/verify-homepage-seo.mjs",
+    "verify:hero": "node tools/hero-guard.mjs",
+    "verify:locations": "npm run verify:hero && node tools/uniqueness-check.mjs"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.4",
@@ -51,6 +53,7 @@
     "@modelcontextprotocol/server-sequential-thinking": "^2025.7.1",
     "jsdom": "^27.0.0",
     "sharp": "^0.34.4",
+    "sharp-cli": "^5.2.0",
     "terser": "^5.44.0"
   }
 }

@@ -11,8 +11,8 @@
   },
   "tempe": {
     "city": "tempe",
-    "path": "/images/hero-optimized/hero-1600w.avif",
-    "fileName": "hero-1600w.avif",
+    "path": "/images/cities/tempe-hero-1600.avif",
+    "fileName": "tempe-hero-1600.avif",
     "format": "avif",
     "width": 1600,
     "height": 900,
@@ -21,8 +21,8 @@
   },
   "mesa": {
     "city": "mesa",
-    "path": "/images/hero-optimized/hero-1600w.avif",
-    "fileName": "hero-1600w.avif",
+    "path": "/images/cities/mesa-hero-1600.avif",
+    "fileName": "mesa-hero-1600.avif",
     "format": "avif",
     "width": 1600,
     "height": 900,
@@ -31,8 +31,8 @@
   },
   "chandler": {
     "city": "chandler",
-    "path": "/images/hero-optimized/hero-1600w.avif",
-    "fileName": "hero-1600w.avif",
+    "path": "/images/cities/chandler-hero-1600.avif",
+    "fileName": "chandler-hero-1600.avif",
     "format": "avif",
     "width": 1600,
     "height": 900,
@@ -41,8 +41,18 @@
   },
   "glendale": {
     "city": "glendale",
-    "path": "/images/hero-optimized/hero-1600w.avif",
-    "fileName": "hero-1600w.avif",
+    "path": "/images/cities/glendale-hero-1600.avif",
+    "fileName": "glendale-hero-1600.avif",
+    "format": "avif",
+    "width": 1600,
+    "height": 900,
+    "bytes": 140000,
+    "aspect": 1.78
+  },
+  "scottsdale": {
+    "city": "scottsdale",
+    "path": "/images/cities/scottsdale-hero-1600.avif",
+    "fileName": "scottsdale-hero-1600.avif",
     "format": "avif",
     "width": 1600,
     "height": 900,
@@ -51,12 +61,12 @@
   },
   "default-hero": {
     "city": "default-hero",
-    "path": "/images/hero-optimized/hero-2000w.avif",
-    "fileName": "hero-2000w.avif",
+    "path": "/images/cities/generic-hero-1600.avif",
+    "fileName": "generic-hero-1600.avif",
     "format": "avif",
-    "width": 2000,
-    "height": 1125,
-    "bytes": 180000,
+    "width": 1600,
+    "height": 900,
+    "bytes": 140000,
     "aspect": 1.78
   }
 }
