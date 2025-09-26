@@ -25,7 +25,12 @@
     "verify:images": "node tools/image-budget.mjs",
     "verify:hygiene": "node tools/site-hygiene.mjs",
     "verify:phone": "node tools/phone-usage-check.mjs",
-    "verify:locations": "npm run verify:hero && node tools/uniqueness-check.mjs && npm run verify:sab && npm run verify:meta && npm run verify:links && npm run verify:images && npm run verify:hygiene && npm run verify:phone"
+    "verify:body-sab": "node tools/body-sab-leak.mjs",
+    "verify:broken-links": "node tools/broken-links.mjs",
+    "verify:title-h1": "node tools/title-h1-check.mjs",
+    "verify:wordcount": "node tools/wordcount-check.mjs",
+    "verify:budget": "node tools/build-budget.mjs",
+    "verify:locations": "npm run verify:hero && node tools/uniqueness-check.mjs && npm run verify:sab && npm run verify:meta && npm run verify:links && npm run verify:images && npm run verify:hygiene && npm run verify:phone && npm run verify:body-sab && npm run verify:broken-links && npm run verify:title-h1 && npm run verify:wordcount && npm run verify:budget"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.4",
