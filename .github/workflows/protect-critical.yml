@@ -1,0 +1,73 @@
+name: Protect Critical Files
+
+on:
+  pull_request:
+    paths:
+      - 'src/pages/index.astro'
+      - 'src/pages/locations/phoenix.astro'
+      - 'src/content/locations/phoenix.mdx'
+
+jobs:
+  protect-critical:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Check for protection override
+        id: check-override
+        run: |
+          # Check if PR title or description contains the override keyword
+          OVERRIDE_FOUND=false
+
+          # Check PR title for override
+          if echo "${{ github.event.pull_request.title }}" | grep -q "ALLOW_PROTECTED"; then
+            OVERRIDE_FOUND=true
+          fi
+
+          # Check PR body for override
+          if echo "${{ github.event.pull_request.body }}" | grep -q "ALLOW_PROTECTED"; then
+            OVERRIDE_FOUND=true
+          fi
+
+          echo "override_found=$OVERRIDE_FOUND" >> $GITHUB_OUTPUT
+
+      - name: Run protection validator
+        env:
+          ALLOW_PROTECTED: ${{ steps.check-override.outputs.override_found == 'true' && '1' || '0' }}
+        run: node tools/protect-critical.mjs
+
+      - name: Add protection comment
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `## 🚨 Critical File Protection Violation
+
+This pull request modifies protected files that are critical to business operations:
+
+- \`src/pages/index.astro\` (Homepage)
+- \`src/pages/locations/phoenix.astro\` (Phoenix location page)
+- \`src/content/locations/phoenix.mdx\` (Phoenix content)
+
+### To override this protection:
+
+1. Add \`ALLOW_PROTECTED\` to your PR title or description
+2. Ensure changes are intentional and approved
+3. The protection validator will automatically re-run
+
+⚠️ **Only use override for intentional, approved changes to critical business pages!**`
+            })

@@ -1,21 +1,46 @@
 ---
 const { faqs = [] } = Astro.props;
 ---
-<section aria-labelledby="faqs" class="my-8">
-  <h2 id="faqs" class="sr-only">Frequently Asked Questions</h2>
-  <div class="divide-y divide-slate-200 rounded-2xl border border-slate-200 bg-white">
-    {faqs.map((f, idx) => (
-      <details class="group p-4 open:bg-slate-50 open:rounded-2xl transition-colors">
-        <summary class="cursor-pointer list-none">
-          <div class="flex items-start justify-between">
-            <h3 class="text-base md:text-lg font-semibold text-slate-900 pr-4">{f.question}</h3>
-            <span class="ml-2 text-slate-500 group-open:rotate-180 transition-transform" aria-hidden="true">▾</span>
-          </div>
-        </summary>
-        <div class="mt-2 text-slate-700 leading-relaxed">
-          {f.answer}
-        </div>
-      </details>
-    ))}
-  </div>
-</section>
+
+<div class="max-w-4xl mx-auto space-y-4">
+  {faqs.map((faq, index) => (
+    <div class="bg-white rounded-lg border border-gray-200 shadow-sm">
+      <button
+        class="w-full px-6 py-4 text-left flex justify-between items-center hover:bg-gray-50 transition-colors"
+        onclick={`toggleFAQ(${index})`}
+      >
+        <span class="font-semibold text-gray-900">{faq.question}</span>
+        <svg
+          class="w-5 h-5 text-[#ed6623] transform transition-transform duration-200"
+          id={`faq-icon-${index}`}
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+        </svg>
+      </button>
+      <div
+        class="px-6 pb-4 text-gray-700 hidden"
+        id={`faq-content-${index}`}
+      >
+        <p>{faq.answer}</p>
+      </div>
+    </div>
+  ))}
+</div>
+
+<script is:inline>
+  function toggleFAQ(index) {
+    const content = document.getElementById(`faq-content-${index}`);
+    const icon = document.getElementById(`faq-icon-${index}`);
+
+    if (content.classList.contains('hidden')) {
+      content.classList.remove('hidden');
+      icon.style.transform = 'rotate(180deg)';
+    } else {
+      content.classList.add('hidden');
+      icon.style.transform = 'rotate(0deg)';
+    }
+  }
+</script>

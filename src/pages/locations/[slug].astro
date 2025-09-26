@@ -1,15 +1,6 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import { getCollection, getEntry } from "astro:content";
-import { buildInternalLinks } from "@/utils/linkBuilder";
-import { COMPANY_CONFIG } from "@/config/constants";
-import { BUSINESS_NAME, PHONE_E164, PHONE_DISPLAY, COMPANY_LAT, COMPANY_LNG, SERVICE_RADIUS_METERS } from "@/config/company";
-import HeroCity from "@/components/HeroCity.astro";
-import CorridorsGrid from "@/components/locations/CorridorsGrid.astro";
-import FAQAccordion from "@/components/ui/FAQAccordion.astro";
-import DispatchCard from "@/components/DispatchCard.astro";
-import { getHeroPreload } from "@/utils/heroPreload";
-import citiesData from "@/data/cities.json";
 
 export async function getStaticPaths() {
   const entries = await getCollection("locations");
@@ -17,362 +8,319 @@ export async function getStaticPaths() {
 }
 
 const { slug } = Astro.params;
+
+// Protect Phoenix from shared template edits - redirect to dedicated route
+if (Astro.params.slug === 'phoenix') {
+  throw Astro.redirect('/locations/phoenix');
+}
+
 const entry = await getEntry("locations", slug);
 if (!entry) throw new Error(`Location not found: ${slug}`);
 
 // Render MDX content
 const rendered = await entry.render();
 const { Content } = rendered;
-const data = entry.data;
+const frontmatter = entry.data;
 
-// Merge with cities.json data
-const cityJsonData = citiesData.find(city => city.slug === slug);
-const mergedData = cityJsonData ? { ...cityJsonData, ...data } : data;
+// Safe helpers that never crash
+const safe = (v, d='') => (v === undefined || v === null ? d : v);
+const toSlug = (s) => typeof s === 'string' ? s.trim().toLowerCase().replace(/\s+/g,'-') : '';
+const safeArray = (arr) => Array.isArray(arr) ? arr : [];
 
-const links = buildInternalLinks(mergedData);
+// Business constants (E.164 format for schema, display format for UI)
+const COMPANY_NAME = "AZ Mobile Diesel Repair";
+const PHONE_DISPLAY = "(480) 307-7434";
+const PHONE_E164 = "+14803077434";
+const BUSINESS_URL = "https://azmobiledieselrepair.com";
 
-// Enhanced local SEO data
-const cityName = (mergedData.title.split('—')[1]?.trim() || mergedData.city || 'Phoenix').split(',')[0].trim();
-const isPhoenix = cityName?.toLowerCase()?.includes('phoenix') || false;
+// Safe data merge: frontmatter + fallbacks
+const cityName = safe(frontmatter.city, 'Phoenix');
+const stateName = safe(frontmatter.state, 'Arizona');
+const pageTitle = safe(frontmatter.metaTitle, `Mobile Diesel Mechanic ${cityName} | 24/7 On‑Site Truck Repair`);
+const pageDescription = safe(frontmatter.metaDescription, `Mobile diesel repair in ${cityName} with 24/7 emergency dispatch.`);
+const heroImage = safe(frontmatter.heroImage, '/images/hero-default.jpg');
+const corridors = safeArray(frontmatter.corridors);
+const nearbyCities = safeArray(frontmatter.nearbyCities);
+const lastReviewed = frontmatter.lastReviewed || new Date().toISOString().split('T')[0];
 
-// Hero image selection with AVIF/WebP optimization
-const heroOptions = [
-  `/images/hero/diesel-truck-${slug}-1.avif`,
-  `/images/hero/diesel-truck-${slug}-2.avif`,
-  `/images/hero/diesel-truck-repair-${slug}.avif`,
-  `/images/hero/mobile-diesel-${cityName?.toLowerCase() || 'phoenix'}.avif`,
-  `/images/hero/diesel-truck-phoenix-highway.avif`
+// Build canonical URL
+const canonicalURL = `${BUSINESS_URL}/locations/${toSlug(safe(frontmatter.slug, slug))}`;
+
+// Hero image with AVIF/WebP optimization and fallback
+const heroImageBase = heroImage.replace(/\.(jpg|jpeg|png)$/, '');
+const heroImageAVIF = `${heroImageBase}.avif`;
+const heroImageWebP = `${heroImageBase}.webp`;
+
+// Schema data is handled by UnifiedSchema component in BaseLayout
+
+// Internal links generation (safe)
+const cityLinks = nearbyCities.slice(0, 6).map(city => ({
+  href: `/locations/${toSlug(city)}`,
+  text: `${city} Mobile Mechanic`,
+  priority: 'medium'
+}));
+
+const serviceLinks = [
+  { href: '/services/emergency-roadside-assistance', text: 'Emergency Roadside Assistance', priority: 'critical' },
+  { href: '/services/engine-diagnostics', text: 'Engine Diagnostics', priority: 'high' },
+  { href: '/services/brakes-air-systems', text: 'Brakes & Air Systems', priority: 'high' },
+  { href: '/services/ac-cooling', text: 'A/C & Cooling', priority: 'medium' },
+  { href: '/services/hydraulics-hoses-cylinders', text: 'Hydraulics & Hoses', priority: 'medium' }
 ];
-
-const heroImage = heroOptions[0]; // Use first option as primary
-const heroPreload = await getHeroPreload(heroImage);
-
-// City defaults fallback system
-const cityDefaults = {
-  corridors: mergedData.corridors || [
-    `I-10 ${cityName} Area Coverage`,
-    `I-17 ${cityName} Corridor Access`,
-    `Loop System ${cityName} Metro`
-  ],
-  landmarks: mergedData.landmarks || [
-    `${cityName} distribution centers`,
-    `Local freight facilities`,
-    `Major corridor intersections`,
-    `Industrial zones & logistics hubs`
-  ],
-  nearbyCities: mergedData.nearbyCities || ["Phoenix", "Tempe", "Mesa", "Chandler", "Glendale"],
-  relatedServices: mergedData.relatedServices || ["emergency-roadside-assistance", "engine-diagnostics", "brakes-air-systems"],
-  faqs: mergedData.faqs || [
-    {
-      question: `Do you provide emergency service in ${cityName}?`,
-      answer: `Yes, we provide 24/7 emergency mobile diesel repair throughout ${cityName} and surrounding areas. Typical response time is 30-90 minutes depending on location and traffic conditions.`
-    },
-    {
-      question: `What types of diesel repairs do you handle in ${cityName}?`,
-      answer: `We handle all diesel engine repairs, brake and air systems, hydraulics, electrical issues, A/C systems, and emergency roadside assistance throughout ${cityName} and the greater Phoenix metro area.`
-    }
-  ]
-};
-
-// Enhanced SEO meta data
-const pageTitle = mergedData.metaTitle || `Mobile Diesel Mechanic ${cityName} | 24/7 On‑Site Truck Repair`;
-const pageDescription = mergedData.metaDescription || `Mobile diesel repair in ${cityName} with 24/7 emergency dispatch. Serving ${cityDefaults.corridors.slice(0,2).join(', ')} with professional on-site service.`;
-const canonicalUrl = mergedData.canonical || `https://azmobiledieselrepair.com/locations/${slug}`;
-
-// SAB (Service Area Business) JSON-LD Schema
-const sabSchema = {
-  "@context": "https://schema.org",
-  "@graph": [
-    {
-      "@type": "LocalBusiness",
-      "@id": `https://azmobiledieselrepair.com/locations/${slug}#LocalBusiness`,
-      "name": BUSINESS_NAME,
-      "telephone": PHONE_E164,
-      "url": `https://azmobiledieselrepair.com/locations/${slug}`,
-      "logo": "https://azmobiledieselrepair.com/images/az-mobile-diesel-logo.png",
-      "image": "https://azmobiledieselrepair.com/images/hero/diesel-truck-repair-team.jpg",
-      "description": `Professional mobile diesel repair serving ${cityName}, Arizona. 24/7 emergency roadside assistance and on-site diesel engine repair.`,
-      "geo": {
-        "@type": "GeoCoordinates",
-        "latitude": mergedData.centroid?.lat || COMPANY_LAT,
-        "longitude": mergedData.centroid?.lng || COMPANY_LNG
-      },
-      "areaServed": {
-        "@type": "GeoCircle",
-        "geoMidpoint": {
-          "@type": "GeoCoordinates",
-          "latitude": mergedData.centroid?.lat || COMPANY_LAT,
-          "longitude": mergedData.centroid?.lng || COMPANY_LNG
-        },
-        "geoRadius": SERVICE_RADIUS_METERS
-      },
-      "serviceArea": [
-        {
-          "@type": "City",
-          "name": cityName,
-          "addressRegion": "AZ",
-          "addressCountry": "US"
-        }
-      ],
-      "hasOfferCatalog": {
-        "@type": "OfferCatalog",
-        "name": "Mobile Diesel Repair Services",
-        "itemListElement": [
-          {
-            "@type": "Offer",
-            "itemOffered": {
-              "@type": "Service",
-              "name": "Emergency Roadside Assistance",
-              "description": "24/7 mobile diesel repair emergency service"
-            }
-          },
-          {
-            "@type": "Offer",
-            "itemOffered": {
-              "@type": "Service",
-              "name": "Engine Diagnostics",
-              "description": "Computer diagnostics and ECM programming"
-            }
-          },
-          {
-            "@type": "Offer",
-            "itemOffered": {
-              "@type": "Service",
-              "name": "Brake & Air Systems",
-              "description": "Mobile brake repair and air system service"
-            }
-          }
-        ]
-      },
-      "openingHours": "Mo-Su 00:00-23:59",
-      "contactPoint": {
-        "@type": "ContactPoint",
-        "telephone": PHONE_E164,
-        "contactType": "customer service",
-        "availableLanguage": "English"
-      }
-    },
-    {
-      "@type": "FAQPage",
-      "@id": `https://azmobiledieselrepair.com/locations/${slug}#FAQPage`,
-      "mainEntity": cityDefaults.faqs.map((faq, index) => ({
-        "@type": "Question",
-        "@id": `https://azmobiledieselrepair.com/locations/${slug}#Question${index + 1}`,
-        "name": faq.question,
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": faq.answer
-        }
-      }))
-    },
-    {
-      "@type": "BreadcrumbList",
-      "@id": `https://azmobiledieselrepair.com/locations/${slug}#BreadcrumbList`,
-      "itemListElement": [
-        {
-          "@type": "ListItem",
-          "position": 1,
-          "name": "Home",
-          "item": "https://azmobiledieselrepair.com/"
-        },
-        {
-          "@type": "ListItem",
-          "position": 2,
-          "name": "Locations",
-          "item": "https://azmobiledieselrepair.com/locations/"
-        },
-        {
-          "@type": "ListItem",
-          "position": 3,
-          "name": cityName,
-          "item": `https://azmobiledieselrepair.com/locations/${slug}`
-        }
-      ]
-    }
-  ]
-};
 ---
 
 <BaseLayout
   title={pageTitle}
+  pageType="city"
   description={pageDescription}
-  canonical={canonicalUrl}
-  ogImage={`https://azmobiledieselrepair.com/images/og/diesel-repair-${slug}.jpg`}
-  preload={[heroPreload]}
+  canonicalURL={canonicalURL}
+  ogImage={`${BUSINESS_URL}${heroImage}`}
 >
-  <script type="application/ld+json" set:html={JSON.stringify(sabSchema)} />
+  <!-- Preload critical hero image -->
+  <link rel="preload" as="image" href={heroImageAVIF} type="image/avif" slot="head" />
+  <link rel="preload" as="image" href={heroImageWebP} type="image/webp" slot="head" />
+  <link rel="preload" as="image" href={heroImage} type="image/jpeg" slot="head" />
 
-  <!-- Hero Section with City-Specific Background -->
-  <HeroCity
-    city={cityName}
-    state="Arizona"
-    corridors={cityDefaults.corridors}
-    phone={PHONE_DISPLAY}
-    phoneLink={PHONE_E164}
-    heroImage={heroImage}
-    etaMinutes={mergedData.etaMinutes || 45}
-  />
+  <!-- JSON-LD structured data is handled by UnifiedSchema in BaseLayout -->
 
-  <main class="space-y-16 pt-8">
-    <!-- Emergency Dispatch Section -->
-    <section class="bg-red-600 text-white py-16">
-      <div class="container mx-auto px-4">
-        <div class="max-w-4xl mx-auto text-center">
-          <h2 class="text-3xl font-bold mb-6">24/7 Emergency Dispatch - {cityName}</h2>
-          <p class="text-xl mb-8">Stranded on {cityDefaults.corridors[0] || 'the highway'}? Our emergency response team is standing by.</p>
-          <div class="grid md:grid-cols-2 gap-8">
-            <DispatchCard
-              type="emergency"
-              title="Emergency Roadside"
-              description="Immediate response for breakdowns and emergencies"
-              responseTime={`${mergedData.etaMinutes || 45}-90 min`}
-              phone={PHONE_DISPLAY}
-              phoneLink={PHONE_E164}
-            />
-            <DispatchCard
-              type="scheduled"
-              title="Scheduled Service"
-              description="On-site repair at your location or facility"
-              responseTime="Same day"
-              phone={PHONE_DISPLAY}
-              phoneLink={PHONE_E164}
-            />
-          </div>
+  <main class="min-h-screen">
+    <!-- Hero Section -->
+    <section class="section-hero relative h-[600px] flex items-center justify-center">
+      <!-- Background with multiple format support -->
+      <picture class="absolute inset-0 w-full h-full">
+        <source srcset={heroImageAVIF} type="image/avif" />
+        <source srcset={heroImageWebP} type="image/webp" />
+        <img
+          src={heroImage}
+          alt={`Mobile diesel repair truck in ${cityName}, Arizona`}
+          class="w-full h-full object-cover"
+          loading="eager"
+        />
+      </picture>
+
+      <!-- Hero overlay for text readability -->
+      <div class="hero-overlay absolute inset-0 bg-black bg-opacity-40"></div>
+
+      <!-- Hero content -->
+      <div class="relative z-10 text-center text-white px-4 max-w-4xl mx-auto">
+        <h1 class="text-5xl md:text-6xl font-bold mb-6 text-shadow-lg">
+          Mobile Diesel Mechanic — {cityName}, AZ
+        </h1>
+        <p class="text-xl md:text-2xl mb-8 text-shadow">
+          24/7 Emergency Dispatch • On-Site Repairs • Licensed & Insured
+        </p>
+
+        <!-- Dual CTAs -->
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+          <a
+            href={`tel:${PHONE_E164}`}
+            class="btn-hero px-8 py-4 bg-[#ed6623] text-white font-bold text-lg rounded-full hover:bg-[#B8501C] transition-colors"
+          >
+            Call {PHONE_DISPLAY}
+          </a>
+          <a
+            href="#services"
+            class="btn-outline px-8 py-4 border-2 border-white text-white font-bold text-lg rounded-full hover:bg-white hover:text-[#ed6623] transition-colors"
+          >
+            View Services
+          </a>
         </div>
+
+        {corridors.length > 0 && (
+          <p class="mt-6 text-lg opacity-90">
+            Serving {corridors.join(', ')} • {cityName} & Surrounding Areas
+          </p>
+        )}
       </div>
     </section>
 
-    <!-- Corridor Coverage Section -->
-    <section class="py-16">
-      <div class="container mx-auto px-4">
-        <div class="max-w-4xl mx-auto">
-          <h2 class="text-3xl font-bold text-center mb-12">
-            {cityName} Corridor Coverage
-          </h2>
-          <CorridorsGrid
-            corridors={cityDefaults.corridors}
-            city={cityName}
-            landmarks={cityDefaults.landmarks}
-            etaMinutes={mergedData.etaMinutes || 45}
-          />
-        </div>
-      </div>
-    </section>
-
-    <!-- Services Grid Section -->
-    <section class="py-16 bg-gray-50">
-      <div class="container mx-auto px-4">
-        <div class="max-w-6xl mx-auto">
-          <h2 class="text-3xl font-bold text-center mb-12">
-            Mobile Diesel Services in {cityName}
-          </h2>
-          <div class="grid md:grid-cols-3 gap-8">
-            <div class="bg-white p-6 rounded-lg shadow-md">
-              <h3 class="text-xl font-semibold mb-4">Emergency Roadside Assistance</h3>
-              <p class="text-gray-600 mb-4">24/7 emergency response for breakdowns, lockouts, and roadside repairs throughout {cityName}.</p>
-              <a href="/services/emergency-roadside-assistance" class="text-orange-600 font-semibold hover:text-orange-700">Learn More →</a>
-            </div>
-            <div class="bg-white p-6 rounded-lg shadow-md">
-              <h3 class="text-xl font-semibold mb-4">Engine Diagnostics</h3>
-              <p class="text-gray-600 mb-4">Computer diagnostics, ECM programming, and engine repair services at your {cityName} location.</p>
-              <a href="/services/engine-diagnostics" class="text-orange-600 font-semibold hover:text-orange-700">Learn More →</a>
-            </div>
-            <div class="bg-white p-6 rounded-lg shadow-md">
-              <h3 class="text-xl font-semibold mb-4">Brakes & Air Systems</h3>
-              <p class="text-gray-600 mb-4">Complete brake and air system repair, including wheel seals and foundation brake work.</p>
-              <a href="/services/brakes-air-systems" class="text-orange-600 font-semibold hover:text-orange-700">Learn More →</a>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Local Expertise Section -->
-    <section class="py-16">
-      <div class="container mx-auto px-4">
-        <div class="max-w-4xl mx-auto">
-          <h2 class="text-3xl font-bold text-center mb-12">
-            Local {cityName} Expertise
-          </h2>
-          <div class="prose prose-lg mx-auto text-center">
+    <div class="container mx-auto px-4 py-12">
+      <!-- Main Content Area -->
+      <div class="grid lg:grid-cols-3 gap-12">
+        <!-- Main Content Column -->
+        <div class="lg:col-span-2">
+          <!-- MDX Content -->
+          <section class="prose lg:prose-xl max-w-none mb-12">
             <Content />
-            {mergedData.heatNotes && mergedData.heatNotes.length > 0 && (
-              <div class="bg-orange-50 p-6 rounded-lg mt-8">
-                <h3 class="text-xl font-semibold text-orange-800 mb-4">Local Conditions & Challenges</h3>
-                <ul class="text-left text-orange-700">
-                  {mergedData.heatNotes.map((note: string) => (
-                    <li class="mb-2">• {note}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-    </section>
+          </section>
 
-    <!-- FAQ Section -->
-    <section class="py-16 bg-gray-50">
-      <div class="container mx-auto px-4">
-        <div class="max-w-4xl mx-auto">
-          <h2 class="text-3xl font-bold text-center mb-12">
-            Frequently Asked Questions - {cityName}
-          </h2>
-          <FAQAccordion faqs={cityDefaults.faqs} />
-        </div>
-      </div>
-    </section>
+          <!-- Services Grid -->
+          <section id="services" class="mb-12">
+            <h2 class="text-3xl font-bold mb-8 text-[#1d1d1b]">
+              Essential Services in {cityName}
+            </h2>
+            <div class="grid md:grid-cols-2 gap-6">
+              {serviceLinks.map(service => (
+                <div class="border border-gray-200 rounded-lg p-6 hover:shadow-lg transition-shadow">
+                  <h3 class="text-xl font-semibold mb-3 text-[#ed6623]">
+                    <a href={service.href} class="hover:underline">
+                      {service.text}
+                    </a>
+                  </h3>
+                  <p class="text-gray-600 mb-4">
+                    Professional mobile service throughout {cityName} area.
+                  </p>
+                  <a
+                    href={service.href}
+                    class="inline-flex items-center text-[#ed6623] font-medium hover:underline"
+                  >
+                    Learn More →
+                  </a>
+                </div>
+              ))}
+            </div>
+          </section>
 
-    <!-- Nearby Areas Section -->
-    <section class="py-16">
-      <div class="container mx-auto px-4">
-        <div class="max-w-4xl mx-auto text-center">
-          <h2 class="text-3xl font-bold mb-8">Nearby Service Areas</h2>
-          <p class="text-lg text-gray-600 mb-8">
-            We also provide mobile diesel repair services in these nearby cities:
-          </p>
-          <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
-            {cityDefaults.nearbyCities.slice(0, 6).map((city: string) => (
-              <a
-                href={`/locations/${city?.toLowerCase()}`}
-                class="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow border border-gray-200 hover:border-orange-300"
-              >
-                <span class="font-semibold text-gray-800 hover:text-orange-600">
-                  {city}
-                </span>
-              </a>
-            ))}
-          </div>
+          <!-- Local Expertise -->
+          <section class="mb-12">
+            <h2 class="text-3xl font-bold mb-6 text-[#1d1d1b]">
+              Local {cityName} Expertise
+            </h2>
+            <div class="bg-gray-50 rounded-lg p-8">
+              <p class="text-lg mb-4">
+                Our certified diesel mechanics understand the unique challenges of operating heavy-duty vehicles in {cityName}'s desert climate and traffic conditions.
+              </p>
+              <ul class="space-y-2 text-gray-700">
+                <li>• Extreme heat impact on cooling systems and A/C performance</li>
+                <li>• Dust filtration and air intake maintenance requirements</li>
+                <li>• Local truck stops, weigh stations, and service corridors</li>
+                <li>• Compliance with Arizona DOT regulations and inspections</li>
+              </ul>
+            </div>
+          </section>
         </div>
-      </div>
-    </section>
 
-    <!-- Final CTA Section -->
-    <section class="py-16 bg-orange-600 text-white">
-      <div class="container mx-auto px-4">
-        <div class="max-w-4xl mx-auto text-center">
-          <h2 class="text-3xl font-bold mb-6">
-            Ready for Expert Diesel Repair in {cityName}?
-          </h2>
-          <p class="text-xl mb-8">
-            Call now for immediate dispatch to your {cityName} location.
-          </p>
-          <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <!-- Sidebar -->
+        <div class="lg:col-span-1">
+          <!-- Emergency Contact Card -->
+          <div class="bg-[#ed6623] text-white rounded-lg p-6 mb-8">
+            <h3 class="text-xl font-bold mb-4">24/7 Emergency Service</h3>
+            <p class="mb-4">Stuck in {cityName}? We're here to help.</p>
             <a
               href={`tel:${PHONE_E164}`}
-              class="bg-white text-orange-600 px-8 py-4 rounded-full font-bold text-lg hover:bg-gray-100 transition-colors"
+              class="block w-full text-center bg-white text-[#ed6623] font-bold py-3 rounded-lg hover:bg-gray-100 transition-colors"
             >
               Call {PHONE_DISPLAY}
             </a>
-            <a
-              href="#contact-form"
-              class="border-2 border-white text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-white hover:text-orange-600 transition-colors"
-            >
-              Request Service
-            </a>
+            <p class="text-sm mt-3 opacity-90">
+              Average Response: 60-90 minutes
+            </p>
+          </div>
+
+          <!-- Service Areas -->
+          {nearbyCities.length > 0 && (
+            <div class="border border-gray-200 rounded-lg p-6 mb-8">
+              <h3 class="text-xl font-semibold mb-4 text-[#1d1d1b]">
+                Nearby Service Areas
+              </h3>
+              <div class="grid grid-cols-2 gap-2">
+                {cityLinks.map(city => (
+                  <a
+                    href={city.href}
+                    class="text-[#ed6623] hover:underline text-sm"
+                  >
+                    {city.text.replace(' Mobile Mechanic', '')}
+                  </a>
+                ))}
+              </div>
+            </div>
+          )}
+
+          <!-- Trust Signals -->
+          <div class="border border-gray-200 rounded-lg p-6">
+            <h3 class="text-xl font-semibold mb-4 text-[#1d1d1b]">
+              Why Choose Us
+            </h3>
+            <ul class="space-y-3 text-sm">
+              <li class="flex items-start">
+                <span class="text-[#ed6623] mr-2">✓</span>
+                <span>Licensed & Insured in Arizona</span>
+              </li>
+              <li class="flex items-start">
+                <span class="text-[#ed6623] mr-2">✓</span>
+                <span>15+ Years Fleet Management Experience</span>
+              </li>
+              <li class="flex items-start">
+                <span class="text-[#ed6623] mr-2">✓</span>
+                <span>Mobile Diagnostic Equipment</span>
+              </li>
+              <li class="flex items-start">
+                <span class="text-[#ed6623] mr-2">✓</span>
+                <span>Fast Response Throughout {cityName}</span>
+              </li>
+            </ul>
           </div>
         </div>
+      </div>
+    </div>
+
+    <!-- Final CTA Section -->
+    <section class="bg-[#1d1d1b] text-white py-16">
+      <div class="container mx-auto px-4 text-center">
+        <h2 class="text-3xl font-bold mb-6">
+          Ready to Get Back on the Road?
+        </h2>
+        <p class="text-xl mb-8 opacity-90">
+          Professional mobile diesel repair throughout {cityName} and surrounding areas.
+        </p>
+        <a
+          href={`tel:${PHONE_E164}`}
+          class="inline-block bg-[#ed6623] text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-[#B8501C] transition-colors"
+        >
+          Call {PHONE_DISPLAY} Now
+        </a>
       </div>
     </section>
   </main>
 </BaseLayout>
+
+<style>
+.section-hero {
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-overlay {
+  background: linear-gradient(
+    135deg,
+    rgba(0, 0, 0, 0.4) 0%,
+    rgba(0, 0, 0, 0.2) 100%
+  );
+}
+
+.text-shadow {
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.text-shadow-lg {
+  text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.7);
+}
+
+.btn-hero,
+.btn-outline {
+  transition: all 0.3s ease;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.btn-hero:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(237, 102, 35, 0.3);
+}
+
+.btn-outline:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.2);
+}
+
+@media (max-width: 640px) {
+  .section-hero {
+    height: 500px;
+  }
+
+  h1 {
+    font-size: 2.5rem !important;
+    line-height: 1.2;
+  }
+}
+</style>

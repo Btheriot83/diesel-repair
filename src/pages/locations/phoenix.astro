@@ -1,0 +1,65 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { getEntryBySlug } from 'astro:content';
+import { PHONE_E164, PHONE_DISPLAY } from '@/config/company';
+import HeroCity from '@/components/HeroCity.astro';
+import CorridorsGrid from '@/components/locations/CorridorsGrid.astro';
+import FAQAccordion from '@/components/ui/FAQAccordion.astro';
+import cities from '@/data/cities.json';
+
+const slug = 'phoenix';
+const entry = await getEntryBySlug('locations', slug);
+if (!entry) throw Astro.redirect('/404');
+const { Content } = await entry.render();
+const fm = entry.data || {};
+const model = (cities||[]).find(c => c.slug === slug) || {};
+
+const city = fm.city || model.city || 'Phoenix';
+const state = fm.state || model.state || 'AZ';
+const corridors = (fm.corridors?.length ? fm.corridors : model.corridors) || ['I-10','I-17','Loop 101'];
+const landmarks = (fm.landmarks?.length ? fm.landmarks : model.landmarks) || [];
+const faqs = (fm.faqs?.length ? fm.faqs : model.faqs) || [];
+const eta = Number.isFinite(fm.etaMinutes) ? fm.etaMinutes : (model.etaMinutes || 30);
+const title = fm.metaTitle || `Mobile Diesel Mechanic — ${city}, ${state} | 24/7 Roadside & On-Site Repair`;
+const desc = fm.metaDescription || `On-site diesel repair in ${city}, ${state}. Coverage near ${corridors.slice(0,2).join(', ')}. Avg ETA ${eta}–${eta+20} minutes.`;
+const heroBase = '/images/cities/phoenix-hero';
+const canonical = '/locations/phoenix';
+---
+
+<BaseLayout
+  title={title}
+  description={desc}
+  canonicalURL={canonical}
+  ogImage={`${heroBase}-1600.avif`}
+>
+  <HeroCity
+    city={city}
+    state={state}
+    corridors={corridors}
+    phone={PHONE_DISPLAY}
+    phoneLink={PHONE_E164}
+    heroImage={`${heroBase}-1600.avif`}
+    etaMinutes={eta}
+  />
+
+  <section class='space-y-16 pt-8'>
+    <section>
+      <h2 class='text-3xl font-bold text-center mb-12'>{city} Corridor Coverage</h2>
+      <CorridorsGrid
+        corridors={corridors}
+        city={city}
+        landmarks={landmarks}
+        etaMinutes={eta}
+      />
+    </section>
+
+    <section class='prose prose-lg mx-auto text-center'>
+      <Content />
+    </section>
+
+    <section>
+      <h2 class='text-3xl font-bold text-center mb-12'>Frequently Asked Questions — {city}</h2>
+      <FAQAccordion faqs={faqs} />
+    </section>
+  </section>
+</BaseLayout>

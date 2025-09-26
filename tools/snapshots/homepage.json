@@ -1,0 +1,25 @@
+{
+  "timestamp": "2025-09-26T23:52:59.143Z",
+  "hash": "69e97e79c2ec855b",
+  "structure": {
+    "title": "AZ Mobile Diesel Repair - Mobile Diesel Mechanic in Phoenix, AZ",
+    "h1": [],
+    "h2": [],
+    "navLinks": [
+      "<nav class=\"hidden lg:flex items-center space-x-10\" data-astro-source-file=\"/Users/brandontheriot/projects/Diesel Repair/src/components/Header.astro\" data-astro-source-loc=\"39:59\"> <button class=\"nav-button text-gray-700 font-bold text-sm uppercase tracking-wider hover:text-orange-600 transition-colors duration-200\" data-href=\"#services\" data-astro-source-file=\"/Users/brandontheriot/projects/Diesel Repair/src/components/Header.astro\" data-astro-source-loc=\"44:12\"> SERVICES </button><button class=\"nav-button text-gray-700 font-bold text-sm uppercase tracking-wider hover:text-orange-600 transition-colors duration-200\" data-href=\"#service-area\" data-astro-source-file=\"/Users/brandontheriot/projects/Diesel Repair/src/components/Header.astro\" data-astro-source-loc=\"44:12\"> LOCATIONS </button><button class=\"nav-button text-gray-700 font-bold text-sm uppercase tracking-wider hover:text-orange-600 transition-colors duration-200\" data-href=\"#recent-jobs\" data-astro-source-file=\"/Users/brandontheriot/projects/Diesel Repair/src/components/Header.astro\" data-astro-source-loc=\"44:12\"> BLOG </button><button class=\"nav-button text-gray-700 font-bold text-sm uppercase tracking-wider hover:text-orange-600 transition-colors duration-200\" data-href=\"#why-choose-us\" data-astro-source-file=\"/Users/brandontheriot/projects/Diesel Repair/src/components/Header.astro\" data-astro-source-loc=\"44:12\"> ABOUT </button><button class=\"nav-button text-gray-700 font-bold text-sm uppercase tracking-wider hover:text-orange-600 transition-colors duration-200\" data-href=\"#contact\" data-astro-source-file=\"/Users/brandontheriot/projects/Diesel Repair/src/components/Header.astro\" data-astro-source-loc=\"44:12\"> CONTACT </button> </nav>",
+      "<nav class=\"flex flex-col space-y-4\" data-astro-source-file=\"/Users/brandontheriot/projects/Diesel Repair/src/components/Header.astro\" data-astro-source-loc=\"97:44\"> <button class=\"mobile-nav-button text-left text-lg font-medium text-gray-800 hover:text-orange-600 transition-colors duration-200 py-2 uppercase tracking-wider\" data-href=\"#services\" data-astro-source-file=\"/Users/brandontheriot/projects/Diesel Repair/src/components/Header.astro\" data-astro-source-loc=\"102:12\"> SERVICES </button><button class=\"mobile-nav-button text-left text-lg font-medium text-gray-800 hover:text-orange-600 transition-colors duration-200 py-2 uppercase tracking-wider\" data-href=\"#service-area\" data-astro-source-file=\"/Users/brandontheriot/projects/Diesel Repair/src/components/Header.astro\" data-astro-source-loc=\"102:12\"> LOCATIONS </button><button class=\"mobile-nav-button text-left text-lg font-medium text-gray-800 hover:text-orange-600 transition-colors duration-200 py-2 uppercase tracking-wider\" data-href=\"#recent-jobs\" data-astro-source-file=\"/Users/brandontheriot/projects/Diesel Repair/src/components/Header.astro\" data-astro-source-loc=\"102:12\"> BLOG </button><button class=\"mobile-nav-button text-left text-lg font-medium text-gray-800 hover:text-orange-600 transition-colors duration-200 py-2 uppercase tracking-wider\" data-href=\"#why-choose-us\" data-astro-source-file=\"/Users/brandontheriot/projects/Diesel Repair/src/components/Header.astro\" data-astro-source-loc=\"102:12\"> ABOUT </button><button class=\"mobile-nav-button text-left text-lg font-medium text-gray-800 hover:text-orange-600 transition-colors duration-200 py-2 uppercase tracking-wider\" data-href=\"#contact\" data-astro-source-file=\"/Users/brandontheriot/projects/Diesel Repair/src/components/Header.astro\" data-astro-source-loc=\"102:12\"> CONTACT </button> </nav>"
+    ],
+    "ctaButtons": [],
+    "phoneNumbers": [
+      "(480) 307-7434",
+      "(480) 307-7434",
+      "(480) 307-7434",
+      "(480) 307-7434",
+      "(480) 555-0123",
+      "(480) 307-7434",
+      "(480) 307-7434"
+    ],
+    "sections": 11,
+    "metaDescription": "Professional mobile diesel repair services for Phoenix Metro area. 24/7 emergency roadside assistance, fleet services, and commercial vehicle repairs."
+  }
+}
