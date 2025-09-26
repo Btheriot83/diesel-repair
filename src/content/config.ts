@@ -60,13 +60,43 @@ const services = defineCollection({
   }),
 });
 
-const cities = defineCollection({
+const locations = defineCollection({
   type: "content",
   schema: z.object({
-    ...baseFields,
     pageType: z.literal("city"),
-  }),
+    title: z.string(),
+    city: z.string(),
+    state: z.string().default("AZ"),
+    slug: z.string().optional(), // will infer from filename if missing
+    corridors: z.array(z.string()).min(2),
+    exitClusters: z.array(z.string()).min(2),
+    neighborhoods: z.array(z.string()).min(6),
+    zips: z.array(z.string()).min(6),
+    landmarks: z.array(z.string()).min(3),
+    heatNotes: z.array(z.string()).min(2),
+    nearbyCities: z.array(z.string()).min(2),
+    etaMinutes: z.number().int().positive(),
+    faqs: z.array(faq).min(1),
+
+    // Optional SEO/meta that Phoenix might already have:
+    metaTitle: z.string().optional(),
+    metaDescription: z.string().optional(),
+    canonical: z.string().url().optional(),
+    ogImage: z.string().optional(),
+
+    // Optional fields for compatibility
+    centroid: z.object({
+      lat: z.number(),
+      lng: z.number()
+    }).optional(),
+
+    // Safety valves for future extras; won't break validation:
+    extras: z.record(z.any()).optional()
+  })
 });
+
+// Keep cities as alias for backward compatibility
+const cities = locations;
 
 const corridors = defineCollection({
   type: "content",
@@ -84,4 +114,4 @@ const blog = defineCollection({
   }),
 });
 
-export const collections = { services, cities, corridors, blog };
+export const collections = { services, locations, cities, corridors, blog };

@@ -1,0 +1,152 @@
+{
+  "$ref": "#/definitions/locations",
+  "definitions": {
+    "locations": {
+      "type": "object",
+      "properties": {
+        "pageType": {
+          "type": "string",
+          "const": "city"
+        },
+        "title": {
+          "type": "string"
+        },
+        "city": {
+          "type": "string"
+        },
+        "state": {
+          "type": "string",
+          "default": "AZ"
+        },
+        "slug": {
+          "type": "string"
+        },
+        "corridors": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 2
+        },
+        "exitClusters": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 2
+        },
+        "neighborhoods": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 6
+        },
+        "zips": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 6
+        },
+        "landmarks": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 3
+        },
+        "heatNotes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 2
+        },
+        "nearbyCities": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 2
+        },
+        "etaMinutes": {
+          "type": "integer",
+          "exclusiveMinimum": 0
+        },
+        "faqs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "question": {
+                "type": "string"
+              },
+              "answer": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "question",
+              "answer"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 1
+        },
+        "metaTitle": {
+          "type": "string"
+        },
+        "metaDescription": {
+          "type": "string"
+        },
+        "canonical": {
+          "type": "string",
+          "format": "uri"
+        },
+        "ogImage": {
+          "type": "string"
+        },
+        "centroid": {
+          "type": "object",
+          "properties": {
+            "lat": {
+              "type": "number"
+            },
+            "lng": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "lat",
+            "lng"
+          ],
+          "additionalProperties": false
+        },
+        "extras": {
+          "type": "object",
+          "additionalProperties": {}
+        },
+        "$schema": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "pageType",
+        "title",
+        "city",
+        "corridors",
+        "exitClusters",
+        "neighborhoods",
+        "zips",
+        "landmarks",
+        "heatNotes",
+        "nearbyCities",
+        "etaMinutes",
+        "faqs"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

@@ -1,0 +1,198 @@
+{
+  "$ref": "#/definitions/blog",
+  "definitions": {
+    "blog": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "metaTitle": {
+          "type": "string"
+        },
+        "metaDescription": {
+          "type": "string"
+        },
+        "canonical": {
+          "type": "string",
+          "format": "uri"
+        },
+        "layout": {
+          "type": "string"
+        },
+        "faqs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "question": {
+                "type": "string"
+              },
+              "answer": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "question",
+              "answer"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "breadcrumbs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "@type": {
+                "type": "string",
+                "const": "ListItem"
+              },
+              "position": {
+                "type": "number"
+              },
+              "name": {
+                "type": "string"
+              },
+              "item": {
+                "type": "string",
+                "format": "uri"
+              }
+            },
+            "required": [
+              "@type",
+              "position",
+              "name"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "corridors": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "nearbyCities": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "relatedServices": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "hero": {
+          "type": "string"
+        },
+        "images": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "cta": {
+          "type": "object",
+          "properties": {
+            "primary": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
+        "links": {
+          "type": "object",
+          "properties": {
+            "internal": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        "draft": {
+          "type": "boolean",
+          "default": false
+        },
+        "updated": {
+          "type": "string"
+        },
+        "city": {
+          "type": "string"
+        },
+        "slug": {
+          "type": "string"
+        },
+        "state": {
+          "type": "string"
+        },
+        "centroid": {
+          "type": "object",
+          "properties": {
+            "lat": {
+              "type": "number"
+            },
+            "lng": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "lat",
+            "lng"
+          ],
+          "additionalProperties": false
+        },
+        "exitClusters": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "neighborhoods": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "zips": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "landmarks": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "heatNotes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "etaMinutes": {
+          "type": "number"
+        },
+        "pageType": {
+          "type": "string",
+          "const": "blog"
+        },
+        "$schema": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "title"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}
