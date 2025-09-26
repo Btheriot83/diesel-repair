@@ -1,0 +1,113 @@
+---
+import { BUSINESS_NAME, PHONE_E164, PHONE_DISPLAY } from "@/config/company";
+
+export interface Props {
+  city: string;
+  neighborhoods?: string[];
+  zips?: string[];
+  corridors?: string[];
+  showServiceAreaImage?: boolean;
+}
+
+const {
+  city,
+  neighborhoods = [],
+  zips = [],
+  corridors = [],
+  showServiceAreaImage = true
+} = Astro.props;
+
+// Service statement based on city
+const serviceStatement = city.toLowerCase().includes('phoenix')
+  ? "Serving Phoenix, AZ • I-10, I-17, Loop 202"
+  : `Serving ${city}, AZ • Phoenix Metro Coverage`;
+
+// Coverage chips - prioritize corridors, then nearby cities from neighborhoods
+const coverageChips = [
+  ...corridors.slice(0, 3),
+  ...neighborhoods.slice(0, 4)
+].slice(0, 6);
+---
+
+<div
+  class="bg-gradient-to-br from-diesel-orange to-orange-600 text-white p-6 rounded-xl shadow-lg"
+  aria-label="Dispatch and service area"
+>
+  <!-- Business Header -->
+  <div class="flex items-center gap-3 mb-4">
+    <div class="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center animate-pulse">
+      <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
+      </svg>
+    </div>
+    <div>
+      <h3 class="text-xl font-bold">{BUSINESS_NAME}</h3>
+      <p class="text-orange-100 text-sm">24/7 Emergency Available</p>
+    </div>
+  </div>
+
+  <!-- Service Statement -->
+  <p class="mb-4 text-orange-100 font-medium">{serviceStatement}</p>
+
+  <!-- Coverage Chips -->
+  {coverageChips.length > 0 && (
+    <div class="mb-6">
+      <div class="flex flex-wrap gap-2">
+        {coverageChips.map(chip => (
+          <span class="bg-white/20 rounded-full px-3 py-1 text-sm font-medium">
+            {chip}
+          </span>
+        ))}
+      </div>
+    </div>
+  )}
+
+  <!-- Service Area Image (Optional) -->
+  {showServiceAreaImage && (
+    <div class="mb-6 rounded-lg overflow-hidden bg-white/10 p-1">
+      <img
+        src="/images/maps/phoenix-service-area.svg"
+        alt="Phoenix service area coverage showing 50-mile radius from Phoenix with major highways I-10, I-17, and Loop 101"
+        width="320"
+        height="180"
+        loading="lazy"
+        class="w-full h-auto rounded object-cover"
+        style="aspect-ratio: 16/9; max-height: 180px;"
+      />
+    </div>
+  )}
+
+  <!-- CTAs -->
+  <div class="space-y-3">
+    <!-- Primary CTA: Call -->
+    <a
+      href={`tel:${PHONE_E164}`}
+      class="block w-full bg-white text-diesel-orange font-bold py-3 px-4 rounded-lg text-center hover:bg-orange-50 transition-colors min-h-[44px] flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-orange-600"
+      onclick="gtag('event', 'dispatch_call_click', { page: window.location.pathname });"
+    >
+      <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+        <path d="M6.62,10.79C8.06,13.62 10.38,15.94 13.21,17.38L15.41,15.18C15.69,14.9 16.08,14.82 16.43,14.93C17.55,15.3 18.75,15.5 20,15.5A1,1 0 0,1 21,16.5V20A1,1 0 0,1 20,21A17,17 0 0,1 3,4A1,1 0 0,1 4,3H7.5A1,1 0 0,1 8.5,4C8.5,5.25 8.7,6.45 9.07,7.57C9.18,7.92 9.1,8.31 8.82,8.59L6.62,10.79Z"/>
+      </svg>
+      Call {PHONE_DISPLAY}
+    </a>
+
+    <!-- Secondary CTA: Request Service -->
+    <button
+      class="block w-full bg-transparent border-2 border-white hover:bg-white hover:text-diesel-orange text-white font-bold py-3 px-4 rounded-lg text-center transition-colors min-h-[44px] flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-orange-600"
+      onclick="gtag('event', 'dispatch_request_click', { page: window.location.pathname }); document.getElementById('request-service')?.scrollIntoView({ behavior: 'smooth' });"
+    >
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+      </svg>
+      Request Service
+    </button>
+
+    <!-- Business Hours -->
+    <div class="text-center">
+      <div class="inline-flex items-center gap-2 bg-white/20 rounded-full px-3 py-1 text-sm">
+        <div class="w-2 h-2 bg-green-300 rounded-full animate-pulse"></div>
+        <span>Available Now • 30-90 Min ETA</span>
+      </div>
+    </div>
+  </div>
+</div>

@@ -3,9 +3,11 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 import { getCollection, getEntry } from "astro:content";
 import { buildInternalLinks } from "@/utils/linkBuilder";
 import { COMPANY_CONFIG } from "@/config/constants";
+import { BUSINESS_NAME, PHONE_E164, COMPANY_LAT, COMPANY_LNG, SERVICE_RADIUS_METERS } from "@/config/company";
 import HeroCity from "@/components/HeroCity.astro";
 import CorridorsGrid from "@/components/locations/CorridorsGrid.astro";
 import FAQAccordion from "@/components/ui/FAQAccordion.astro";
+import DispatchCard from "@/components/DispatchCard.astro";
 import { getHeroPreload } from "@/utils/heroPreload";
 
 export async function getStaticPaths() {
@@ -83,56 +85,51 @@ const schemaData = {
     {
       "@type": "LocalBusiness",
       "@id": `${COMPANY_CONFIG.siteUrl}/locations/${slug}#business`,
-      "name": "AZ Mobile Diesel Repair",
+      "name": BUSINESS_NAME,
       "alternateName": `Mobile Diesel Mechanic ${cityName}`,
       "description": `Professional mobile diesel repair services in ${cityName}, Arizona. 24/7 emergency roadside assistance with 30-90 minute response time.`,
       "url": `${COMPANY_CONFIG.siteUrl}/locations/${slug}`,
-      "telephone": COMPANY_CONFIG.phoneE164,
+      "telephone": PHONE_E164,
       "priceRange": "$$",
       "email": COMPANY_CONFIG.email,
       "address": {
         "@type": "PostalAddress",
-        "streetAddress": "Service Area Coverage",
-        "addressLocality": cityName,
+        "addressLocality": "Phoenix",
         "addressRegion": "AZ",
-        "postalCode": isPhoenix ? "85001" : "85001",
         "addressCountry": "US"
       },
-      "geo": {
-        "@type": "GeoCoordinates",
-        "latitude": isPhoenix ? 33.4484 : 33.4484,
-        "longitude": isPhoenix ? -112.0740 : -112.0740
+      "serviceArea": {
+        "@type": "Place",
+        "geo": {
+          "@type": "GeoCircle",
+          "geoMidpoint": {
+            "@type": "GeoCoordinates",
+            "latitude": COMPANY_LAT,
+            "longitude": COMPANY_LNG
+          },
+          "geoRadius": SERVICE_RADIUS_METERS
+        }
       },
-      "hasMap": `https://maps.google.com/maps?q=AZ+Mobile+Diesel+Repair+${cityName}+AZ`,
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "telephone": PHONE_E164,
+        "contactType": "customer service",
+        "areaServed": "US-AZ"
+      },
       "sameAs": [
         "https://www.facebook.com/azmobiledieselrepair",
         "https://www.linkedin.com/company/az-mobile-diesel-repair"
       ],
       "areaServed": [
-        {
-          "@type": "City",
-          "name": cityName,
-          "containedInPlace": {
-            "@type": "State",
-            "name": "Arizona",
-            "containedInPlace": {
-              "@type": "Country",
-              "name": "United States"
-            }
-          }
-        },
-        ...(isPhoenix ? [
-          "I-10 Phoenix Corridor",
-          "I-17 Phoenix Corridor",
-          "Loop 202 Phoenix",
-          "Loop 101 Phoenix",
-          "PHX Sky Harbor Airport Area",
-          "Downtown Phoenix",
-          "Central Phoenix",
-          "North Phoenix",
-          "South Phoenix",
-          "West Phoenix"
-        ] : [])
+        "Phoenix AZ",
+        "I-10",
+        "I-17",
+        "Loop 202",
+        "Tempe",
+        "Mesa",
+        "Glendale",
+        "Scottsdale",
+        "Chandler"
       ],
       "openingHours": "Mo-Su 00:00-23:59",
       "paymentAccepted": ["Cash", "Credit Card", "Check"],
@@ -150,14 +147,7 @@ const schemaData = {
             "description": `Professional ${service.replace(/-/g, ' ')} services in ${cityName}, Arizona.`,
             "url": `${COMPANY_CONFIG.siteUrl}/services/${service}`,
             "serviceType": service.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
-            "areaServed": {
-              "@type": "City",
-              "name": cityName,
-              "containedInPlace": {
-                "@type": "State",
-                "name": "Arizona"
-              }
-            },
+            "areaServed": "Phoenix AZ",
             "provider": {
               "@id": `${COMPANY_CONFIG.siteUrl}/locations/${slug}#business`
             }
@@ -1014,28 +1004,15 @@ const schemaData = {
 
         <!-- Enhanced Sidebar -->
         <div class="lg:col-span-1">
-          <!-- Emergency CTA -->
-          <div id="request-service" class="bg-gradient-to-br from-orange-500 to-red-500 text-white p-6 rounded-xl mb-8 shadow-lg">
-            <div class="flex items-center gap-3 mb-4">
-              <div class="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center animate-pulse">
-                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
-                </svg>
-              </div>
-              <h3 class="text-xl font-bold">Emergency Service?</h3>
-            </div>
-            <p class="mb-4 text-orange-100">Broken down? Need immediate help?</p>
-            <div class="space-y-3">
-              <a href={COMPANY_CONFIG.phoneLink} class="block w-full bg-white text-orange-600 font-bold py-3 px-4 rounded-lg text-center hover:bg-orange-50 transition-colors min-h-[44px] flex items-center justify-center">
-                🚨 Call {COMPANY_CONFIG.phoneNumber}
-              </a>
-              <div class="text-center">
-                <div class="inline-flex items-center gap-2 bg-white/20 rounded-full px-3 py-1 text-sm">
-                  <div class="w-2 h-2 bg-green-300 rounded-full animate-pulse"></div>
-                  <span>Available Now • 30-90 Min ETA</span>
-                </div>
-              </div>
-            </div>
+          <!-- Dispatch & Service Area -->
+          <div class="mb-8">
+            <DispatchCard
+              city={cityName}
+              neighborhoods={data.neighborhoods || cityDefaults.neighborhoods}
+              zips={data.zips || cityDefaults.zips}
+              corridors={cityDefaults.corridors}
+              showServiceAreaImage={false}
+            />
           </div>
 
           <!-- Nearby Cities -->

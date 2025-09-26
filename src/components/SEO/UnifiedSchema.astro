@@ -10,7 +10,7 @@
  *  - breadcrumbs?: Array<{ "@type":"ListItem"; position:number; name:string; item?:string }>
  *  - reviews?: Array<{ rating:number }>
  */
-import { BUSINESS_NAME, SITE_ORIGIN, PHONE_E164, SERVICE_AREA_CITIES } from "../../config/company";
+import { BUSINESS_NAME, SITE_ORIGIN, PHONE_E164, SERVICE_AREA_CITIES, COMPANY_LAT, COMPANY_LNG, SERVICE_RADIUS_METERS } from "../../config/company";
 import svcList from "../../data/services.json";
 
 const { pageType, service, faqs, breadcrumbs, reviews, title } = Astro.props as {
@@ -28,12 +28,12 @@ const avg = (arr: number[]) => arr.length ? (arr.reduce((a,b)=>a+b,0) / arr.leng
 
 const blocks:any[] = [];
 
-// Homepage gets Organization + WebSite + ItemList schemas
+// Homepage gets SAB-compliant LocalBusiness + WebSite + ItemList schemas
 if (pageType === "home") {
-  // Organization schema
+  // LocalBusiness schema (SAB-compliant)
   blocks.push({
     "@context": "https://schema.org",
-    "@type": "Organization",
+    "@type": "LocalBusiness",
     "@id": orgId,
     "name": BUSINESS_NAME,
     "url": SITE_ORIGIN,
@@ -44,6 +44,24 @@ if (pageType === "home") {
       "addressLocality": "Phoenix",
       "addressRegion": "AZ",
       "addressCountry": "US"
+    },
+    "serviceArea": {
+      "@type": "Place",
+      "geo": {
+        "@type": "GeoCircle",
+        "geoMidpoint": {
+          "@type": "GeoCoordinates",
+          "latitude": COMPANY_LAT,
+          "longitude": COMPANY_LNG
+        },
+        "geoRadius": SERVICE_RADIUS_METERS
+      }
+    },
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "telephone": PHONE_E164,
+      "contactType": "customer service",
+      "areaServed": "US-AZ"
     },
     "areaServed": SERVICE_AREA_CITIES.map((c:string) => ({ "@type": "City", "name": c + ", AZ" })),
     "description": "Professional mobile diesel repair services for commercial vehicles in Phoenix Metro area. 24/7 emergency roadside assistance, fleet services, and on-site repairs.",
