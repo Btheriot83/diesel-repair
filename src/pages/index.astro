@@ -10,6 +10,7 @@ import Testimonial from '../components/Testimonial.astro';
 import PopularFixes from '../components/homepage/PopularFixes.astro';
 import FAQ from '../components/FAQ.astro';
 import ContactFormSimple from '../components/ContactFormSimple.astro';
+import { PHONE_E164 } from '../config/company.ts';
 ---
 
 <BaseLayout title="AZ Mobile Diesel Repair - Mobile Diesel Mechanic in Phoenix, AZ" pageType="home">
@@ -26,7 +27,7 @@ import ContactFormSimple from '../components/ContactFormSimple.astro';
         24/7 roadside service across Phoenix Metro • Average 25-min response
       </p>
       <a
-        href="tel:+14803077434"
+        href={`tel:${PHONE_E164}`}
         class="inline-flex items-center gap-3 bg-white text-orange-600 font-bold py-4 px-8 rounded-full shadow-lg hover:bg-gray-100 transform hover:scale-105 transition-all duration-300 text-lg min-h-[44px]"
       >
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">

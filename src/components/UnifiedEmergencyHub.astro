@@ -1,4 +1,6 @@
 ---
+import { PHONE_E164 } from '../config/company.ts';
+
 // Using correct service images from the public folder
 const emergencyRoadside = "/images/emergency-roadside-alt.png";
 const mobileMechanic = "/images/mobile-mechanic-alt.png";
@@ -119,7 +121,7 @@ const mobileMechanic = "/images/mobile-mechanic-alt.png";
             Speak directly with our dispatch team. Fast response times guaranteed.
           </p>
           <a
-            href="tel:+14803077434"
+            href={`tel:${PHONE_E164}`}
             class="btn-emergency w-full"
           >
             <!-- Phone icon -->

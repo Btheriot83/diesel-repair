@@ -1,9 +1,11 @@
 ---
+import { PHONE_E164 } from '../config/company.ts';
+
 // Business configuration for AZ Mobile Diesel Repair
 const COMPANY_CONFIG = {
   companyName: "AZ Mobile Diesel Repair",
   phoneNumber: "(480) 307-7434",
-  phoneLink: "tel:+14803077434",
+  phoneLink: `tel:${PHONE_E164}`,
 };
 
 const navigationItems = [

@@ -1,10 +1,11 @@
 ---
 import HeroLCP from './HeroLCP.astro';
+import { PHONE_E164 } from '../config/company.ts';
 
 // Business configuration
 const COMPANY_CONFIG = {
   phoneNumber: "(480) 307-7434",
-  phoneLink: "tel:+14803077434",
+  phoneLink: `tel:${PHONE_E164}`,
 };
 ---
 
@@ -16,7 +17,7 @@ const COMPANY_CONFIG = {
   <!-- Hero background image with LCP optimization -->
   <div class="absolute inset-0 w-full h-full">
     <HeroLCP
-      src="/images/Alt Hero 3.png"
+      src="/images/phoenix-mobile-diesel-mechanic-hero.png"
       alt="Mobile diesel mechanic assisting semi-truck in Phoenix desert at sunset"
       width={1920}
       height={1080}
