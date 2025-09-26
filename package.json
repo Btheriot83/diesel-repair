@@ -48,6 +48,7 @@
   "devDependencies": {
     "@astrojs/mdx": "^4.3.5",
     "@astrojs/vercel": "^8.2.7",
+    "@modelcontextprotocol/server-sequential-thinking": "^2025.7.1",
     "jsdom": "^27.0.0",
     "sharp": "^0.34.4",
     "terser": "^5.44.0"
