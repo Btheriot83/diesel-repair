@@ -74,9 +74,7 @@ const ogImage = cityHero ? `${COMPANY_CONFIG.siteUrl}${cityHero.path}` : `${COMP
 // Hero preload for LCP optimization
 const heroPreload = getHeroPreload(cityName);
 
-// Load reviews for trust signals
-const reviewsData = await import("@/data/reviews.json");
-const cityReviews = reviewsData.reviews.filter(review => review.city === cityName).slice(0, 3);
+// Reviews data removed - no longer using fictional testimonials
 
 // Schema markup data - comprehensive JSON-LD stack
 const schemaData = {
@@ -139,15 +137,7 @@ const schemaData = {
       "openingHours": "Mo-Su 00:00-23:59",
       "paymentAccepted": ["Cash", "Credit Card", "Check"],
       "currenciesAccepted": "USD",
-      ...(cityReviews.length > 0 && {
-        "aggregateRating": {
-          "@type": "AggregateRating",
-          "ratingValue": "5.0",
-          "reviewCount": cityReviews.length,
-          "bestRating": "5",
-          "worstRating": "5"
-        }
-      }),
+      // Aggregate rating removed - no longer using fictional reviews
       "hasOfferCatalog": {
         "@type": "OfferCatalog",
         "name": "Mobile Diesel Repair Services",
