@@ -59,6 +59,7 @@ const CORRIDOR_SLUGS: Record<string, string> = {
 
 // Basic slugify with diacritics removal and symbol normalization
 export function slugify(input: string): string {
+  if (!input || typeof input !== 'string') return '';
   const lowered = input
     .normalize('NFD')
     .replace(/\p{Diacritic}+/gu, '')

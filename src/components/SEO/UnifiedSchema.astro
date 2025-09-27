@@ -177,7 +177,7 @@ if (Array.isArray(faqs) && faqs.length) {
 
 if (pageType === "city") {
   // Extract city name from title (e.g., "Mobile Diesel Mechanic — Phoenix, AZ" -> "Phoenix")
-  const cityName = title?.includes("—") ? title.split("—")[1]?.trim().replace(", AZ", "") || "Phoenix" : "Phoenix";
+  const cityName = title?.includes("—") ? (title.split("—")[1]?.trim()?.replace(", AZ", "") || "Phoenix") : "Phoenix";
   const phoneNumber = PHONE_E164;
 
   // Phoenix-specific service areas (corridors)
